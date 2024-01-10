@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using JxAudio.Extensions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace JxAudio.Controller;
 
-
-public class SystemController: ControllerBase
+public class SystemController : AudioController
 {
     [HttpPost("/ping")]
-    public void Ping()
+    public Task Ping()
     {
-        
+        return WriteResponseAsync(HttpContext, 0, null);
     }
 }

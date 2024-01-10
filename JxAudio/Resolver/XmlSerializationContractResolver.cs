@@ -38,7 +38,7 @@ public class XmlSerializationContractResolver: DefaultContractResolver
                 var elementAttributes = field.GetCustomAttributes<XmlElementAttribute>().ToArray();
                 var textAttribute = field.GetCustomAttribute<XmlTextAttribute>();
 
-                FieldInfo choiceField = null;
+                FieldInfo? choiceField = null;
 
                 if (choiceAttribute == null)
                 {
@@ -58,9 +58,8 @@ public class XmlSerializationContractResolver: DefaultContractResolver
                 {
                     var jsonProperty = CreateXmlProperty(field, memberSerialization, attributeAttribute.AttributeName, attributeAttribute.Type, choiceField);
 
-                    if (names.Contains(jsonProperty.PropertyName))
+                    if (jsonProperty.PropertyName == null || !names.Add(jsonProperty.PropertyName))
                         throw new InvalidOperationException();
-                    names.Add(jsonProperty.PropertyName);
 
                     jsonProperties.Add(jsonProperty);
                 }
@@ -69,9 +68,8 @@ public class XmlSerializationContractResolver: DefaultContractResolver
                 {
                     var jsonProperty = CreateXmlProperty(field, memberSerialization, elementAttribute.ElementName, elementAttribute.Type, choiceField);
 
-                    if (names.Contains(jsonProperty.PropertyName))
+                    if (jsonProperty.PropertyName == null || !names.Add(jsonProperty.PropertyName))
                         throw new InvalidOperationException();
-                    names.Add(jsonProperty.PropertyName);
 
                     jsonProperties.Add(jsonProperty);
                 }
@@ -93,7 +91,7 @@ public class XmlSerializationContractResolver: DefaultContractResolver
             return jsonProperties;
         }
 
-        private JsonProperty CreateXmlProperty(FieldInfo field, MemberSerialization memberSerialization, string name = null, Type type = null, FieldInfo choiceField = null)
+        private JsonProperty CreateXmlProperty(FieldInfo field, MemberSerialization memberSerialization, string? name = null, Type? type = null, FieldInfo? choiceField = null)
         {
             var jsonProperty = CreateProperty(field, memberSerialization);
 
@@ -114,8 +112,8 @@ public class XmlSerializationContractResolver: DefaultContractResolver
                         if (field.GetValue(instance) == null)
                             return false;
 
-                        object choiceValue = choiceField.GetValue(instance);
-                        string choiceName = Enum.GetName(choiceField.FieldType, choiceValue);
+                        var choiceValue = choiceField.GetValue(instance);
+                        var choiceName = Enum.GetName(choiceField.FieldType, choiceValue ?? "");
                         return choiceName == jsonProperty.PropertyName;
                     };
             }
@@ -125,7 +123,7 @@ public class XmlSerializationContractResolver: DefaultContractResolver
                     instance => field.GetValue(instance) != null;
             }
 
-            var specifiedField = field.DeclaringType.GetField(jsonProperty.PropertyName + "Specified", BindingFlags.Public | BindingFlags.Instance);
+            var specifiedField = field.DeclaringType?.GetField(jsonProperty.PropertyName + "Specified", BindingFlags.Public | BindingFlags.Instance);
             if (specifiedField != null)
             {
                 if (specifiedField.FieldType != typeof(bool))
@@ -135,7 +133,7 @@ public class XmlSerializationContractResolver: DefaultContractResolver
                 if (specifiedFieldIgnoreAttribute != null)
                 {
                     jsonProperty.GetIsSpecified =
-                        instance => (bool)specifiedField.GetValue(instance);
+                        instance => (bool)(specifiedField.GetValue(instance) ?? false);
                 }
             }
 
