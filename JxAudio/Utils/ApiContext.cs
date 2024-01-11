@@ -1,5 +1,5 @@
-﻿using JxAudio.Enums;
-using JxAudio.Subsonic;
+﻿using JxAudio.Entity;
+using JxAudio.Enums;
 
 namespace JxAudio.Utils;
 
@@ -14,7 +14,7 @@ public sealed class ApiContext
 
     public string? Client;
 
-    public User? User;
+    public UserEntity? User;
 
     public string? Suffix;
 }

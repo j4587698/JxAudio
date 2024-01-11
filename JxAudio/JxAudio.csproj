@@ -14,6 +14,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="FreeSql.All" Version="3.2.810-preview20231229" />
+      <PackageReference Include="FreeSql.Extensions.BaseEntity" Version="3.2.810-preview20231229" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
