@@ -1,6 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JxAudio", "JxAudio\JxAudio.csproj", "{2665860A-68B7-4CC9-B72C-56D12CEB3C5A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JxAudio.Web", "JxAudio.Web\JxAudio.Web.csproj", "{2665860A-68B7-4CC9-B72C-56D12CEB3C5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JxAudio.Core", "JxAudio.Core\JxAudio.Core.csproj", "{BB79A37E-2278-4638-900B-0F2AF941E4DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JxAudio.Plugin", "JxAudio.Plugin\JxAudio.Plugin.csproj", "{766FA7A3-4ED5-418C-952B-7A403E4EE213}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +16,13 @@ Global
 		{2665860A-68B7-4CC9-B72C-56D12CEB3C5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2665860A-68B7-4CC9-B72C-56D12CEB3C5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2665860A-68B7-4CC9-B72C-56D12CEB3C5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB79A37E-2278-4638-900B-0F2AF941E4DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB79A37E-2278-4638-900B-0F2AF941E4DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB79A37E-2278-4638-900B-0F2AF941E4DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB79A37E-2278-4638-900B-0F2AF941E4DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{766FA7A3-4ED5-418C-952B-7A403E4EE213}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{766FA7A3-4ED5-418C-952B-7A403E4EE213}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{766FA7A3-4ED5-418C-952B-7A403E4EE213}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{766FA7A3-4ED5-418C-952B-7A403E4EE213}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

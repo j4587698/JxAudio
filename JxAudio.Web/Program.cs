@@ -1,5 +1,5 @@
 using FreeSql;
-using JxAudio.Components;
+using JxAudio.Web.Components;
 
 IFreeSql fsql = new FreeSqlBuilder()
     .UseConnectionString(FreeSql.DataType.Sqlite, @"Data Source=freedb.db")

@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BootstrapBlazor" Version="8.1.7-beta03" />
+      <PackageReference Include="FreeSql.All" Version="3.2.810" />
+      <PackageReference Include="FreeSql.Extensions.BaseEntity" Version="3.2.810" />
+    </ItemGroup>
+
+</Project>
