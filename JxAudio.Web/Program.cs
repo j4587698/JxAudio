@@ -1,5 +1,9 @@
+using BootstrapBlazor.Components;
 using FreeSql;
+using JxAudio.Core.Service;
 using JxAudio.Web.Components;
+using Microsoft.Extensions.Options;
+using Console = System.Console;
 
 IFreeSql fsql = new FreeSqlBuilder()
     .UseConnectionString(FreeSql.DataType.Sqlite, @"Data Source=freedb.db")
@@ -10,12 +14,38 @@ BaseEntity.Initialization(fsql, null);
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped(typeof(IDataService<>), typeof(FreeSqlDataService<>));
 builder.Services.AddControllers();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddBootstrapBlazor(null, option =>
+{
+    option.AdditionalJsonFiles = Directory.GetFiles("./Locales", "*.json", SearchOption.AllDirectories);
+});
+
+// 增加多语言支持配置信息
+builder.Services.AddRequestLocalization<IOptionsMonitor<BootstrapBlazorOptions>>((localizerOption, blazorOption)=>
+{
+    blazorOption.OnChange(Invoke);
+    Invoke(blazorOption.CurrentValue);
+
+    void Invoke(BootstrapBlazorOptions option)
+    {
+        var supportedCultures = option.GetSupportedCultures();
+        localizerOption.SupportedCultures = supportedCultures;
+        localizerOption.SupportedUICultures = supportedCultures;
+    }
+});
 
 var app = builder.Build();
+
+// 启用本地化
+var option = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
+if (option != null)
+{
+    app.UseRequestLocalization(option.Value);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

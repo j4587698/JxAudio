@@ -1,4 +1,4 @@
-﻿using JxAudio.Entity;
+﻿using JxAudio.Core.Entity;
 using JxAudio.Enums;
 
 namespace JxAudio.Utils;

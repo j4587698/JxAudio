@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.Xml;
-using JxAudio.Entity;
+using JxAudio.Core.Entity;
 using JxAudio.Enums;
 using JxAudio.Utils;
 

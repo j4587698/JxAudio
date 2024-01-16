@@ -2,18 +2,21 @@
 <html lang="en">
 
 <head>
+    <title>JXAduio后台管理系统</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <base href="/"/>
-    <link rel="stylesheet" href="bootstrap/bootstrap.min.css"/>
+    <Link Href="_content/BootstrapBlazor.FontAwesome/css/font-awesome.min.css" />
+    <Link Href="_content/BootstrapBlazor/css/bootstrap.blazor.bundle.min.css" />
     <link rel="stylesheet" href="app.css"/>
     <link rel="stylesheet" href="JxAudio.Web.styles.css"/>
     <link rel="icon" type="image/png" href="favicon.png"/>
-    <HeadOutlet/>
+    <HeadOutlet @rendermode="InteractiveServer"/>
 </head>
 
 <body>
-<Routes/>
+<Routes @rendermode="InteractiveServer"/>
+<script src="_content/BootstrapBlazor/js/bootstrap.blazor.bundle.min.js"></script>
 <script src="_framework/blazor.web.js"></script>
 </body>
 

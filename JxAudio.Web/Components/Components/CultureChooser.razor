@@ -1,0 +1,55 @@
+﻿@using Microsoft.Extensions.Options
+@using Microsoft.Extensions.Localization
+@using System.Globalization
+@using System.Diagnostics.CodeAnalysis
+@inherits BootstrapComponentBase
+
+@inject IOptionsMonitor<BootstrapBlazorOptions> BootstrapOptions
+@inject IStringLocalizer<CultureChooser> Localizer
+@inject NavigationManager NavigationManager
+
+<div @attributes="@AdditionalAttributes" class="@ClassString">
+    <span>@Label</span>
+    <Select Value="@SelectedCulture" OnSelectedItemChanged="@SetCulture">
+        <Options>
+            @foreach (var kv in BootstrapOptions.CurrentValue.GetSupportedCultures())
+            {
+                <SelectOption Text="@kv.NativeName" Value="@kv.Name" />
+            }
+        </Options>
+    </Select>
+</div>
+
+@code {
+    private string? ClassString => CssBuilder.Default("culture-selector")
+        .AddClassFromAttributes(AdditionalAttributes)
+        .Build();
+    
+    private string SelectedCulture { get; set; } = CultureInfo.CurrentUICulture.Name;
+    
+    [NotNull]
+    private string? Label { get; set; }
+    
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        Label ??= Localizer[nameof(Label)];
+    }
+
+    private Task SetCulture(SelectedItem item)
+    {
+        // 使用 api 方式 适用于 Server-Side 模式
+        if (SelectedCulture != item.Value)
+        {
+            var culture = item.Value;
+            var uri = new Uri(NavigationManager.Uri).GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+            var query = $"?culture={Uri.EscapeDataString(culture)}&redirectUri={Uri.EscapeDataString(uri)}";
+
+            // use a path that matches your culture redirect controller from the previous steps
+            NavigationManager.NavigateTo("/Culture/SetCulture" + query, forceLoad: true);
+        }
+        return Task.CompletedTask;
+    }
+
+}

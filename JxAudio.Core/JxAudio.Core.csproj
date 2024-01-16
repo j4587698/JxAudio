@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <PackageReference Include="BootstrapBlazor" Version="8.1.7-beta03" />
+      <PackageReference Include="BootstrapBlazor.FontAwesome" Version="8.0.1" />
       <PackageReference Include="FreeSql.All" Version="3.2.810" />
       <PackageReference Include="FreeSql.Extensions.BaseEntity" Version="3.2.810" />
     </ItemGroup>

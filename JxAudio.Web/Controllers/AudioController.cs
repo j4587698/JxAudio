@@ -1,9 +1,8 @@
 ﻿using JxAudio.Extensions;
 using JxAudio.Utils;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace JxAudio.Controller;
+namespace JxAudio.Web.Controllers;
 
 public class AudioController : Microsoft.AspNetCore.Mvc.Controller
 {

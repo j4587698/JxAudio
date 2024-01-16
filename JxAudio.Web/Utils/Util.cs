@@ -9,8 +9,8 @@ public class Util
     public static string HexDecodePassword(string password)
         {
             if (password.StartsWith("enc:", StringComparison.Ordinal))
-                if (TryParseHexBytes(password.AsSpan(4), out byte[] bytes))
-                    return Encoding.UTF8.GetString(bytes);
+                if (TryParseHexBytes(password.AsSpan(4), out var bytes))
+                    return Encoding.UTF8.GetString(bytes ?? Array.Empty<byte>());
 
             return password;
         }

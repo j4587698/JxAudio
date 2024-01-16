@@ -1,0 +1,9 @@
+﻿{
+  "JxAudio.Web.Components.Components.CultureChooser": {
+    "Label": "语言"
+  },
+  "JxAudio.Web.Components.Layout.MainLayout": {
+    "Home": "首页",
+    "Music": "音乐管理"
+  }
+}

@@ -1,6 +1,6 @@
 ﻿using FreeSql;
 
-namespace JxAudio.Entity;
+namespace JxAudio.Core.Entity;
 
 public class UserEntity : BaseEntity<UserEntity, Guid>
 {
