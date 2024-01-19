@@ -60,8 +60,8 @@
         base.OnInitialized();
         MenuItems = new List<MenuItem>
         {
-            new() { Text = @Localizer["Home"], Icon = "fa fa-fw fa-home", Url = "/Admin" } ,
-            new() { Text = @Localizer["Music"], Icon = "fa fa-fw fa-home", Url = "/Admin/Music" } 
+            new() { Text = @Localizer["Home"], Icon = "fa fa-fw fa-home", Url = "/Admin", Match = NavLinkMatch.All} ,
+            new() { Text = @Localizer["Music"], Icon = "fa fa-fw fa-home", Url = "/Admin/MusicManager", Match = NavLinkMatch.All } 
         };
     }
 }

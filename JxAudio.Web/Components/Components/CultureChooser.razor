@@ -47,7 +47,7 @@
             var query = $"?culture={Uri.EscapeDataString(culture)}&redirectUri={Uri.EscapeDataString(uri)}";
 
             // use a path that matches your culture redirect controller from the previous steps
-            NavigationManager.NavigateTo("/Culture/SetCulture" + query, forceLoad: true);
+            NavigationManager.NavigateTo("/Admin/Culture/SetCulture" + query, forceLoad: true);
         }
         return Task.CompletedTask;
     }
