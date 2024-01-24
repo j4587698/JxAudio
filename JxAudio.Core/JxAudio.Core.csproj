@@ -11,6 +11,7 @@
       <PackageReference Include="BootstrapBlazor.FontAwesome" Version="8.0.1" />
       <PackageReference Include="FreeSql.All" Version="3.2.810" />
       <PackageReference Include="FreeSql.Extensions.BaseEntity" Version="3.2.810" />
+      <PackageReference Include="Jx.Toolbox" Version="0.3.6" />
     </ItemGroup>
 
 </Project>

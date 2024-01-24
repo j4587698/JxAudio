@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JxAudio.Core", "JxAudio.Cor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JxAudio.Plugin", "JxAudio.Plugin\JxAudio.Plugin.csproj", "{766FA7A3-4ED5-418C-952B-7A403E4EE213}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{E3C60856-3E9D-435A-82C7-04479737C3DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalFileProviederPlugin", "Plugins\LocalFileProviederPlugin\LocalFileProviederPlugin.csproj", "{698F015B-20A4-4527-AAFA-94D3A57DA6B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,12 @@ Global
 		{766FA7A3-4ED5-418C-952B-7A403E4EE213}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{766FA7A3-4ED5-418C-952B-7A403E4EE213}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{766FA7A3-4ED5-418C-952B-7A403E4EE213}.Release|Any CPU.Build.0 = Release|Any CPU
+		{698F015B-20A4-4527-AAFA-94D3A57DA6B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{698F015B-20A4-4527-AAFA-94D3A57DA6B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{698F015B-20A4-4527-AAFA-94D3A57DA6B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{698F015B-20A4-4527-AAFA-94D3A57DA6B9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{698F015B-20A4-4527-AAFA-94D3A57DA6B9} = {E3C60856-3E9D-435A-82C7-04479737C3DF}
 	EndGlobalSection
 EndGlobal
