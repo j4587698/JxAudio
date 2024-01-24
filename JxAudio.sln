@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JxAudio.Plugin", "JxAudio.P
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{E3C60856-3E9D-435A-82C7-04479737C3DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalFileProviederPlugin", "Plugins\LocalFileProviederPlugin\LocalFileProviederPlugin.csproj", "{698F015B-20A4-4527-AAFA-94D3A57DA6B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalFileProviderPlugin", "Plugins\LocalFileProviderPlugin\LocalFileProviderPlugin.csproj", "{698F015B-20A4-4527-AAFA-94D3A57DA6B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

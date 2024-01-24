@@ -1,7 +1,7 @@
 ﻿using Jx.Toolbox.Utils;
 using JxAudio.Plugin;
 
-namespace LocalFileProviederPlugin;
+namespace LocalFileProviderPlugin;
 
 public class LocalFileProvider : IProviderPlugin
 {
