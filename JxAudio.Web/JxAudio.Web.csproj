@@ -19,6 +19,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\JxAudio.Plugin\JxAudio.Plugin.csproj" />
+      <ProjectReference Include="..\Plugins\LocalFileProviderPlugin\LocalFileProviderPlugin.csproj" />
     </ItemGroup>
 
 </Project>

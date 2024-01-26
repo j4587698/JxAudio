@@ -1,12 +1,19 @@
 ﻿using System.Xml.Serialization;
+using JxAudio.Plugin;
 using JxAudio.Resolver;
+using LocalFileProviderPlugin;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace JxAudio.Utils;
+namespace JxAudio.Web.Utils;
 
-public class Constant
+public static class Constant
 {
+    public static List<IProviderPlugin> ProviderPlugins = new List<IProviderPlugin>()
+    {
+        new LocalFileProvider()
+    };
+    
     
     public const string SuffixKey = "SuffixKey";
     
@@ -32,4 +39,5 @@ public class Constant
 #endif
         return serializer;
     });
+    
 }
