@@ -1,5 +1,6 @@
 using BootstrapBlazor.Components;
 using FreeSql;
+using JxAudio.Core.Extensions;
 using JxAudio.Core.Service;
 using JxAudio.Web.Components;
 using Microsoft.Extensions.Options;
@@ -12,7 +13,7 @@ IFreeSql fsql = new FreeSqlBuilder()
     .Build();
 BaseEntity.Initialization(fsql, null);
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args).Inject();
 
 builder.Services.AddScoped(typeof(IDataService<>), typeof(FreeSqlDataService<>));
 builder.Services.AddControllers();
