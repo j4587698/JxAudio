@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace JxAudio.Core.Extensions;
@@ -25,6 +26,7 @@ public static class WebApplicationExtension
 
         AppConfigOption option = new AppConfigOption();
         configOption?.Invoke(option);
+        
         
         webApplicationBuilder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory(containerBuilder));
         webApplicationBuilder.Host.ConfigureContainer<ContainerBuilder>((context, builder) =>
@@ -60,9 +62,8 @@ public static class WebApplicationExtension
                     }
                 }
             }
-            
-            
         });
+
         return webApplicationBuilder;
     }
 
@@ -83,10 +84,10 @@ public static class WebApplicationExtension
             }
 
             register.PropertiesAutowired((info, o) =>
-                info.GetCustomAttributes(typeof(InjectAttribute), false).Length > 0);
+                Attribute.IsDefined(info, typeof(InjectAttribute)));
 
             var properties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                .Where(x => x.GetCustomAttributes(typeof(ValueAttribute), false).Length > 0);
+                .Where(x => Attribute.IsDefined(x, typeof(ValueAttribute)));
             foreach (var property in properties)
             {
                 var valueAttribute = property.GetCustomAttribute<ValueAttribute>();
@@ -125,9 +126,10 @@ public static class WebApplicationExtension
             }
             
             register.PropertiesAutowired((info, o) =>
-                info.GetCustomAttributes(typeof(InjectAttribute), false).Length > 0);
+                Attribute.IsDefined(info, typeof(InjectAttribute)));
 
-            var properties = type.GetProperties().Where(x => Attribute.IsDefined(x, typeof(ValueAttribute)));
+            var properties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(x => Attribute.IsDefined(x, typeof(ValueAttribute)));
             foreach (var property in properties)
             {
                 var valueAttribute = property.GetCustomAttribute<ValueAttribute>();
