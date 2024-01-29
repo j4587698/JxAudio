@@ -1,9 +1,12 @@
 ﻿using BootstrapBlazor.Components;
 using FreeSql;
+using JxAudio.Core.Attributes;
 using JxAudio.Core.Extensions;
+using Microsoft.AspNetCore.Components;
 
 namespace JxAudio.Core.Service;
 
+[Scoped]
 public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel : class, new()
 {
     private readonly IFreeSql _db = BaseEntity.Orm;

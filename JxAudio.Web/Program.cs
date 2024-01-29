@@ -15,7 +15,6 @@ BaseEntity.Initialization(fsql, null);
 
 var builder = WebApplication.CreateBuilder(args).Inject();
 
-builder.Services.AddScoped(typeof(IDataService<>), typeof(FreeSqlDataService<>));
 builder.Services.AddControllers();
 // Add services to the container.
 builder.Services.AddRazorComponents()
