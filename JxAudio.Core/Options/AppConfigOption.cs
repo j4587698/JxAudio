@@ -20,6 +20,8 @@ public class AppConfigOption
     /// </summary>
     public bool RegisterSelfIfHasInterface { get; set; }
 
+    public bool EnableController { get; set; }
+
     /// <summary>
     /// 是否自动移除动态前缀，默认为true
     /// </summary>

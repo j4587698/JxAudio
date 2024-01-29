@@ -26,16 +26,28 @@ public static class WebApplicationExtension
 
         AppConfigOption option = new AppConfigOption();
         configOption?.Invoke(option);
-        
+        webApplicationBuilder.Services.Configure(configOption ?? (appConfigOption => { }) );
         
         webApplicationBuilder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory(containerBuilder));
         webApplicationBuilder.Host.ConfigureContainer<ContainerBuilder>((context, builder) =>
         {
-            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes());
+            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).ToList();
             var scopedTypes = types.Where(x => x is { IsClass: true, IsAbstract: false } && x.GetCustomAttributes(typeof(ScopedAttribute), false).Length != 0);
             foreach (var scopedType in scopedTypes)
             {
                 Register(builder, scopedType, option, "scoped", webApplicationBuilder);
+            }
+            
+            var singletonTypes = types.Where(x => x is { IsClass: true, IsAbstract: false } && x.GetCustomAttributes(typeof(SingletonAttribute), false).Length != 0);
+            foreach (var singletonType in singletonTypes)
+            {
+                Register(builder, singletonType, option, "singleton", webApplicationBuilder);
+            }
+            
+            var transientTypes = types.Where(x => x is { IsClass: true, IsAbstract: false } && x.GetCustomAttributes(typeof(TransientAttribute), false).Length != 0);
+            foreach (var transientType in transientTypes)
+            {
+                Register(builder, transientType, option, "transient", webApplicationBuilder);
             }
         }).ConfigureAppConfiguration((context, builder) =>
         {
