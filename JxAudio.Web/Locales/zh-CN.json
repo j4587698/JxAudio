@@ -4,6 +4,17 @@
   },
   "JxAudio.Web.Components.Layout.MainLayout": {
     "Home": "首页",
+    "Folder": "文件夹管理",
     "Music": "音乐管理"
+  },
+  "JxAudio.Core.Entity.DirectoryEntity": {
+    "Provider": "提供者",
+    "Name": "目录别名",
+    "Path": "全路径",
+    "Name.Required": "{0}不能为空",
+    "Path.Required": "{0}不能为空"
+  },
+  "JxAudio.Core.Attributes.GuidRequiredAttribute": {
+    "ErrorMessage": "{0}不能为空"
   }
 }

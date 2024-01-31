@@ -18,6 +18,7 @@
       <PackageReference Include="FreeSql.All" Version="3.2.810" />
       <PackageReference Include="FreeSql.Extensions.BaseEntity" Version="3.2.810" />
       <PackageReference Include="Jx.Toolbox" Version="0.3.6" />
+      <PackageReference Include="Longbow.Tasks" Version="8.0.0" />
       <PackageReference Include="TagLibSharp" Version="2.3.0" />
     </ItemGroup>
 

@@ -1,0 +1,70 @@
+﻿@using JxAudio.Plugin
+@using JxAudio.Web.Utils
+
+<div class="row g-3">
+    <div class="col-12">
+        <Display @bind-Value="@Path" ShowLabel="false"></Display>
+    </div>
+    <div class="col-12">
+        <GroupBox>
+            <TreeView TItem="FsInfo" Items="TreeViewItems" OnExpandNodeAsync="OnExpandNodeAsync"
+                      OnTreeItemClick="OnTreeItemClick"></TreeView>
+        </GroupBox>
+    </div>
+</div>
+    
+    @code {
+        [Parameter] public Guid ProviderId { get; set; }
+
+        [Parameter] public string? Path { get; set; }
+
+        [Parameter] public EventCallback<string> PathChanged { get; set; }
+
+        private List<TreeViewItem<FsInfo>>? TreeViewItems { get; set; }
+        
+        private Guid _providerId = Guid.Empty;
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            if (ProviderId != _providerId)
+            {
+                TreeViewItems = new List<TreeViewItem<FsInfo>>()
+                {
+                    new TreeViewItem<FsInfo>(new FsInfo()
+                    {
+                        FullName = "/",
+                        IsDir = true
+                    })
+                    {
+                        HasChildren = true,
+                        Text = "根目录"
+                    }
+                };
+                _providerId = ProviderId;
+            }
+            
+        }
+
+        private async Task<IEnumerable<TreeViewItem<FsInfo>>> OnExpandNodeAsync(TreeViewItem<FsInfo> arg)
+        {
+            List<TreeViewItem<FsInfo>> treeViewItems = new List<TreeViewItem<FsInfo>>();
+            var provider = Constant.ProviderPlugins.FirstOrDefault(x => x.Id == ProviderId);
+            if (provider == null)
+            {
+                return treeViewItems;
+            }
+
+            var folders = await provider.ListFolderAsync(arg.Value.FullName!);
+            treeViewItems.AddRange(folders.Select(x => new TreeViewItem<FsInfo>(x) { HasChildren = true, Text = x.Name }));
+            return treeViewItems;
+        }
+
+        private async Task OnTreeItemClick(TreeViewItem<FsInfo> arg)
+        {
+            Path = arg.Value.FullName;
+            StateHasChanged();
+            await PathChanged.InvokeAsync(arg.Value.FullName);
+        }
+
+    }

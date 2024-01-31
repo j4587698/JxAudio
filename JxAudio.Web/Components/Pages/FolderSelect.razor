@@ -1,0 +1,24 @@
+﻿@page "/Admin/FolderSelect"
+@using JxAudio.Core.Entity
+@inject DialogService DialogService
+@inject MessageService MessageService
+
+<AdminTable TItem="DirectoryEntity">
+    <TableColumns>
+        <TableColumn @bind-Field="@context.Provider" LookupServiceKey="plugin"></TableColumn>
+        <TableColumn @bind-Field="@context.Name"></TableColumn>
+        <TableColumn @bind-Field="@context.Path">
+            <EditTemplate Context="value">
+                <div class="col-12">
+                    <label class="form-label is-display">选择内容</label>
+                    <SelectPathComponent ProviderId="value.Provider" @bind-Path="@value.Path"></SelectPathComponent>
+                </div>
+            </EditTemplate>
+        </TableColumn>
+    </TableColumns>
+</AdminTable>
+
+@code {
+
+
+}

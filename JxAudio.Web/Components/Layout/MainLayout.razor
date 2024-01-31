@@ -2,10 +2,10 @@
 @inherits LayoutComponentBase
 
 @inject IStringLocalizer<MainLayout> Localizer
-
+<PageTitle>@PageTitle</PageTitle>
 <BootstrapBlazorRoot>
     <Layout SideWidth="0" IsPage="true" IsFullSide="true" IsFixedHeader="true" AdditionalAssemblies="new[] { GetType().Assembly }"
-            ShowFooter="true" ShowCollapseBar="true" OnCollapsed="@OnCollapsed" Menus="MenuItems">
+            ShowFooter="true" ShowCollapseBar="true" OnCollapsed="@OnCollapsed" Menus="MenuItems" OnClickMenu="OnClickMenu">
         <Header>
             <span class="ms-3 flex-sm-fill d-none d-sm-block">JxAudio</span>
             <div class="flex-fill d-sm-none">
@@ -46,6 +46,8 @@
     ///获得/设置 是否收缩侧边栏
     /// </summary>
     public bool IsCollapsed { get; set; }
+
+    private string? PageTitle { get; set; }
     
     private List<MenuItem>? MenuItems { get; set; }
 
@@ -60,8 +62,16 @@
         base.OnInitialized();
         MenuItems = new List<MenuItem>
         {
-            new() { Text = @Localizer["Home"], Icon = "fa fa-fw fa-home", Url = "/Admin", Match = NavLinkMatch.All} ,
-            new() { Text = @Localizer["Music"], Icon = "fa fa-fw fa-home", Url = "/Admin/MusicManager", Match = NavLinkMatch.All } 
+            new() { Text = Localizer["Home"], Icon = "fa fa-fw fa-home", Url = "/Admin", Match = NavLinkMatch.All} ,
+            new() { Text = Localizer["Folder"], Icon = "fa fa-fw fa-home", Url = "/Admin/FolderSelect", Match = NavLinkMatch.All} ,
+            new() { Text = Localizer["Music"], Icon = "fa fa-fw fa-home", Url = "/Admin/MusicManager", Match = NavLinkMatch.All } 
         };
+    }
+
+    private Task OnClickMenu(MenuItem arg)
+    {
+        PageTitle = arg.Text + " - JXAudio";
+        StateHasChanged();
+        return Task.CompletedTask;
     }
 }

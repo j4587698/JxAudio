@@ -1,0 +1,24 @@
+﻿@typeparam TValue
+@inject ILookupService LookupService
+
+<Select TValue="TValue" Value="Value" ValueChanged="ValueChanged" Items="SelectedItems"></Select>
+
+@code {
+    [Parameter]
+    public TValue? Value { get; set; }
+
+    [Parameter]
+    public EventCallback<TValue> ValueChanged { get; set; }
+
+    [Parameter]
+    public string? LookupServiceKey { get; set; }
+
+    public IEnumerable<SelectedItem>? SelectedItems { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        SelectedItems = LookupService.GetItemsByKey(LookupServiceKey);
+    }
+
+}
