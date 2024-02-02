@@ -1,0 +1,56 @@
+﻿@page "/Admin/Settings"
+@using JxAudio.Web.Vo
+@using JxAudio.Web.Enums
+@using Microsoft.Extensions.Localization
+
+@inject IStringLocalizer<SettingsVo> SettingsVoLocalizer
+@inject IStringLocalizer<Settings> SettingsLocalizer
+
+<ValidateForm Model="_settingsVo">
+    <div class="row g-3">
+        <div class="col-6">
+            <h3>@SettingsLocalizer["Title"]</h3>
+        </div>
+        <div class="col-auto ms-auto">
+            <Button Text="@SettingsLocalizer["Save"]"></Button>
+        </div>
+        <div class="col-12 col-md-6">
+            <Select @bind-Value="@_settingsVo.SearchType"></Select>
+        </div>
+        <div class="col-12 col-md-6">
+            @if (_settingsVo.SearchType == SearchType.Cron)
+            {
+                <BootstrapInput @bind-Value="@_settingsVo.ScanInterval" DisplayText="@SettingsVoLocalizer["CronScanInterval"]"></BootstrapInput>
+            }
+            else
+            {
+                <BootstrapInputGroupLabel DisplayText="@SettingsVoLocalizer["ScanInterval"]"></BootstrapInputGroupLabel>
+                <BootstrapInputGroup>
+                    <BootstrapInput @bind-Value="@_settingsVo.ScanInterval"></BootstrapInput>
+                    <Dropdown @bind-Value="_settingsVo.TimeUnit"></Dropdown>
+                </BootstrapInputGroup>
+            }
+        </div>
+        <div class="col-12 col-md-6 col-sm-4">
+
+        </div>
+        <div class="col-12 col-md-6 col-sm-4">
+
+        </div>
+        <div class="col-12 col-md-6 col-sm-4">
+
+        </div>
+    </div>
+    
+
+</ValidateForm>
+
+@code {
+    private SettingsVo _settingsVo = new SettingsVo();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+}

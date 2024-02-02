@@ -5,7 +5,8 @@
   "JxAudio.Web.Components.Layout.MainLayout": {
     "Home": "首页",
     "Folder": "文件夹管理",
-    "Music": "音乐管理"
+    "Music": "音乐管理",
+    "Setting": "系统设置"
   },
   "JxAudio.Core.Entity.DirectoryEntity": {
     "Provider": "提供者",
@@ -16,5 +17,26 @@
   },
   "JxAudio.Core.Attributes.GuidRequiredAttribute": {
     "ErrorMessage": "{0}不能为空"
+  },
+  "JxAudio.Web.Enums.SearchType": {
+    "Interval": "时间间隔",
+    "Cron": "Cron表达式"
+  },
+  "JxAudio.Web.Vo.SettingsVo": {
+    "ScanInterval": "扫描间隔",
+    "SearchType": "扫描时间设置方式",
+    "TimeUnit": "时间单位",
+    "ScanInterval.PlaceHolder": "请输入扫描间隔",
+    "CronScanInterval": "填写Cron表达式 (秒 分 时 日 月 周) 可从https://cron.qqe2.com/生成"
+  },
+  "JxAudio.Web.Enums.TimeUnit": {
+    "Second": "秒",
+    "Minute": "分",
+    "Hour": "时",
+    "Day": "天"
+  },
+  "JxAudio.Web.Components.Pages.Settings": {
+    "Title": "系统设置",
+    "Save": "保存"
   }
 }

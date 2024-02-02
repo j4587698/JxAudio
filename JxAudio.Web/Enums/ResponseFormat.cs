@@ -1,4 +1,4 @@
-﻿namespace JxAudio.Enums;
+﻿namespace JxAudio.Web.Enums;
 
 public enum ResponseFormat
 {

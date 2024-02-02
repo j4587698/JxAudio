@@ -1,5 +1,5 @@
 ﻿using JxAudio.Core.Entity;
-using JxAudio.Enums;
+using JxAudio.Web.Enums;
 
 namespace JxAudio.Utils;
 

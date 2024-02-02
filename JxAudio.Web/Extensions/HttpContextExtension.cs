@@ -1,8 +1,8 @@
 ﻿using System.Text;
 using System.Xml;
 using JxAudio.Core.Entity;
-using JxAudio.Enums;
 using JxAudio.Utils;
+using JxAudio.Web.Enums;
 using JxAudio.Web.Utils;
 
 namespace JxAudio.Extensions;
