@@ -32,6 +32,16 @@ public class SettingsService
     {
         SetValue(SystemGroupName, name, value);
     }
+    
+    public void DeleteValue(string groupName, string name)
+    {
+        SettingsEntity.Where(x => x.SettingName == name && x.GroupName == groupName).ToDelete().ExecuteDeleted();
+    }
+    
+    public void DeleteValue(string name)
+    {
+        DeleteValue(SystemGroupName, name);
+    }
 
     public Dictionary<string, string?> GetAllValues(string groupName = SystemGroupName)
     {

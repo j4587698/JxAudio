@@ -2,32 +2,36 @@
 @using JxAudio.Web.Vo
 @using JxAudio.Web.Enums
 @using Microsoft.Extensions.Localization
+@using JxAudio.Core.Service
+@using System.Diagnostics.CodeAnalysis
 
 @inject IStringLocalizer<SettingsVo> SettingsVoLocalizer
 @inject IStringLocalizer<Settings> SettingsLocalizer
+@inject SettingsService SettingsService
+@inject ToastService ToastService
 
-<ValidateForm Model="_settingsVo">
+<ValidateForm Model="SettingsVo" OnValidSubmit="Save">
     <div class="row g-3">
         <div class="col-6">
             <h3>@SettingsLocalizer["Title"]</h3>
         </div>
         <div class="col-auto ms-auto">
-            <Button Text="@SettingsLocalizer["Save"]"></Button>
+            <Button Text="@SettingsLocalizer["Save"]" ButtonType="ButtonType.Submit"></Button>
         </div>
         <div class="col-12 col-md-6">
-            <Select @bind-Value="@_settingsVo.SearchType"></Select>
+            <Select @bind-Value="@SettingsVo.SearchType"></Select>
         </div>
         <div class="col-12 col-md-6">
-            @if (_settingsVo.SearchType == SearchType.Cron)
+            @if (SettingsVo.SearchType == SearchType.Cron)
             {
-                <BootstrapInput @bind-Value="@_settingsVo.ScanInterval" DisplayText="@SettingsVoLocalizer["CronScanInterval"]"></BootstrapInput>
+                <BootstrapInput @bind-Value="@SettingsVo.CronExpress"></BootstrapInput>
             }
             else
             {
                 <BootstrapInputGroupLabel DisplayText="@SettingsVoLocalizer["ScanInterval"]"></BootstrapInputGroupLabel>
                 <BootstrapInputGroup>
-                    <BootstrapInput @bind-Value="@_settingsVo.ScanInterval"></BootstrapInput>
-                    <Dropdown @bind-Value="_settingsVo.TimeUnit"></Dropdown>
+                    <BootstrapInput @bind-Value="@SettingsVo.ScanInterval"></BootstrapInput>
+                    <Dropdown @bind-Value="SettingsVo.TimeUnit"></Dropdown>
                 </BootstrapInputGroup>
             }
         </div>
@@ -46,11 +50,20 @@
 </ValidateForm>
 
 @code {
-    private SettingsVo _settingsVo = new SettingsVo();
+    [NotNull]
+    private SettingsVo? SettingsVo { get; set; }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        SettingsVo = SettingsVo.GetSettings(SettingsService);
+    }
+
+    private Task Save(EditContext arg)
+    {
+        SettingsVo.SetSettings(SettingsService);
+        ToastService.Success(SettingsLocalizer["ToastTitle"], SettingsLocalizer["SuccessContent"]);
+        return Task.CompletedTask;
     }
 
 }

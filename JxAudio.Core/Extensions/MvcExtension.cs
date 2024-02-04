@@ -10,7 +10,8 @@ namespace JxAudio.Core.Extensions;
 
 public static class MvcExtension
 {
-    public static IMvcCoreBuilder AddServiceController(this IServiceCollection collection, bool enableDynamicController = true)
+    public static IMvcCoreBuilder AddServiceController(this IServiceCollection collection,
+        bool enableDynamicController = true)
     {
         using var serviceProvider = collection.BuildServiceProvider();
         var option = serviceProvider.GetService<IOptions<AppConfigOption>>()?.Value ?? new AppConfigOption();
@@ -21,10 +22,10 @@ public static class MvcExtension
                 options.Conventions.Add(new DynamicControllerFeatureProvider(option));
             }
         }).AddControllersAsServices();
-        
+
         return builder;
     }
-    
+
     private class DynamicControllerFeatureProvider(AppConfigOption option) : IApplicationModelConvention
     {
 
@@ -33,7 +34,7 @@ public static class MvcExtension
             foreach (var controller in application.Controllers)
             {
                 // 检查是否是ControllerBase的派生类
-                if (controller.ControllerType.IsSubclassOf(typeof(ControllerBase)))
+                if (controller.ControllerType.BaseType == typeof(ControllerBase))
                 {
                     // 检查是否已经有RouteAttribute定义
                     var hasRouteAttribute = controller.Selectors.Any(selector =>
@@ -48,68 +49,75 @@ public static class MvcExtension
                             AttributeRouteModel = new AttributeRouteModel(routeAttribute)
                         });
                     }
-                }
-                
-                foreach (var action in controller.Actions)
-                {
-                    // 检查动作是否已经有HTTP方法特性（HttpGet, HttpPost, 等等）
-                    var hasHttpMethodAttribute = action.Selectors.Any(selector =>
-                        selector.EndpointMetadata.OfType<HttpMethodAttribute>().Any());
 
-                    // 如果没有HTTP方法特性，则添加一个默认的HttpGet特性
-                    if (!hasHttpMethodAttribute)
+                    foreach (var action in controller.Actions)
                     {
-                        var hasAttribute = false;
-                        var prefix = option.GetPrefix.FirstOrDefault(x => action.ActionName.StartsWith(x));
-                        if (prefix != null)
+                        // 检查动作是否已经有HTTP方法特性（HttpGet, HttpPost, 等等）
+                        var hasHttpMethodAttribute = action.Selectors.Any(selector =>
+                            selector.EndpointMetadata.OfType<HttpMethodAttribute>().Any());
+
+                        // 如果没有HTTP方法特性，则添加一个默认的HttpGet特性
+                        if (!hasHttpMethodAttribute)
                         {
-                            if (option.AutoRemoveDynamicPrefix)
+                            var hasAttribute = false;
+                            var prefix = option.GetPrefix.FirstOrDefault(x => action.ActionName.StartsWith(x));
+                            if (prefix != null)
                             {
-                                action.ActionName = action.ActionName[prefix.Length..];
+                                if (option.AutoRemoveDynamicPrefix)
+                                {
+                                    action.ActionName = action.ActionName[prefix.Length..];
+                                }
+
+                                action.Selectors.Add(new SelectorModel
+                                {
+                                    EndpointMetadata = { new HttpGetAttribute("[action]") }
+                                });
+                                hasAttribute = true;
                             }
-                            action.Selectors.Add(new SelectorModel
+
+                            prefix = option.PutPrefix.FirstOrDefault(x => action.ActionName.StartsWith(x));
+                            if (prefix != null)
                             {
-                                EndpointMetadata = { new HttpGetAttribute("[action]") }
-                            });
-                            hasAttribute = true;
-                        }
-                        prefix = option.PutPrefix.FirstOrDefault(x => action.ActionName.StartsWith(x));
-                        if (prefix != null)
-                        {
-                            if (option.AutoRemoveDynamicPrefix)
-                            {
-                                action.ActionName = action.ActionName[prefix.Length..];
+                                if (option.AutoRemoveDynamicPrefix)
+                                {
+                                    action.ActionName = action.ActionName[prefix.Length..];
+                                }
+
+                                action.Selectors.Add(new SelectorModel
+                                {
+                                    EndpointMetadata = { new HttpPutAttribute("[action]") }
+                                });
+                                hasAttribute = true;
                             }
-                            action.Selectors.Add(new SelectorModel
+
+                            prefix = option.DeletePrefix.FirstOrDefault(x => action.ActionName.StartsWith(x));
+                            if (prefix != null)
                             {
-                                EndpointMetadata = { new HttpPutAttribute("[action]") }
-                            });
-                            hasAttribute = true;
-                        }
-                        prefix = option.DeletePrefix.FirstOrDefault(x => action.ActionName.StartsWith(x));
-                        if (prefix != null)
-                        {
-                            if (option.AutoRemoveDynamicPrefix)
-                            {
-                                action.ActionName = action.ActionName[prefix.Length..];
+                                if (option.AutoRemoveDynamicPrefix)
+                                {
+                                    action.ActionName = action.ActionName[prefix.Length..];
+                                }
+
+                                action.Selectors.Add(new SelectorModel
+                                {
+                                    EndpointMetadata = { new HttpDeleteAttribute("[action]") }
+                                });
+                                hasAttribute = true;
                             }
-                            action.Selectors.Add(new SelectorModel
+
+                            prefix = option.PostPrefix.FirstOrDefault(x => action.ActionName.StartsWith(x));
+                            if (!hasAttribute)
                             {
-                                EndpointMetadata = { new HttpDeleteAttribute("[action]") }
-                            });
-                            hasAttribute = true;
-                        }
-                        prefix = option.PostPrefix.FirstOrDefault(x => action.ActionName.StartsWith(x));
-                        if (!hasAttribute)
-                        {
-                            if (option.AutoRemoveDynamicPrefix && prefix != null)
-                            {
-                                action.ActionName = action.ActionName[prefix.Length..];
+                                if (option.AutoRemoveDynamicPrefix && prefix != null)
+                                {
+                                    action.ActionName = action.ActionName[prefix.Length..];
+                                }
+
+                                action.Selectors.Add(new SelectorModel
+                                {
+                                    EndpointMetadata = { new HttpDeleteAttribute("[action]") }
+                                });
                             }
-                            action.Selectors.Add(new SelectorModel
-                            {
-                                EndpointMetadata = { new HttpDeleteAttribute("[action]") }
-                            });
                         }
                     }
                 }

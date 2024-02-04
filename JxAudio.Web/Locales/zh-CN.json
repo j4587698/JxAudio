@@ -2,6 +2,12 @@
   "JxAudio.Web.Components.Components.CultureChooser": {
     "Label": "语言"
   },
+  "JxAudio.Core.Attributes.CronAttribute": {
+    "ErrorMessage": "Cron表达式有误"
+  },
+  "JxAudio.Core.Attributes.IntAttribute": {
+    "ErrorMessage": "{0}必须为整数"
+  },
   "JxAudio.Web.Components.Layout.MainLayout": {
     "Home": "首页",
     "Folder": "文件夹管理",
@@ -27,16 +33,20 @@
     "SearchType": "扫描时间设置方式",
     "TimeUnit": "时间单位",
     "ScanInterval.PlaceHolder": "请输入扫描间隔",
-    "CronScanInterval": "填写Cron表达式 (秒 分 时 日 月 周) 可从https://cron.qqe2.com/生成"
+    "ScanInterval.Required": "{0}不能为空",
+    "CronExpress": "填写Cron表达式 (秒 分 时 日 月 周) 可从https://cron.qqe2.com/生成",
+    "CronExpress.PlaceHolder": "请输入Cron表达式 (秒 分 时 日 月 周)"
   },
   "JxAudio.Web.Enums.TimeUnit": {
     "Second": "秒",
     "Minute": "分",
-    "Hour": "时",
+    "Hour": "小时",
     "Day": "天"
   },
   "JxAudio.Web.Components.Pages.Settings": {
     "Title": "系统设置",
-    "Save": "保存"
+    "Save": "保存",
+    "ToastTitle": "保存设置",
+    "SuccessContent": "设置保存成功"
   }
 }
