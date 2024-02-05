@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using FreeSql;
 using JxAudio.Core.Attributes;
 
@@ -14,6 +15,7 @@ public class DirectoryEntity : BaseEntity<DirectoryEntity, long>
 
     [Description("目录路径")]
     [Required]
+    [NotNull]
     public string? Path { get; set; }
 
     [Description("目录别名")]

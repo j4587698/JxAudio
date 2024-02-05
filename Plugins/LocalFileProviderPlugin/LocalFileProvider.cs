@@ -63,15 +63,13 @@ public class LocalFileProvider : IProviderPlugin
         return null;
     }
 
-    public async Task<Stream?> GetFileAsync(string name)
+    public Task<Stream?> GetFileAsync(string name)
     {
         if (!File.Exists(name))
         {
-            return null;
+            return Task.FromResult<Stream?>(null);
         }
-        var memoryStream = new MemoryStream();
-        await File.OpenRead(name).CopyToAsync(memoryStream);
-        return memoryStream;
+        return Task.FromResult<Stream?>(File.OpenRead(name));
     }
 
     public async Task<string?> GetLrcAsync(string name)

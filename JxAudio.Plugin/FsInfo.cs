@@ -8,7 +8,7 @@ public class FsInfo
     /// <summary>
     /// 文件名
     /// </summary>
-    public string? Name { get; set; }
+    public string Name { get; set; } = "";
 
     /// <summary>
     /// 文件全名（包含路径）
