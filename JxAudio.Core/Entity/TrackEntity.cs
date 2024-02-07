@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using FreeSql;
+using FreeSql.DataAnnotations;
 
 namespace JxAudio.Core.Entity;
 
@@ -32,6 +33,22 @@ public class TrackEntity : BaseEntity<TrackEntity, long>
     
     [Description("音轨标题")]
     public string? Title { get; set; }
-    
-    
+
+    [Description("排序名称")]
+    public string? SortTitle { get; set; }
+
+    [Description("专辑Id")]
+    public long? AlbumId { get; set; }
+
+    [Navigate(nameof(AlbumId))]
+    public AlbumEntity? AlbumEntity { get; set; }
+
+    [Description("封面Id")]
+    public long? PictureId { get; set; }
+
+    [Navigate(nameof(PictureId))]
+    public PictureEntity? PictureEntity { get; set; }
+
+    [Navigate(ManyToMany = typeof(TrackArtistEntity))]
+    public ICollection<ArtistEntity>? ArtistEntities { get; set; }
 }

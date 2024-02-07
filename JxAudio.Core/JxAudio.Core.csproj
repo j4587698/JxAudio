@@ -19,6 +19,7 @@
       <PackageReference Include="FreeSql.Extensions.BaseEntity" Version="3.2.810" />
       <PackageReference Include="Jx.Toolbox" Version="0.3.6" />
       <PackageReference Include="Longbow.Tasks" Version="8.0.0" />
+      <PackageReference Include="SixLabors.ImageSharp" Version="3.1.2" />
       <PackageReference Include="z440.atl.core" Version="5.18.0" />
     </ItemGroup>
 

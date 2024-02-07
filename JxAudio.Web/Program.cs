@@ -3,6 +3,7 @@ using FreeSql;
 using JxAudio.Core.Extensions;
 using JxAudio.Core.Service;
 using JxAudio.Web.Components;
+using JxAudio.Web.Services;
 using Microsoft.Extensions.Options;
 using Console = System.Console;
 
@@ -16,7 +17,7 @@ BaseEntity.Initialization(fsql, null);
 var builder = WebApplication.CreateBuilder(args).Inject();
 
 builder.Services.AddTaskServices();
-
+builder.Services.AddHostedService<JobHostedService>();
 builder.Services.AddServiceController();
 // Add services to the container.
 builder.Services.AddRazorComponents()
