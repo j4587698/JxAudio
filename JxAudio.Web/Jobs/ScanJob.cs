@@ -1,26 +1,34 @@
 ﻿using ATL;
 using Jx.Toolbox.Extensions;
+using JxAudio.Core;
 using JxAudio.Core.Entity;
 using JxAudio.Plugin;
 using JxAudio.Web.Utils;
 using Longbow.Tasks;
+using Serilog;
 using SixLabors.ImageSharp;
 
 namespace JxAudio.Web.Jobs;
 
 public class ScanJob : ITask
 {
+
+    private List<TrackEntity>? _trackEntities;
+    
     public async Task Execute(IServiceProvider provider, CancellationToken cancellationToken)
     {
+        _trackEntities = await TrackEntity.Select.ToListAsync(x => new TrackEntity()
+            { Id = x.Id, ProviderId = x.ProviderId, FullName = x.FullName }, cancellationToken);
         var directoryEntities = await DirectoryEntity.Select.ToListAsync(cancellationToken);
         foreach (var directoryEntity in directoryEntities)
         {
             var providerPlugin = Constant.ProviderPlugins.FirstOrDefault(x => x.Id == directoryEntity.Provider);
             if (providerPlugin == null)
             {
+                Log.Warning("提供器{pluginId}不存在，无法继续", directoryEntity.Provider);
                 continue;
             }
-
+            
             await ScanFiles(providerPlugin, directoryEntity.Path);
         }
     }
@@ -36,7 +44,12 @@ public class ScanJob : ITask
             }
             else
             {
-                if (Constant.AudioExtensions.Contains(Path.GetExtension(fsInfo.Name)))
+                if (_trackEntities?.Any(x => x.ProviderId == providerPlugin.Id && x.FullName == fsInfo.FullName) == true)
+                {
+                    Log.Information("文件{filename}已存在，跳过执行", fsInfo.FullName);
+                    continue;
+                }
+                if (Constants.AudioExtensions.Contains(Path.GetExtension(fsInfo.Name)))
                 {
                     var stream = await providerPlugin.GetFileAsync(fsInfo.FullName);
                     if (stream == null)
@@ -45,7 +58,7 @@ public class ScanJob : ITask
                     }
 
                     var track = new Track(stream);
-                    var artists = track.Artist.Split(';');
+                    var artists = track.Artist.Split(new []{';', '&', '、', '|'}).Select(x => x.Trim()).ToArray();
                     var artistEntities = new List<ArtistEntity>();
                     if (artists.Length > 0)
                     {
@@ -59,6 +72,7 @@ public class ScanJob : ITask
                                     Name = artist
                                 };
                                 await artistEntity.SaveAsync();
+                                Log.Information("查找到新歌手{artist}", artistEntity.Name);
                             }
                             artistEntities.Add(artistEntity);
                         }
@@ -79,14 +93,16 @@ public class ScanJob : ITask
                             };
 
                             await albumEntity.SaveAsync();
+                            Log.Information("查找到新专辑{album}", albumEntity.Title);
                         }
-                        else if(albumEntity.PictureId is null or 0)
+                        else if (albumEntity.PictureId is null or 0)
                         {
                             var picture = await GetPicture(providerPlugin, fsInfo, track);
                             if (picture != null)
                             {
                                 albumEntity.PictureId = picture.Id;
                                 await albumEntity.SaveAsync();
+                                
                             }
                         }
                     }
@@ -106,6 +122,7 @@ public class ScanJob : ITask
                         PictureId = albumEntity?.PictureId
                     };
                     await trackEntity.SaveAsync();
+                    Log.Information("加入歌曲{track}", trackEntity.Title);
                 }
             }
         }
@@ -126,15 +143,15 @@ public class ScanJob : ITask
         if (picStream != null)
         {
             var image = await Image.LoadAsync(picStream);
-            var extension = image.Metadata.DecodedImageFormat?.FileExtensions.FirstOrDefault() ?? ".jpg";
+            var extension = image.Metadata.DecodedImageFormat?.FileExtensions.FirstOrDefault() ?? "jpg";
             var mimeType = image.Metadata.DecodedImageFormat?.DefaultMimeType ?? "image/jpeg";
-            var picName = Path.Combine("config", "cache", $"{Guid.NewGuid()}{extension}");
-            var fullPath = Path.Combine(AppContext.BaseDirectory, picName);
+            var picName = Path.Combine($"{Guid.NewGuid()}.{extension}");
+            var fullPath = Path.Combine(AppContext.BaseDirectory, Constants.CoverCachePath);
             if (!Directory.Exists(fullPath))
             {
                 Directory.CreateDirectory(fullPath);
             }
-            await image.SaveAsync(fullPath);
+            await image.SaveAsync(Path.Combine(fullPath, picName));
             var pictureEntity = new PictureEntity
             {
                 MimeType = mimeType,

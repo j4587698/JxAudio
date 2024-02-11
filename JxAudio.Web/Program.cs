@@ -5,6 +5,7 @@ using JxAudio.Core.Service;
 using JxAudio.Web.Components;
 using JxAudio.Web.Services;
 using Microsoft.Extensions.Options;
+using Serilog;
 using Console = System.Console;
 
 IFreeSql fsql = new FreeSqlBuilder()
@@ -14,8 +15,12 @@ IFreeSql fsql = new FreeSqlBuilder()
     .Build();
 BaseEntity.Initialization(fsql, null);
 
-var builder = WebApplication.CreateBuilder(args).Inject();
+Log.Logger = new LoggerConfiguration().WriteTo
+    .File("./log/log.txt", rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
+    .WriteTo.Console().CreateLogger();
 
+var builder = WebApplication.CreateBuilder(args).Inject();
+builder.Host.UseSerilog();
 builder.Services.AddTaskServices();
 builder.Services.AddHostedService<JobHostedService>();
 builder.Services.AddServiceController();
@@ -42,7 +47,7 @@ builder.Services.AddRequestLocalization<IOptionsMonitor<BootstrapBlazorOptions>>
 });
 
 var app = builder.Build();
-
+app.UseSerilogRequestLogging();
 // 启用本地化
 var option = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
 if (option != null)
