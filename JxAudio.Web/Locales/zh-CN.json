@@ -48,5 +48,12 @@
     "Save": "保存",
     "ToastTitle": "保存设置",
     "SuccessContent": "设置保存成功"
+  },
+  "JxAudio.Core.Entity.TrackEntity": {
+    "PictureEntity": "封面图",
+    "ProviderId": "提供者",
+    "FullName": "文件路径",
+    "Title": "标题",
+    "Size": "文件大小"
   }
 }

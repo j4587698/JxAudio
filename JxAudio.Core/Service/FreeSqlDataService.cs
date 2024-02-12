@@ -1,6 +1,7 @@
 ﻿using BootstrapBlazor.Components;
 using FreeSql;
 using JxAudio.Core.Attributes;
+using JxAudio.Core.Entity;
 using JxAudio.Core.Extensions;
 using Microsoft.AspNetCore.Components;
 
@@ -46,16 +47,18 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
         var select = _db.Select<TModel>().WhereDynamicFilter(option.ToDynamicFilter())
             .OrderByPropertyNameIf(option.SortOrder != SortOrder.Unset, option.SortName,
                 option.SortOrder == SortOrder.Asc)
+            .IncludeByPropertyNameIf(typeof(TModel) == typeof(TrackEntity), nameof(TrackEntity.PictureEntity))
+            .IncludeByPropertyNameIf(typeof(TModel) == typeof(TrackEntity), nameof(TrackEntity.AlbumEntity))
             .Count(out var count);
         if (option.IsPage)
         {
             select = select.Page(option.PageIndex, option.PageItems);
         }
-        var Items = select.ToList();
+        var items = select.ToList();
         var ret = new QueryData<TModel>()
         {
             TotalCount = (int)count,
-            Items = Items,
+            Items = items,
             IsSorted = option.SortOrder != SortOrder.Unset,
             IsFiltered = option.Filters.Any(),
             IsAdvanceSearch = option.AdvanceSearches.Any(),

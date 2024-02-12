@@ -59,6 +59,7 @@ public static class MvcExtension
                         // 如果没有HTTP方法特性，则添加一个默认的HttpGet特性
                         if (!hasHttpMethodAttribute)
                         {
+                            action.Selectors.Clear();
                             var hasAttribute = false;
                             var prefix = option.GetPrefix.FirstOrDefault(x => action.ActionName.StartsWith(x));
                             if (prefix != null)
@@ -115,7 +116,7 @@ public static class MvcExtension
 
                                 action.Selectors.Add(new SelectorModel
                                 {
-                                    EndpointMetadata = { new HttpDeleteAttribute("[action]") }
+                                    EndpointMetadata = { new HttpPostAttribute("[action]") }
                                 });
                             }
                         }

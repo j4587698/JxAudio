@@ -1,8 +1,34 @@
 ﻿@page "/Admin/MusicManager"
 @using JxAudio.Core.Entity
+@using JxAudio.Core.Extensions
+@using Constants = JxAudio.Core.Constants
+@using Jx.Toolbox.Extensions
 
-<Table TItem="TrackEntity"></Table>
+<AdminTable TItem="TrackEntity">
+    <TableColumns>
+        <TableColumn @bind-Field="@context.PictureEntity">
+            <Template Context="value">
+                @if (value.Value != null)
+                {
+                    <Avatar Url="@($"Cover?path={value.Value.Path}")"></Avatar>
+                }
+            </Template>
+        </TableColumn>
+        <TableColumn @bind-Field="@context.ProviderId" LookupServiceKey="plugin"></TableColumn>
+        <TableColumn @bind-Field="@context.FullName"></TableColumn>
+        <TableColumn @bind-Field="@context.Title"></TableColumn>
+        <TableColumn @bind-Field="@context.Size">
+            <Template Context="value">
+                @value.Value.ToSizeString()
+            </Template>
+        </TableColumn>
+    </TableColumns>
+</AdminTable>
 
 @code {
-    
+
+    private string GetPictureByPath(string path)
+    {
+        return Path.Combine(AppContext.BaseDirectory, Constants.CoverCachePath, path);
+    }
 }
