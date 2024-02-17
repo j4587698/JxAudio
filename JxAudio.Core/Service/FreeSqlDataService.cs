@@ -47,8 +47,8 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
         var select = _db.Select<TModel>().WhereDynamicFilter(option.ToDynamicFilter())
             .OrderByPropertyNameIf(option.SortOrder != SortOrder.Unset, option.SortName,
                 option.SortOrder == SortOrder.Asc)
-            .IncludeByPropertyNameIf(typeof(TModel) == typeof(TrackEntity), nameof(TrackEntity.PictureEntity))
-            .IncludeByPropertyNameIf(typeof(TModel) == typeof(TrackEntity), nameof(TrackEntity.AlbumEntity))
+            .IncludeByPropertyNameIf(typeof(TModel) == typeof(AlbumEntity), nameof(AlbumEntity.ArtistEntity))
+            .IncludeByPropertyNameIf(typeof(TModel) == typeof(TrackEntity), nameof(TrackEntity.ArtistEntities))
             .Count(out var count);
         if (option.IsPage)
         {

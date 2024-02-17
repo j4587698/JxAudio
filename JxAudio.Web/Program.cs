@@ -1,16 +1,13 @@
 using BootstrapBlazor.Components;
 using FreeSql;
 using JxAudio.Core.Extensions;
-using JxAudio.Core.Service;
 using JxAudio.Web.Components;
 using JxAudio.Web.Services;
 using Microsoft.Extensions.Options;
 using Serilog;
-using Console = System.Console;
 
 IFreeSql fsql = new FreeSqlBuilder()
     .UseConnectionString(FreeSql.DataType.Sqlite, @"Data Source=freedb.db")
-    .UseMonitorCommand(cmd => Console.WriteLine($"Sql：{cmd.CommandText}"))//监听SQL语句
     .UseAutoSyncStructure(true) //自动同步实体结构到数据库，FreeSql不会扫描程序集，只有CRUD时才会生成表。
     .Build();
 BaseEntity.Initialization(fsql, null);
@@ -20,7 +17,7 @@ Log.Logger = new LoggerConfiguration().WriteTo
     .WriteTo.Console().CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args).Inject();
-builder.Host.UseSerilog();
+//builder.Host.UseSerilog();
 builder.Services.AddTaskServices();
 builder.Services.AddHostedService<JobHostedService>();
 builder.Services.AddServiceController();
@@ -47,7 +44,7 @@ builder.Services.AddRequestLocalization<IOptionsMonitor<BootstrapBlazorOptions>>
 });
 
 var app = builder.Build();
-app.UseSerilogRequestLogging();
+//app.UseSerilogRequestLogging();
 // 启用本地化
 var option = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
 if (option != null)

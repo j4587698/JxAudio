@@ -2,7 +2,7 @@
 using BootstrapBlazor.Components;
 using Microsoft.AspNetCore.Components;
 
-namespace JxAudio.Web.Components.Components;
+namespace JxAudio.Core.Components;
 
 [CascadingTypeParameter(nameof(TItem))]
 public partial class AdminTable<TItem> where TItem : class, new()
@@ -13,4 +13,10 @@ public partial class AdminTable<TItem> where TItem : class, new()
     
     [Parameter] 
     public Func<QueryPageOptions,Task<QueryData<TItem>>>? OnQueryAsync { get; set; }
+    
+    [Parameter] 
+    public bool ShowToolbar { get; set; }
+    
+    [Parameter] 
+    public bool ShowExtendButtons { get; set; }
 }

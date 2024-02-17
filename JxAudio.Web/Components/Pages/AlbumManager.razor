@@ -1,0 +1,59 @@
+﻿@page "/Admin/AlbumManager"
+@using JxAudio.Core.Entity
+@using JxAudio.Core.Extensions
+<AdminTable TItem="AlbumEntity" OnQueryAsync="OnQueryAsync">
+    <TableColumns>
+        <TableColumn @bind-Field="@context.PictureId" Width="50">
+            <Template Context="value">
+                <Avatar Url="@($"Cover?coverId={value.Value}")"></Avatar>
+            </Template>
+        </TableColumn>
+        <TableColumn @bind-Field="@context.Title"></TableColumn>
+        <TableColumn @bind-Field="@context.Year"></TableColumn>
+        <TableColumn @bind-Field="@context.ArtistEntity">
+            <Template Context="value">
+                @if (value.Value != null)
+                {
+                    @value.Value.Name
+                }
+            </Template>
+        </TableColumn>
+        <TableColumn @bind-Field="@context.Count"></TableColumn>
+    </TableColumns>
+</AdminTable>
+
+@code {
+
+    private Task<QueryData<AlbumEntity>> OnQueryAsync(QueryPageOptions option)
+    {
+        var select = AlbumEntity.Select.WhereDynamicFilter(option.ToDynamicFilter())
+            .OrderByPropertyNameIf(option.SortOrder != SortOrder.Unset, option.SortName,
+                option.SortOrder == SortOrder.Asc)
+            .Include(x => x.ArtistEntity)
+            .Count(out var count);
+        if (option.IsPage)
+        {
+            select = select.Page(option.PageIndex, option.PageItems);
+        }
+        var items = select.ToList(x => new AlbumEntity()
+        {
+            ArtistEntity = x.ArtistEntity,
+            Count = TrackEntity.Select.Where(y => y.AlbumId == x.Id).Count(),
+            Title = x.Title,
+            Id = x.Id,
+            Year = x.Year,
+            PictureId = x.PictureId
+        });
+        var ret = new QueryData<AlbumEntity>()
+        {
+            TotalCount = (int)count,
+            Items = items,
+            IsSorted = option.SortOrder != SortOrder.Unset,
+            IsFiltered = option.Filters.Any(),
+            IsAdvanceSearch = option.AdvanceSearches.Any(),
+            IsSearch = option.Searches.Any() || option.CustomerSearches.Any()
+        };
+        return Task.FromResult(ret);
+    }
+
+}

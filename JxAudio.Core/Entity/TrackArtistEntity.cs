@@ -10,6 +10,7 @@ public class TrackArtistEntity
     [Navigate(nameof(TrackId))]
     public TrackEntity? TrackEntity { get; set; }
 
+    [Column(IsPrimary = true)]
     public long ArtistId { get; set; }
     
     [Navigate(nameof(ArtistId))]

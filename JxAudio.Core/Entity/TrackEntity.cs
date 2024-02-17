@@ -29,7 +29,7 @@ public class TrackEntity : BaseEntity<TrackEntity, long>
     public int? BitRate { get; set; }
     
     [Description("音频时长")]
-    public float? Duration { get; set; }
+    public float Duration { get; set; }
     
     [Description("音轨标题")]
     public string? Title { get; set; }

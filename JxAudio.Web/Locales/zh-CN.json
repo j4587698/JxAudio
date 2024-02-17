@@ -11,6 +11,8 @@
   "JxAudio.Web.Components.Layout.MainLayout": {
     "Home": "首页",
     "Folder": "文件夹管理",
+    "Album": "专辑管理",
+    "Artist": "歌手管理",
     "Music": "音乐管理",
     "Setting": "系统设置"
   },
@@ -50,10 +52,25 @@
     "SuccessContent": "设置保存成功"
   },
   "JxAudio.Core.Entity.TrackEntity": {
-    "PictureEntity": "封面图",
+    "PictureId": "封面图",
     "ProviderId": "提供者",
     "FullName": "文件路径",
     "Title": "标题",
-    "Size": "文件大小"
+    "Size": "文件大小",
+    "Duration": "音频时长"
+  },
+  "JxAudio.Core.Entity.AlbumEntity": {
+    "PictureId": "封面图",
+    "Title": "专辑名",
+    "Year": "专辑年份",
+    "ArtistEntity": "作者",
+    "Count": "歌曲数量"
+  },
+  "JxAudio.Core.Entity.ArtistEntity": {
+    "Name": "歌手名",
+    "Count": "歌曲数量"
+  },
+  "JxAudio.Web.Components.Pages.MusicManager": {
+    "NoTitle": "【未知标题】"
   }
 }

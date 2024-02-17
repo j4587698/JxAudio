@@ -24,4 +24,7 @@ public class AlbumEntity : BaseEntity<AlbumEntity, long>
 
     [Navigate(nameof(PictureId))]
     public PictureEntity? PictureEntity { get; set; }
+
+    [Column(IsIgnore = true)]
+    public long Count { get; set; }
 }

@@ -1,0 +1,44 @@
+﻿@page "/Admin/ArtistManager"
+@using JxAudio.Core.Entity
+@using JxAudio.Core.Extensions
+@using FreeSql
+
+<AdminTable TItem="ArtistEntity" OnQueryAsync="OnQueryAsync">
+    <TableColumns>
+        <TableColumn @bind-Field="@context.Name"></TableColumn>
+        <TableColumn @bind-Field="@context.Count"></TableColumn>
+    </TableColumns>
+</AdminTable>
+
+@code {
+
+    private Task<QueryData<ArtistEntity>> OnQueryAsync(QueryPageOptions option)
+    {
+        var select = ArtistEntity.Select.WhereDynamicFilter(option.ToDynamicFilter())
+            .OrderByPropertyNameIf(option.SortOrder != SortOrder.Unset, option.SortName,
+                option.SortOrder == SortOrder.Asc)
+            .Count(out var count);
+        if (option.IsPage)
+        {
+            select = select.Page(option.PageIndex, option.PageItems);
+        }
+        var items = select.ToList(x => new ArtistEntity()
+        {
+            
+            Count = BaseEntity.Orm.Select<TrackArtistEntity>().Where(y => y.ArtistId == x.Id).Count(),
+            Name = x.Name,
+            Id = x.Id
+        });
+        var ret = new QueryData<ArtistEntity>()
+        {
+            TotalCount = (int)count,
+            Items = items,
+            IsSorted = option.SortOrder != SortOrder.Unset,
+            IsFiltered = option.Filters.Any(),
+            IsAdvanceSearch = option.AdvanceSearches.Any(),
+            IsSearch = option.Searches.Any() || option.CustomerSearches.Any()
+        };
+        return Task.FromResult(ret);
+    }
+
+}

@@ -119,9 +119,12 @@ public class ScanJob : ITask
                         Title = track.Title,
                         SortTitle = track.SortTitle,
                         AlbumId = albumEntity?.Id,
-                        PictureId = albumEntity?.PictureId
+                        PictureId = albumEntity?.PictureId,
+                        CodecName = track.AudioFormat.ShortName,
+                        ArtistEntities = artistEntities
                     };
                     await trackEntity.SaveAsync();
+                    await trackEntity.SaveManyAsync(nameof(TrackEntity.ArtistEntities));
                     Log.Information("加入歌曲{track}", trackEntity.Title);
                 }
             }
