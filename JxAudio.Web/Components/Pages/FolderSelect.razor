@@ -3,10 +3,24 @@
 @inject DialogService DialogService
 @inject MessageService MessageService
 
-<AdminTable TItem="DirectoryEntity">
+<AdminTable TItem="DirectoryEntity" ShowToolbar="true" ShowExtendButtons="true">
     <TableColumns>
         <TableColumn @bind-Field="@context.Provider" LookupServiceKey="plugin"></TableColumn>
         <TableColumn @bind-Field="@context.Name"></TableColumn>
+        <TableColumn @bind-Field="@context.IsAccessControlled"></TableColumn>
+        <TableColumn @bind-Field="@context.UserEntities">
+            <Template Context="value">
+                @if (value.Value != null)
+                {
+                    @string.Join(",", value.Value.Select(x => x.UserName))
+                }
+            </Template>
+            <EditTemplate Context="value">
+                <div class="col-12 col-sm-6 col-md-6">
+                    <MultiSelect @bind-Value=@value.UserList Items="_userList"></MultiSelect>
+                </div>
+            </EditTemplate>
+        </TableColumn>
         <TableColumn @bind-Field="@context.Path">
             <EditTemplate Context="value">
                 <div class="col-12">
@@ -19,6 +33,6 @@
 </AdminTable>
 
 @code {
-
+    private List<SelectedItem> _userList = UserEntity.Select.ToList(x => new SelectedItem(x.Id.ToString(), x.UserName!));
 
 }

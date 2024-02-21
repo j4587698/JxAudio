@@ -21,7 +21,10 @@
     "Name": "目录别名",
     "Path": "全路径",
     "Name.Required": "{0}不能为空",
-    "Path.Required": "{0}不能为空"
+    "Path.Required": "{0}不能为空",
+    "IsAccessControlled": "是否需要访问权限",
+    "UserEntities": "可访问用户",
+    "UserList": "可访问用户"
   },
   "JxAudio.Core.Attributes.GuidRequiredAttribute": {
     "ErrorMessage": "{0}不能为空"

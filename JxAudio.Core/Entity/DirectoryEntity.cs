@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using FreeSql;
 using FreeSql.DataAnnotations;
+using Jx.Toolbox.Extensions;
 using JxAudio.Core.Attributes;
 
 namespace JxAudio.Core.Entity;
@@ -28,4 +29,16 @@ public class DirectoryEntity : BaseEntity<DirectoryEntity, long>
 
     [Navigate(ManyToMany = typeof(UserDirectoryEntity))]
     public ICollection<UserEntity>? UserEntities { get; set; }
+
+    [Column(IsIgnore = true)]
+    public string UserList {
+        get
+        {
+            return string.Join(",", UserEntities?.Select(x => x.Id.ToString()) ?? ArraySegment<string>.Empty);
+        }
+        set
+        {
+            UserEntities = value.IsNullOrEmpty() ? ArraySegment<UserEntity>.Empty : value.Split(',').Select(x => new UserEntity() { Id = Guid.Parse(value) }).ToList();
+        }
+    }
 }
