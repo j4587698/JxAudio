@@ -1,11 +1,12 @@
 ﻿using System.Text;
-using System.Xml;
 using JxAudio.Core.Entity;
+using JxAudio.Core.Subsonic;
+using JxAudio.Extensions;
 using JxAudio.Utils;
 using JxAudio.Web.Enums;
 using JxAudio.Web.Utils;
 
-namespace JxAudio.Extensions;
+namespace JxAudio.Web.Extensions;
 
 public static class HttpContextExtension
 {
@@ -142,18 +143,18 @@ public static class HttpContextExtension
             return apiContext;
         }
     
-    internal static Task WriteResponseAsync(this HttpContext context, Subsonic.ItemChoiceType itemType, object? item)
+    internal static Task WriteResponseAsync(this HttpContext context, ItemChoiceType itemType, object? item)
     {
-        return WriteResponseAsync(context, new Subsonic.Response()
+        return WriteResponseAsync(context, new Response()
         {
-            status = Subsonic.ResponseStatus.ok,
+            status = ResponseStatus.ok,
             version = Constant.ApiVersion,
             ItemElementName = itemType,
             Item = item,
         });
     }
 
-    public static async Task WriteResponseAsync(this HttpContext context, Subsonic.Response response)
+    public static async Task WriteResponseAsync(this HttpContext context, Response response)
     {
         DateTimeOffset now = DateTimeOffset.UtcNow;
         context.Response.SetDate(now);
@@ -204,12 +205,12 @@ public static class HttpContextExtension
     
     public static Task WriteErrorResponseAsync(this HttpContext context, int code, string message)
     {
-        return WriteResponseAsync(context, new Subsonic.Response()
+        return WriteResponseAsync(context, new Response()
         {
-            status = Subsonic.ResponseStatus.failed,
+            status = ResponseStatus.failed,
             version = Constant.ApiVersion,
-            ItemElementName = Subsonic.ItemChoiceType.error,
-            Item = new Subsonic.Error()
+            ItemElementName = ItemChoiceType.error,
+            Item = new Error()
             {
                 code = code,
                 message = message,

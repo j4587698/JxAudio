@@ -1,4 +1,5 @@
 ﻿using FreeSql;
+using FreeSql.DataAnnotations;
 
 namespace JxAudio.Core.Entity;
 
@@ -15,4 +16,7 @@ public class UserEntity : BaseEntity<UserEntity, Guid>
     public bool IsGuest { get; set; }
 
     public bool CanJukebox { get; set; }
+
+    [Navigate(ManyToMany = typeof(UserDirectoryEntity))]
+    public ICollection<DirectoryEntity>? DirectoryEntities { get; set; }
 }

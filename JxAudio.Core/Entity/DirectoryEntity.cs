@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using FreeSql;
+using FreeSql.DataAnnotations;
 using JxAudio.Core.Attributes;
 
 namespace JxAudio.Core.Entity;
@@ -21,4 +22,10 @@ public class DirectoryEntity : BaseEntity<DirectoryEntity, long>
     [Description("目录别名")]
     [Required]
     public string? Name { get; set; }
+    
+    [Description("是否受访问控制")]
+    public bool IsAccessControlled { get; set; }
+
+    [Navigate(ManyToMany = typeof(UserDirectoryEntity))]
+    public ICollection<UserEntity>? UserEntities { get; set; }
 }

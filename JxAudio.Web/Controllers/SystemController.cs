@@ -1,4 +1,6 @@
-﻿using JxAudio.Extensions;
+﻿using JxAudio.Core.Subsonic;
+using JxAudio.Extensions;
+using JxAudio.Web.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JxAudio.Web.Controllers;
@@ -14,11 +16,11 @@ public class SystemController : AudioController
     [HttpGet("/getLicense")]
     public Task GetLicense()
     {
-        var license = new Subsonic.License()
+        var license = new License()
         {
             valid = true,
         };
 
-        return HttpContext.WriteResponseAsync(Subsonic.ItemChoiceType.license, license);
+        return HttpContext.WriteResponseAsync(ItemChoiceType.license, license);
     }
 }
