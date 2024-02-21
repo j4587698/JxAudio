@@ -1,4 +1,5 @@
 ﻿using System.Xml.Serialization;
+using JxAudio.Core.Subsonic;
 using JxAudio.Plugin;
 using JxAudio.Resolver;
 using LocalFileProviderPlugin;
@@ -26,9 +27,9 @@ public static class Constant
 
     public const int ApiMinorVersion = 16;
 
-    public static readonly Lazy<XmlSerializer> LazyXmlSerializer = new Lazy<XmlSerializer>(() => new XmlSerializer(typeof(Subsonic.Response)));
+    public static readonly Lazy<XmlSerializer> LazyXmlSerializer = new Lazy<XmlSerializer>(() => new XmlSerializer(typeof(Response)));
 
-    public static Lazy<JsonSerializer> LazyJsonSerializer = new Lazy<JsonSerializer>(() =>
+    public static readonly Lazy<JsonSerializer> LazyJsonSerializer = new Lazy<JsonSerializer>(() =>
     {
         var serializer = JsonSerializer.Create();
         serializer.ContractResolver = XmlSerializationContractResolver.Instance;
