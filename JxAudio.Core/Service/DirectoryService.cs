@@ -9,7 +9,7 @@ public class DirectoryService
 {
     public async Task<MusicFolders> GetMusicFoldersAsync(Guid userId, CancellationToken cancellationToken)
     {
-        var folder = await DirectoryEntity.Where(x => !x.IsAccessControlled || x.UserEntities.Any(y => y.Id == userId))
+        var folder = await DirectoryEntity.Where(x => !x.IsAccessControlled || x.UserEntities!.Any(y => y.Id == userId))
             .OrderBy(x => x.Name)
             .ToListAsync<MusicFolder>(x => new MusicFolder()
             {

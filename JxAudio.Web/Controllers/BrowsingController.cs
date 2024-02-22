@@ -26,4 +26,17 @@ public class BrowsingController : AudioController
             await HttpContext.WriteResponseAsync(ItemChoiceType.musicFolders, folders);
         }
     }
+    
+    [HttpGet("/getIndexes")]
+    public Task GetIndexes(int? musicFolderId, long? ifModifiedSince)
+    {
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            // var index = DirectoryService.GetIndexes(apiUserId.Value);
+            // return HttpContext.WriteResponseAsync(ItemChoiceType.indexes, index);
+        }
+        return Task.CompletedTask;
+    }
 }

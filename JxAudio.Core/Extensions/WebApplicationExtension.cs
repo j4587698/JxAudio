@@ -8,6 +8,7 @@ using JxAudio.Core.Options;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -49,6 +50,10 @@ public static class WebApplicationExtension
             {
                 Register(builder, transientType, option, "transient", webApplicationBuilder);
             }
+
+            var controllers = types.Where(x => x.IsSubclassOf(typeof(ControllerBase)));
+            builder.RegisterTypes(controllers.ToArray()).PropertiesAutowired((info, o) =>
+                Attribute.IsDefined(info, typeof(InjectAttribute)));
         }).ConfigureAppConfiguration((context, builder) =>
         {
             builder.Sources.Clear();

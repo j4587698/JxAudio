@@ -15,4 +15,10 @@ public class ArtistEntity: BaseEntity<ArtistEntity, long>
     
     [Navigate(ManyToMany = typeof(TrackArtistEntity))]
     public ICollection<TrackEntity>? TrackEntities { get; set; }
+
+    [Navigate(nameof(AlbumEntity.ArtistId))]
+    public ICollection<AlbumEntity>? AlbumEntities { get; set; }
+
+    [Navigate(nameof(ArtistStarEntity.ArtistId))]
+    public ICollection<ArtistStarEntity>? ArtistStarEntities { get; set; }
 }
