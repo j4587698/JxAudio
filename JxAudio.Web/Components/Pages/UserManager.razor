@@ -1,0 +1,16 @@
+﻿@page "/Admin/UserManager"
+@using JxAudio.Core.Entity
+
+<AdminTable TItem="UserEntity" ShowToolbar="true" ShowExtendButtons="true">
+    <TableColumns>
+        <TableColumn @bind-Field="@context.UserName"></TableColumn>
+        <TableColumn @bind-Field="@context.IsAdmin"></TableColumn>
+        <TableColumn @bind-Field="@context.IsGuest"></TableColumn>
+        <TableColumn @bind-Field="@context.MaxBitRate"></TableColumn>
+        <TableColumn @bind-Field="@context.CanJukebox"></TableColumn>
+    </TableColumns>
+</AdminTable>
+
+@code {
+    
+}

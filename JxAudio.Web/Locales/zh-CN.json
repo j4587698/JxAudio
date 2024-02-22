@@ -10,6 +10,7 @@
   },
   "JxAudio.Web.Components.Layout.MainLayout": {
     "Home": "首页",
+    "User": "用户管理",
     "Folder": "文件夹管理",
     "Album": "专辑管理",
     "Artist": "歌手管理",
@@ -25,6 +26,34 @@
     "IsAccessControlled": "是否需要访问权限",
     "UserEntities": "可访问用户",
     "UserList": "可访问用户"
+  },
+  "JxAudio.Core.Entity.TrackEntity": {
+    "PictureId": "封面图",
+    "ProviderId": "提供者",
+    "FullName": "文件路径",
+    "Title": "标题",
+    "Size": "文件大小",
+    "Duration": "音频时长"
+  },
+  "JxAudio.Core.Entity.AlbumEntity": {
+    "PictureId": "封面图",
+    "Title": "专辑名",
+    "Year": "专辑年份",
+    "ArtistEntity": "作者",
+    "Count": "歌曲数量"
+  },
+  "JxAudio.Core.Entity.ArtistEntity": {
+    "Name": "歌手名",
+    "Count": "歌曲数量"
+  },
+  "JxAudio.Core.Entity.UserEntity": {
+    "UserName": "用户名",
+    "IsAdmin": "管理员",
+    "IsGuest": "游客",
+    "MaxBitRate": "最大比特率",
+    "CanJukebox": "允许音乐盒",
+    "MaxBitRate.PlaceHolder": "允许最大比特率",
+    "UserName.Required": "{0}不能为空"
   },
   "JxAudio.Core.Attributes.GuidRequiredAttribute": {
     "ErrorMessage": "{0}不能为空"
@@ -53,25 +82,6 @@
     "Save": "保存",
     "ToastTitle": "保存设置",
     "SuccessContent": "设置保存成功"
-  },
-  "JxAudio.Core.Entity.TrackEntity": {
-    "PictureId": "封面图",
-    "ProviderId": "提供者",
-    "FullName": "文件路径",
-    "Title": "标题",
-    "Size": "文件大小",
-    "Duration": "音频时长"
-  },
-  "JxAudio.Core.Entity.AlbumEntity": {
-    "PictureId": "封面图",
-    "Title": "专辑名",
-    "Year": "专辑年份",
-    "ArtistEntity": "作者",
-    "Count": "歌曲数量"
-  },
-  "JxAudio.Core.Entity.ArtistEntity": {
-    "Name": "歌手名",
-    "Count": "歌曲数量"
   },
   "JxAudio.Web.Components.Pages.MusicManager": {
     "NoTitle": "【未知标题】"
