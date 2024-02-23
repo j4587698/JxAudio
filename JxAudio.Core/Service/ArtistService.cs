@@ -7,28 +7,24 @@ namespace JxAudio.Core.Service;
 [Transient]
 public class ArtistService
 {
-    public async Task GetArtistsAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<IndexID3> GetArtistsAsync(Guid userId, CancellationToken cancellationToken)
     {
-        var id3List = await ArtistEntity.Select
+        var artist = await ArtistEntity.Select
             .IncludeMany(x => x.ArtistStarEntities, then => then.Where(y => y.UserId == userId))
-            .ToListAsync<ArtistID3>(x => new ArtistID3()
-            {
-                albumCount = x.AlbumEntities!.Count,
-                coverArt = null,
-                id = x.Id.ToString(),
-                name = x.Name,
-                starred = x.ArtistStarEntities == null ? default: x.ArtistStarEntities.First().CreateTime,
-                starredSpecified = x.ArtistStarEntities != null
-            }, cancellationToken);
-        id3List.GroupBy(x =>
+            .ToListAsync(cancellationToken);
+        var id3List = artist.Select(x => new ArtistID3()
         {
-            var firstChar = x.name[0];
-            if (char.IsLetter(firstChar))
-            {
-                return firstChar.ToString().ToUpper();
-            }
-
-            return "#";
-        });
+            albumCount = (int)AlbumEntity.Select.Where(y => y.ArtistId == x.Id).Count(),
+            coverArt = null,
+            id = x.Id.ToString(),
+            name = x.Name,
+            starred = x.ArtistStarEntities?.Count > 0 ? x.ArtistStarEntities.First().CreateTime : default,
+            starredSpecified = x.ArtistStarEntities?.Count > 0
+        }).ToArray(); 
+        return new IndexID3()
+        {
+            artist = id3List,
+            name = "#"
+        };
     }
 }
