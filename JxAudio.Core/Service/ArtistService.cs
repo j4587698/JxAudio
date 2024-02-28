@@ -1,4 +1,5 @@
-﻿using JxAudio.Core.Attributes;
+﻿using System.Globalization;
+using JxAudio.Core.Attributes;
 using JxAudio.Core.Entity;
 using JxAudio.Core.Subsonic;
 
@@ -7,7 +8,7 @@ namespace JxAudio.Core.Service;
 [Transient]
 public class ArtistService
 {
-    public async Task<IndexID3> GetArtistsAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<ArtistsID3> GetArtistsAsync(Guid userId, CancellationToken cancellationToken)
     {
         var artist = await ArtistEntity.Select
             .IncludeMany(x => x.ArtistStarEntities, then => then.Where(y => y.UserId == userId))
@@ -20,11 +21,29 @@ public class ArtistService
             name = x.Name,
             starred = x.ArtistStarEntities?.Count > 0 ? x.ArtistStarEntities.First().CreateTime : default,
             starredSpecified = x.ArtistStarEntities?.Count > 0
-        }).ToArray(); 
-        return new IndexID3()
+        })
+        .GroupBy(x =>
         {
-            artist = id3List,
-            name = "#"
+            string name = x.name;
+            if (name != null)
+            {
+                string t = StringInfo.GetNextTextElement(name).Normalize();
+                if (t.Length > 0 && char.IsLetter(t, 0))
+                    return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(t);
+            }
+            return "#";
+        })
+        .OrderBy(x => x.Key.ToString(), CultureInfo.CurrentCulture.CompareInfo.GetStringComparer(CompareOptions.IgnoreCase))
+        .Select(x => new IndexID3()
+        {
+            name = x.Key,
+            artist = x.ToArray()
+        })
+        .ToArray(); 
+        return new ArtistsID3()
+        {
+            index = id3List,
+            ignoredArticles = string.Empty
         };
     }
 }

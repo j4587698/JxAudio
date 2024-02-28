@@ -6,6 +6,7 @@ using JxAudio.Web.Extensions;
 using JxAudio.Web.Utils;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
+using Index = JxAudio.Core.Subsonic.Index;
 
 namespace JxAudio.Web.Controllers;
 
@@ -38,7 +39,26 @@ public class BrowsingController : AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var index = await ArtistService.GetArtistsAsync(apiUserId.Value, HttpContext.RequestAborted);
+            var id3 = await ArtistService.GetArtistsAsync(apiUserId.Value, HttpContext.RequestAborted);
+            var index = new Indexes()
+            {
+                ignoredArticles = id3.ignoredArticles,
+                index = id3.index.Select(x => new Index()
+                {
+                    name = x.name,
+                    artist = x.artist.Select(y => new Artist()
+                    {
+                        id = y.id,
+                        name = y.name,
+                        starred = y.starred,
+                        starredSpecified = y.starredSpecified,
+                        userRating = default,
+                        userRatingSpecified = false,
+                        averageRating = default,
+                        averageRatingSpecified = false,
+                    }).ToArray()
+                }).ToArray()
+            };
             await HttpContext.WriteResponseAsync(ItemChoiceType.indexes, index);
         }
     }
