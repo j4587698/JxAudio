@@ -8,9 +8,11 @@ namespace JxAudio.Core.Service;
 [Transient]
 public class ArtistService
 {
-    public async Task<ArtistsID3> GetArtistsAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<ArtistsID3> GetArtistsAsync(Guid userId, int? musicFolderId, long? ifModifiedSince, CancellationToken cancellationToken)
     {
         var artist = await ArtistEntity.Select
+            .WhereIf(musicFolderId != null, x => x.TrackEntities!.Any(y => y.DirectoryId == musicFolderId))
+            .WhereIf(ifModifiedSince != null, x => x.CreateTime > DateTimeOffset.FromUnixTimeMilliseconds(ifModifiedSince!.Value))
             .IncludeMany(x => x.ArtistStarEntities, then => then.Where(y => y.UserId == userId))
             .ToListAsync(cancellationToken);
         var id3List = artist.Select(x => new ArtistID3()

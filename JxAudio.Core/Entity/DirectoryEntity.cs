@@ -41,4 +41,7 @@ public class DirectoryEntity : BaseEntity<DirectoryEntity, long>
             UserEntities = value.IsNullOrEmpty() ? ArraySegment<UserEntity>.Empty : value.Split(',').Select(x => new UserEntity() { Id = Guid.Parse(value) }).ToList();
         }
     }
+
+    [Navigate(nameof(TrackEntity.DirectoryId))]
+    public ICollection<TrackEntity>? FileEntities { get; set; }
 }

@@ -39,7 +39,7 @@ public class BrowsingController : AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var id3 = await ArtistService.GetArtistsAsync(apiUserId.Value, HttpContext.RequestAborted);
+            var id3 = await ArtistService.GetArtistsAsync(apiUserId.Value, musicFolderId, ifModifiedSince, HttpContext.RequestAborted);
             var index = new Indexes()
             {
                 ignoredArticles = id3.ignoredArticles,

@@ -29,18 +29,18 @@ public class ScanJob : ITask
                 continue;
             }
             
-            await ScanFiles(providerPlugin, directoryEntity.Path);
+            await ScanFiles(providerPlugin, directoryEntity.Path, directoryEntity);
         }
     }
     
-    private async Task ScanFiles(IProviderPlugin providerPlugin, string path)
+    private async Task ScanFiles(IProviderPlugin providerPlugin, string path, DirectoryEntity directoryEntity)
     {
         var files = await providerPlugin.ListFilesAsync(path);
         foreach (var fsInfo in files)
         {
             if (fsInfo.IsDir)
             {
-                await ScanFiles(providerPlugin, fsInfo.FullName);
+                await ScanFiles(providerPlugin, fsInfo.FullName, directoryEntity);
             }
             else
             {
@@ -121,7 +121,8 @@ public class ScanJob : ITask
                         AlbumId = albumEntity?.Id,
                         PictureId = albumEntity?.PictureId,
                         CodecName = track.AudioFormat.ShortName,
-                        ArtistEntities = artistEntities
+                        ArtistEntities = artistEntities,
+                        DirectoryId = directoryEntity.Id
                     };
                     await trackEntity.SaveAsync();
                     await trackEntity.SaveManyAsync(nameof(TrackEntity.ArtistEntities));
