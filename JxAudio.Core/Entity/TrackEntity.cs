@@ -48,13 +48,20 @@ public class TrackEntity : BaseEntity<TrackEntity, int>
 
     [Navigate(nameof(PictureId))]
     public PictureEntity? PictureEntity { get; set; }
-
-    [Navigate(ManyToMany = typeof(TrackArtistEntity))]
-    public ICollection<ArtistEntity>? ArtistEntities { get; set; }
     
     [Description("目录Id")]
-    public long DirectoryId { get; set; }
+    public int DirectoryId { get; set; }
 
     [Navigate(nameof(DirectoryId))]
     public DirectoryEntity? DirectoryEntity { get; set; }
+
+    [Description("流派Id")]
+    public int GenreId { get; set; }
+    
+    [Navigate(nameof(GenreId))]
+    public GenreEntity? GenreEntity { get; set; }
+    
+    [Navigate(ManyToMany = typeof(TrackArtistEntity))]
+    public ICollection<ArtistEntity>? ArtistEntities { get; set; }
+
 }
