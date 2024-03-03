@@ -21,7 +21,7 @@ public static class Constant
     
     public const string ApiContextKey = "ApiContextKey";
     
-    public const string ApiVersion = "1.16.0";
+    public const string ApiVersion = "1.16.1";
 
     public const int ApiMajorVersion = 1;
 
