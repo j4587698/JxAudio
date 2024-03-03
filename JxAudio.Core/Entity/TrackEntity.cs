@@ -5,7 +5,7 @@ using FreeSql.DataAnnotations;
 namespace JxAudio.Core.Entity;
 
 [Description("歌曲表")]
-public class TrackEntity : BaseEntity<TrackEntity, long>
+public class TrackEntity : BaseEntity<TrackEntity, int>
 {
     [Description("提供器Id")]
     public Guid ProviderId { get; set; }
@@ -38,17 +38,30 @@ public class TrackEntity : BaseEntity<TrackEntity, long>
     public string? SortTitle { get; set; }
 
     [Description("专辑Id")]
-    public long? AlbumId { get; set; }
+    public int? AlbumId { get; set; }
 
     [Navigate(nameof(AlbumId))]
     public AlbumEntity? AlbumEntity { get; set; }
 
     [Description("封面Id")]
-    public long? PictureId { get; set; }
+    public int? PictureId { get; set; }
 
     [Navigate(nameof(PictureId))]
     public PictureEntity? PictureEntity { get; set; }
+    
+    [Description("目录Id")]
+    public int DirectoryId { get; set; }
 
+    [Navigate(nameof(DirectoryId))]
+    public DirectoryEntity? DirectoryEntity { get; set; }
+
+    [Description("流派Id")]
+    public int GenreId { get; set; }
+    
+    [Navigate(nameof(GenreId))]
+    public GenreEntity? GenreEntity { get; set; }
+    
     [Navigate(ManyToMany = typeof(TrackArtistEntity))]
     public ICollection<ArtistEntity>? ArtistEntities { get; set; }
+
 }

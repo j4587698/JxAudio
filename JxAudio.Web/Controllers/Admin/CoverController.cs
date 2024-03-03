@@ -8,7 +8,7 @@ namespace JxAudio.Web.Controllers.Admin;
 public class CoverController: ControllerBase
 {
     
-    public IActionResult GetCover(long? coverId)
+    public IActionResult GetCover(int? coverId)
     {
         if (coverId is null or 0)
         {

@@ -9,7 +9,7 @@ using JxAudio.Core.Attributes;
 namespace JxAudio.Core.Entity;
 
 [Description("目录信息表")]
-public class DirectoryEntity : BaseEntity<DirectoryEntity, long>
+public class DirectoryEntity : BaseEntity<DirectoryEntity, int>
 {
     [Description("提供器Id")]
     [GuidRequired]
@@ -41,4 +41,7 @@ public class DirectoryEntity : BaseEntity<DirectoryEntity, long>
             UserEntities = value.IsNullOrEmpty() ? ArraySegment<UserEntity>.Empty : value.Split(',').Select(x => new UserEntity() { Id = Guid.Parse(value) }).ToList();
         }
     }
+
+    [Navigate(nameof(TrackEntity.DirectoryId))]
+    public ICollection<TrackEntity>? FileEntities { get; set; }
 }
