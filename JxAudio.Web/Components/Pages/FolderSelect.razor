@@ -3,7 +3,7 @@
 @inject DialogService DialogService
 @inject MessageService MessageService
 
-<AdminTable TItem="DirectoryEntity" ShowToolbar="true" ShowExtendButtons="true">
+<AdminTable TItem="DirectoryEntity" ShowToolbar="true" ShowExtendButtons="true" OnSaveAsync="OnSaveAsync">
     <TableColumns>
         <TableColumn @bind-Field="@context.Provider" LookupServiceKey="plugin"></TableColumn>
         <TableColumn @bind-Field="@context.Name"></TableColumn>
@@ -17,7 +17,7 @@
             </Template>
             <EditTemplate Context="value">
                 <div class="col-12 col-sm-6 col-md-6">
-                    <MultiSelect @bind-Value=@value.UserList Items="_userList"></MultiSelect>
+                    <MultiSelect @bind-Value="@value.UserList" Items="_userList"></MultiSelect>
                 </div>
             </EditTemplate>
         </TableColumn>
@@ -33,6 +33,13 @@
 </AdminTable>
 
 @code {
-    private List<SelectedItem> _userList = UserEntity.Select.ToList(x => new SelectedItem(x.Id.ToString(), x.UserName!));
+    private readonly List<SelectedItem> _userList = UserEntity.Select.ToList(x => new SelectedItem(x.Id.ToString(), x.UserName!));
+
+    private async Task<bool> OnSaveAsync(DirectoryEntity arg1, ItemChangedType arg2)
+    {
+        await arg1.SaveAsync();
+        await arg1.SaveManyAsync(nameof(DirectoryEntity.UserEntities));
+        return true;
+    }
 
 }

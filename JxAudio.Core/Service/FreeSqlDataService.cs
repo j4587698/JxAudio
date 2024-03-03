@@ -49,6 +49,7 @@ public class FreeSqlDataService<TModel> : DataServiceBase<TModel> where TModel :
                 option.SortOrder == SortOrder.Asc)
             .IncludeByPropertyNameIf(typeof(TModel) == typeof(AlbumEntity), nameof(AlbumEntity.ArtistEntity))
             .IncludeByPropertyNameIf(typeof(TModel) == typeof(TrackEntity), nameof(TrackEntity.ArtistEntities))
+            .IncludeByPropertyNameIf(typeof(TModel) == typeof(DirectoryEntity), nameof(DirectoryEntity.UserEntities))
             .Count(out var count);
         if (option.IsPage)
         {

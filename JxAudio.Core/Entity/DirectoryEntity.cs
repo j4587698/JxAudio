@@ -38,7 +38,7 @@ public class DirectoryEntity : BaseEntity<DirectoryEntity, int>
         }
         set
         {
-            UserEntities = value.IsNullOrEmpty() ? ArraySegment<UserEntity>.Empty : value.Split(',').Select(x => new UserEntity() { Id = Guid.Parse(value) }).ToList();
+            UserEntities = value.IsNullOrEmpty() ? ArraySegment<UserEntity>.Empty : value.Split(',').Select(x => new UserEntity() { Id = Guid.Parse(x) }).ToList();
         }
     }
 
