@@ -20,6 +20,10 @@ public class BrowsingController : AudioController
     [NotNull]
     private ArtistService? ArtistService { get; set; }
     
+    [Inject]
+    [NotNull]
+    private GenreService? GenreService { get; set; }
+    
     [HttpGet("/getMusicFolders")]
     public async Task GetMusicFolders()
     {
@@ -60,6 +64,18 @@ public class BrowsingController : AudioController
                 }).ToArray()
             };
             await HttpContext.WriteResponseAsync(ItemChoiceType.indexes, index);
+        }
+    }
+
+    [HttpGet("/getGenres")]
+    public async Task GetGenres()
+    {
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            var genres = await GenreService.GetGenresAsync(apiUserId.Value, HttpContext.RequestAborted);
+            await HttpContext.WriteResponseAsync(ItemChoiceType.genres, genres);
         }
     }
 }
