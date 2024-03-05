@@ -13,7 +13,7 @@ public class DirectoryService
             .OrderBy(x => x.Name)
             .ToListAsync<MusicFolder>(x => new MusicFolder()
             {
-                id = (int)x.Id,
+                id = x.Id,
                 name = x.Name
             }, cancellationToken);
         return new MusicFolders()

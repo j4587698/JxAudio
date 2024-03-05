@@ -15,7 +15,7 @@ public class ArtistService
     [NotNull]
     private IStringLocalizer<ArtistService>? ArtistServiceLocalizer { get; set; }
     
-    public async Task<ArtistsID3> GetArtistsAsync(Guid userId, int? musicFolderId, long? ifModifiedSince, CancellationToken cancellationToken)
+    public async Task<ArtistsID3> GetArtistsAsync(Guid userId, Guid? musicFolderId, long? ifModifiedSince, CancellationToken cancellationToken)
     {
         var artist = await ArtistEntity.Select
             .WhereIf(musicFolderId != null, x => x.TrackEntities!.Any(y => y.DirectoryId == musicFolderId))
@@ -56,7 +56,7 @@ public class ArtistService
         };
     }
 
-    public async Task<ArtistWithAlbumsID3> GetArtistAsync(Guid userId, int artistId, CancellationToken cancellationToken)
+    public async Task<ArtistWithAlbumsID3> GetArtistAsync(Guid userId, Guid artistId, CancellationToken cancellationToken)
     {
         var id3 = await ArtistEntity.Where(x => x.Id == artistId)
             .IncludeMany(x => x.ArtistStarEntities, then => then.Where(y => y.UserId == userId))

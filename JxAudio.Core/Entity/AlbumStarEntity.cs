@@ -13,7 +13,7 @@ public class AlbumStarEntity: BaseEntity<AlbumEntity, Guid>
 
     [Description("专辑Id")]
     [Column(IsPrimary = true)]
-    public int AlbumId { get; set; }
+    public Guid AlbumId { get; set; }
 
     [Navigate(nameof(UserId))]
     public UserEntity? UserEntity { get; set; }

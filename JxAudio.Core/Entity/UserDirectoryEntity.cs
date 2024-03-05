@@ -11,7 +11,7 @@ public class UserDirectoryEntity
     public UserEntity? UserEntity { get; set; }
 
     [Column(IsPrimary = true)]
-    public int DirectoryId { get; set; }
+    public Guid DirectoryId { get; set; }
 
     [Navigate(nameof(DirectoryId))]
     public DirectoryEntity? DirectoryEntity { get; set; }

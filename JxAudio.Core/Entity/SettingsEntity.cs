@@ -4,7 +4,7 @@ using FreeSql;
 namespace JxAudio.Core.Entity;
 
 [Description("设置表")]
-public class SettingsEntity: BaseEntity<SettingsEntity, int>
+public class SettingsEntity: BaseEntity<SettingsEntity, Guid>
 {
     [Description("设置组名称")]
     public string? GroupName { get; set; }

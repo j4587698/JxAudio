@@ -38,7 +38,7 @@ public class BrowsingController : AudioController
     }
     
     [HttpGet("/getIndexes")]
-    public async Task GetIndexes(int? musicFolderId, long? ifModifiedSince)
+    public async Task GetIndexes(Guid? musicFolderId, long? ifModifiedSince)
     {
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
         var apiUserId = apiContext?.User?.Id;
@@ -81,7 +81,7 @@ public class BrowsingController : AudioController
     }
     
     [HttpGet("/getArtists")]
-    public async Task GetArtists(int? musicFolderId)
+    public async Task GetArtists(Guid? musicFolderId)
     {
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
         var apiUserId = apiContext?.User?.Id;
@@ -93,7 +93,7 @@ public class BrowsingController : AudioController
     }
 
     [HttpGet("/getArtist")]
-    public async Task GetArtist(int? id)
+    public async Task GetArtist(Guid? id)
     {
         if (id == null)
         {

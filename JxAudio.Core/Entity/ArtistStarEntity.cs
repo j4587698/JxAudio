@@ -11,7 +11,7 @@ public class ArtistStarEntity: BaseEntity<ArtistStarEntity, Guid>
     public Guid UserId { get; set; }
 
     [Description("歌手Id")]
-    public int ArtistId { get; set; }
+    public Guid ArtistId { get; set; }
 
     [Navigate(nameof(UserId))]
     public UserEntity? UserEntity { get; set; }
