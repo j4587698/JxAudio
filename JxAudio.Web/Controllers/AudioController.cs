@@ -1,4 +1,5 @@
-﻿using JxAudio.Extensions;
+﻿using JxAudio.Core;
+using JxAudio.Extensions;
 using JxAudio.Utils;
 using JxAudio.Web.Extensions;
 using JxAudio.Web.Utils;
@@ -40,13 +41,17 @@ public class AudioController : Microsoft.AspNetCore.Mvc.Controller
         
         try
         {
-            context.HttpContext.Items[Constant.ApiContextKey] = await context.HttpContext.CreateApiContextAsync().ConfigureAwait(false);
+            context.HttpContext.Items[Constant.ApiContextKey] = await context.HttpContext.CreateApiContextAsync();
             
             var resultContext = await next();
+            if (resultContext.Exception is RestApiErrorException resultContextException)
+            {
+                await context.HttpContext.WriteErrorResponseAsync(resultContextException.Code, resultContextException.Message);
+            }
         }
         catch (RestApiErrorException ex)
         {
-            await context.HttpContext.WriteErrorResponseAsync(ex.Code, ex.Message).ConfigureAwait(false);
+            await context.HttpContext.WriteErrorResponseAsync(ex.Code, ex.Message);
         }
 
 

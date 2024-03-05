@@ -2,6 +2,10 @@
   "JxAudio.Web.Components.Components.CultureChooser": {
     "Label": "语言"
   },
+  "JxAudio.Core.Service.ArtistService": {
+    "NoArtistName": "[未知歌手]",
+    "NoAlbumName": "[未知专辑]"
+  },
   "JxAudio.Core.Attributes.CronAttribute": {
     "ErrorMessage": "Cron表达式有误"
   },

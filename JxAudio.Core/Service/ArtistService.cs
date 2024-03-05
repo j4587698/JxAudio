@@ -1,13 +1,20 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using JxAudio.Core.Attributes;
 using JxAudio.Core.Entity;
 using JxAudio.Core.Subsonic;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 
 namespace JxAudio.Core.Service;
 
 [Transient]
 public class ArtistService
 {
+    [Inject]
+    [NotNull]
+    private IStringLocalizer<ArtistService>? ArtistServiceLocalizer { get; set; }
+    
     public async Task<ArtistsID3> GetArtistsAsync(Guid userId, int? musicFolderId, long? ifModifiedSince, CancellationToken cancellationToken)
     {
         var artist = await ArtistEntity.Select
@@ -46,6 +53,62 @@ public class ArtistService
         {
             index = id3List,
             ignoredArticles = string.Empty
+        };
+    }
+
+    public async Task<ArtistWithAlbumsID3> GetArtistAsync(Guid userId, int artistId, CancellationToken cancellationToken)
+    {
+        var id3 = await ArtistEntity.Where(x => x.Id == artistId)
+            .IncludeMany(x => x.ArtistStarEntities, then => then.Where(y => y.UserId == userId))
+            .FirstAsync(cancellationToken);
+
+        if (id3 == null)
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+        var albums = await AlbumEntity.Where(x => x.ArtistId == artistId && x.TrackEntities!.Any(y => 
+                y.DirectoryEntity!.IsAccessControlled == false || y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
+            .IncludeMany(x => x.AlbumStarEntities, then => then.Where(y => y.UserId == userId))
+            .Include(x => x.ArtistEntity)
+            .OrderBy(x => x.CreateTime)
+            .OrderBy(x => x.Title)
+            .OrderBy(x => x.ArtistId)
+            .ToListAsync(cancellationToken);
+
+        if (albums == null)
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+        
+        var albumId3 = albums
+            .Select(x => new AlbumID3()
+        {
+            id = x.Id.ToString(),
+            name = x.Title ?? ArtistServiceLocalizer["NoAlbumName"],
+            artist = x.ArtistEntity?.Name ?? ArtistServiceLocalizer["NoArtistName"],
+            artistId = x.ArtistId.ToString(),
+            coverArt = x.PictureId.ToString(),
+            songCount = x.TrackEntities?.Count ?? 0,
+            duration = x.TrackEntities?.Sum(y => (int)y.Duration) ?? 0,
+            playCount = default,
+            playCountSpecified = false,
+            created = x.CreateTime,
+            starred = x.AlbumStarEntities?.Count > 0 ? x.AlbumStarEntities.First().CreateTime : default,
+            starredSpecified = x.AlbumStarEntities?.Count > 0,
+            year = x.Year ?? 0,
+            yearSpecified = x.Year.HasValue,
+            genre = x.GenreEntity?.Name ?? ""
+        });
+
+        return new ArtistWithAlbumsID3()
+        {
+            album = albumId3.ToArray(),
+            id = id3.Id.ToString(),
+            name = id3.Name ?? ArtistServiceLocalizer["NoArtistName"],
+            starred = id3.ArtistStarEntities?.Count > 0 ? id3.ArtistStarEntities.First().CreateTime : default,
+            starredSpecified = id3.ArtistStarEntities?.Count > 0,
+            coverArt = null,
+            albumCount = albums.Count
         };
     }
 }

@@ -1,8 +1,8 @@
-﻿namespace JxAudio;
+﻿namespace JxAudio.Core;
 
 #pragma warning disable CA1064 // Exceptions should be public
 #pragma warning disable CA1032 // Implement standard exception constructors
-internal sealed class RestApiErrorException : Exception
+public sealed class RestApiErrorException : Exception
 #pragma warning restore CA1032 // Implement standard exception constructors
 #pragma warning restore CA1064 // Exceptions should be public
 {

@@ -66,6 +66,10 @@ app.UseStatusCodePages();
 app.UsePathBase("/rest");
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+app.MapDefaultControllerRoute();
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
 app.UseExceptionHandler(applicationBuilder =>
 {
     applicationBuilder.Run(context =>
@@ -74,8 +78,4 @@ app.UseExceptionHandler(applicationBuilder =>
         return Task.CompletedTask;
     });
 });
-app.MapDefaultControllerRoute();
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
-
 app.Run();

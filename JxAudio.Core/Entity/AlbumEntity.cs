@@ -24,7 +24,19 @@ public class AlbumEntity : BaseEntity<AlbumEntity, int>
 
     [Navigate(nameof(PictureId))]
     public PictureEntity? PictureEntity { get; set; }
+    
+    [Description("流派Id")]
+    public int GenreId { get; set; }
+    
+    [Navigate(nameof(GenreId))]
+    public GenreEntity? GenreEntity { get; set; }
 
     [Column(IsIgnore = true)]
     public long Count { get; set; }
+
+    [Navigate(nameof(TrackEntity.AlbumId))]
+    public ICollection<TrackEntity>? TrackEntities { get; set; }
+
+    [Navigate(nameof(AlbumStarEntity.AlbumId))]
+    public ICollection<AlbumStarEntity>? AlbumStarEntities { get; set; }
 }

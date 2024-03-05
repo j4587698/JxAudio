@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using JxAudio.Core;
 using JxAudio.Core.Service;
 using JxAudio.Core.Subsonic;
 using JxAudio.Utils;
@@ -76,6 +77,34 @@ public class BrowsingController : AudioController
         {
             var genres = await GenreService.GetGenresAsync(apiUserId.Value, HttpContext.RequestAborted);
             await HttpContext.WriteResponseAsync(ItemChoiceType.genres, genres);
+        }
+    }
+    
+    [HttpGet("/getArtists")]
+    public async Task GetArtists(int? musicFolderId)
+    {
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            var id3 = await ArtistService.GetArtistsAsync(apiUserId.Value, musicFolderId, null, HttpContext.RequestAborted);
+            await HttpContext.WriteResponseAsync(ItemChoiceType.artists, id3);
+        }
+    }
+
+    [HttpGet("/getArtist")]
+    public async Task GetArtist(int? id)
+    {
+        if (id == null)
+        {
+            throw RestApiErrorException.RequiredParameterMissingError("id");
+        }
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            var id3 = await ArtistService.GetArtistAsync(apiUserId.Value, id.Value, HttpContext.RequestAborted);
+            await HttpContext.WriteResponseAsync(ItemChoiceType.artist, id3);
         }
     }
 }

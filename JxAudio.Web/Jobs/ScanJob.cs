@@ -77,6 +77,16 @@ public class ScanJob : ITask
                             artistEntities.Add(artistEntity);
                         }
                     }
+                    
+                    var genre = await GenreEntity.Where(x => x.Name == track.Genre).FirstAsync();
+                    if (genre == null)
+                    {
+                        genre = new GenreEntity()
+                        {
+                            Name = track.Genre
+                        };
+                        await genre.SaveAsync();
+                    }
 
                     AlbumEntity? albumEntity = null;
                     if (!track.Album.IsNullOrEmpty() && artistEntities.Count > 0)
@@ -89,6 +99,7 @@ public class ScanJob : ITask
                                 Title = track.Album,
                                 ArtistId = artistEntities[0].Id,
                                 Year = track.Year,
+                                GenreId = genre.Id,
                                 PictureId = (await GetPicture(providerPlugin, fsInfo, track))?.Id
                             };
 
@@ -105,16 +116,6 @@ public class ScanJob : ITask
                                 
                             }
                         }
-                    }
-
-                    var genre = await GenreEntity.Where(x => x.Name == track.Genre).FirstAsync();
-                    if (genre == null)
-                    {
-                        genre = new GenreEntity()
-                        {
-                            Name = track.Genre
-                        };
-                        await genre.SaveAsync();
                     }
                     
                     var trackEntity = new TrackEntity()
