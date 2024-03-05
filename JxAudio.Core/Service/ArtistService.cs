@@ -68,6 +68,7 @@ public class ArtistService
         }
         var albums = await AlbumEntity.Where(x => x.ArtistId == artistId && x.TrackEntities!.Any(y => 
                 y.DirectoryEntity!.IsAccessControlled == false || y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
+            .IncludeMany(x => x.TrackEntities, then => then.Where(y => y.DirectoryEntity!.IsAccessControlled == false || y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
             .IncludeMany(x => x.AlbumStarEntities, then => then.Where(y => y.UserId == userId))
             .Include(x => x.ArtistEntity)
             .OrderBy(x => x.CreateTime)
