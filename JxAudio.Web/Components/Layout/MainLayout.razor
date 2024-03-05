@@ -1,7 +1,10 @@
 ﻿@using Microsoft.Extensions.Localization
+@using Console = System.Console
 @inherits LayoutComponentBase
 
 @inject IStringLocalizer<MainLayout> Localizer
+@inject NavigationManager NavigationManager
+
 <PageTitle>@PageTitle</PageTitle>
 <BootstrapBlazorRoot>
     <Layout SideWidth="0" IsPage="true" IsFullSide="true" IsFixedHeader="true" AdditionalAssemblies="new[] { GetType().Assembly }"
@@ -68,9 +71,16 @@
             new() { Text = Localizer["Folder"], Icon = "fa fa-fw fa-home", Url = "/Admin/FolderSelect", Match = NavLinkMatch.All} ,
             new() { Text = Localizer["Album"], Icon = "fa fa-fw fa-home", Url = "/Admin/AlbumManager", Match = NavLinkMatch.All } ,
             new() { Text = Localizer["Artist"], Icon = "fa fa-fw fa-home", Url = "/Admin/ArtistManager", Match = NavLinkMatch.All } ,
+            new() { Text = Localizer["Genre"], Icon = "fa fa-fw fa-home", Url = "/Admin/GenreManager", Match = NavLinkMatch.All } ,
             new() { Text = Localizer["Music"], Icon = "fa fa-fw fa-home", Url = "/Admin/MusicManager", Match = NavLinkMatch.All } ,
             new() { Text = Localizer["Setting"], Icon = "fa fa-fw fa-home", Url = "/Admin/Settings", Match = NavLinkMatch.All } 
         };
+        var nowPath = NavigationManager.ToAbsoluteUri(NavigationManager.Uri).LocalPath;
+        var menu = MenuItems.FirstOrDefault(x => x.Url == nowPath);
+        if (menu is not null)
+        {
+            PageTitle = menu.Text + "- JXAudio";
+        }
     }
 
     private Task OnClickMenu(MenuItem arg)
