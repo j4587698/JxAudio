@@ -4,7 +4,8 @@
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<MusicManager> MusicLocalizer
 
-<AdminTable TItem="TrackEntity">
+<AdminTable TItem="TrackEntity" ShowToolbar="true" ShowAddButton="false" ShowExtendButtons="true"
+            ConfirmDeleteContentText="删除歌曲的同时会删除文件，是否确认执行？">
     <TableColumns>
         <TableColumn @bind-Field="@context.PictureId" Width="50">
             <Template Context="value">

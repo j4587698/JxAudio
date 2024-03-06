@@ -2,6 +2,9 @@
 @typeparam TItem
 
 <Table TItem="TItem" IsBordered="true" IsStriped="true" TableColumns="TableColumns" ShowToolbar="@ShowToolbar"
-       ShowExtendButtons="@ShowExtendButtons" IsPagination="true" PageItemsSource="new []{10, 30, 50}"
-       TableToolbarTemplate="@TableToolbarTemplate" RowButtonTemplate="@RowButtonTemplate" 
-       OnQueryAsync="OnQueryAsync" OnSaveAsync="OnSaveAsync"></Table>
+       ShowExtendButtons="@ShowExtendButtons" IsPagination="true" PageItemsSource="new[] { 10, 30, 50 }"
+       TableToolbarTemplate="@TableToolbarTemplate" RowButtonTemplate="@RowButtonTemplate" TableExtensionToolbarTemplate="TableExtensionToolbarTemplate"
+       OnQueryAsync="OnQueryAsync" OnSaveAsync="OnSaveAsync" ConfirmDeleteContentText="@ConfirmDeleteContentText" 
+       ShowAddButton="ShowAddButton" ShowDefaultButtons="ShowDefaultButtons" ShowDeleteButton="ShowDeleteButton" ShowEditButton="ShowEditButton"
+       ShowExtendEditButton="ShowExtendEditButton" ShowExtendDeleteButton="ShowExtendDeleteButton">
+</Table>

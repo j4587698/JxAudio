@@ -28,4 +28,21 @@ public partial class AdminTable<TItem> where TItem : class, new()
     
     [Parameter] 
     public RenderFragment<TItem>? RowButtonTemplate { get; set; }
+
+    [Parameter] public bool ShowAddButton { get; set; } = true;
+
+    [Parameter] public bool ShowDefaultButtons { get; set; } = true;
+
+    [Parameter] public bool ShowDeleteButton { get; set; } = true;
+
+    [Parameter] public bool ShowEditButton { get; set; } = true;
+
+    [Parameter] public bool ShowExtendEditButton { get; set; } = true;
+
+    [Parameter] public bool ShowExtendDeleteButton { get; set; } = true;
+    
+    [Parameter] public RenderFragment? TableExtensionToolbarTemplate { get; set; }
+
+    [Parameter] public string? ConfirmDeleteContentText { get; set; }
+
 }
