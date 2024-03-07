@@ -33,6 +33,7 @@
     "UserList": "可访问用户"
   },
   "JxAudio.Core.Entity.TrackEntity": {
+    "Name": "文件名",
     "PictureId": "封面图",
     "ProviderId": "提供者",
     "FullName": "文件路径",
@@ -89,6 +90,7 @@
     "SuccessContent": "设置保存成功"
   },
   "JxAudio.Web.Components.Pages.MusicManager": {
-    "NoTitle": "【未知标题】"
+    "NoTitle": "【未知标题】",
+    "DeleteMusicText": "删除音乐时会同时删除文件并不可恢复，是否继续？"
   }
 }

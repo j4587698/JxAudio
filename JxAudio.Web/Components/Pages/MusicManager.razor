@@ -2,10 +2,11 @@
 @using JxAudio.Core.Entity
 @using Jx.Toolbox.Extensions
 @using Microsoft.Extensions.Localization
+@using FreeSql
 @inject IStringLocalizer<MusicManager> MusicLocalizer
 
 <AdminTable TItem="TrackEntity" ShowToolbar="true" ShowAddButton="false" ShowExtendButtons="true"
-            ConfirmDeleteContentText="删除歌曲的同时会删除文件，是否确认执行？">
+            ConfirmDeleteContentText="@MusicLocalizer["DeleteMusicText"]" OnDeleteAsync="OnDeleteAsync">
     <TableColumns>
         <TableColumn @bind-Field="@context.PictureId" Width="50">
             <Template Context="value">
@@ -40,5 +41,12 @@
 </AdminTable>
 
 @code {
+
+    private async Task<bool> OnDeleteAsync(IEnumerable<TrackEntity> arg)
+    {
+        var ids = arg.Select(x => x.Id);
+        await BaseEntity.Orm.GetRepository<TrackEntity>().DeleteCascadeByDatabaseAsync(x => ids.Contains(x.Id));
+        return true;
+    }
 
 }

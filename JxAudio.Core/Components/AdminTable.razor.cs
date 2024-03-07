@@ -44,5 +44,13 @@ public partial class AdminTable<TItem> where TItem : class, new()
     [Parameter] public RenderFragment? TableExtensionToolbarTemplate { get; set; }
 
     [Parameter] public string? ConfirmDeleteContentText { get; set; }
+    
+    [Parameter] public Func<IEnumerable<TItem>,Task<bool>>? OnDeleteAsync { get; set; }
+    
+    [Parameter] public RenderFragment<TItem>? DetailRowTemplate { get; set; }
+    
+    [Parameter] public IEnumerable<TItem>? Items { get; set; }
+
+    [Parameter] public bool IsPagination { get; set; } = true;
 
 }

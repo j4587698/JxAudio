@@ -8,6 +8,13 @@
         <TableColumn @bind-Field="@context.Name"></TableColumn>
         <TableColumn @bind-Field="@context.Count"></TableColumn>
     </TableColumns>
+    <DetailRowTemplate>
+        <AdminTable TItem="TrackEntity" Items="GetTracks(context)" IsPagination="false">
+            <TableColumns Context="value">
+                <TableColumn @bind-Field="@value.Name"></TableColumn>
+            </TableColumns>
+        </AdminTable>
+    </DetailRowTemplate>
 </AdminTable>
 
 @code {
@@ -41,4 +48,8 @@
         return Task.FromResult(ret);
     }
 
+    private List<TrackEntity> GetTracks(ArtistEntity artistEntity)
+    {
+        return TrackEntity.Where(x => x.ArtistEntities!.Any(y => y.Id == artistEntity.Id)).ToList();
+    }
 }
