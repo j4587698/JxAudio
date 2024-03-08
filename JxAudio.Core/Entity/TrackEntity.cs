@@ -20,10 +20,16 @@ public class TrackEntity : BaseEntity<TrackEntity, Guid>
     public string? Name { get; set; }
     
     [Description("音轨序号")]
-    public int TrackNumber { get; set; }
+    public int? TrackNumber { get; set; }
+
+    [Description("专辑序号")]
+    public int? DiscNumber { get; set; }
 
     [Description("音频格式")]
     public string? CodecName { get; set; }
+
+    [Description("MIME类型")]
+    public string? MimeType { get; set; }
     
     [Description("比特率")]
     public int? BitRate { get; set; }
@@ -36,6 +42,9 @@ public class TrackEntity : BaseEntity<TrackEntity, Guid>
 
     [Description("排序名称")]
     public string? SortTitle { get; set; }
+
+    [Description("播放次数")]
+    public long PlayCount { get; set; }
 
     [Description("专辑Id")]
     public Guid? AlbumId { get; set; }
@@ -63,5 +72,8 @@ public class TrackEntity : BaseEntity<TrackEntity, Guid>
     
     [Navigate(ManyToMany = typeof(TrackArtistEntity))]
     public ICollection<ArtistEntity>? ArtistEntities { get; set; }
+    
+    [Navigate(nameof(TrackStarEntity.TrackId))]
+    public ICollection<TrackStarEntity>? TrackStarEntities { get; set; }
 
 }

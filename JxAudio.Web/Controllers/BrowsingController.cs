@@ -25,6 +25,10 @@ public class BrowsingController : AudioController
     [NotNull]
     private GenreService? GenreService { get; set; }
     
+    [Inject]
+    [NotNull]
+    private AlbumService? AlbumService { get; set; }
+    
     [HttpGet("/getMusicFolders")]
     public async Task GetMusicFolders()
     {
@@ -95,7 +99,7 @@ public class BrowsingController : AudioController
     [HttpGet("/getArtist")]
     public async Task GetArtist(Guid? id)
     {
-        if (id == null)
+        if (id == null || id == Guid.Empty)
         {
             throw RestApiErrorException.RequiredParameterMissingError("id");
         }
@@ -105,6 +109,22 @@ public class BrowsingController : AudioController
         {
             var id3 = await ArtistService.GetArtistAsync(apiUserId.Value, id.Value, HttpContext.RequestAborted);
             await HttpContext.WriteResponseAsync(ItemChoiceType.artist, id3);
+        }
+    }
+    
+    [HttpGet("/getAlbum")]
+    public async Task GetAlbum(Guid? id)
+    {
+        if (id == null || id == Guid.Empty)
+        {
+            throw RestApiErrorException.RequiredParameterMissingError("id");
+        }
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            var id3 = await AlbumService.GetAlbumAsync(apiUserId.Value, id.Value, "", HttpContext.RequestAborted);
+            await HttpContext.WriteResponseAsync(ItemChoiceType.album, id3);
         }
     }
 }

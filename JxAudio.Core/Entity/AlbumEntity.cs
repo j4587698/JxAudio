@@ -13,6 +13,9 @@ public class AlbumEntity : BaseEntity<AlbumEntity, Guid>
     [Description("发布时间")]
     public int? Year { get; set; }
 
+    [Description("播放次数")]
+    public long PlayCount { get; set; }
+
     [Description("歌手Id")]
     public Guid ArtistId { get; set; }
 

@@ -124,7 +124,8 @@ public class ScanJob : ITask
                         FullName = fsInfo.FullName,
                         Size = fsInfo.Size,
                         ProviderId = providerPlugin.Id,
-                        TrackNumber = track.TrackNumber ?? 999,
+                        TrackNumber = track.TrackNumber,
+                        DiscNumber = track.DiscNumber,
                         Duration = track.Duration,
                         BitRate = track.Bitrate,
                         Title = track.Title,
@@ -132,6 +133,7 @@ public class ScanJob : ITask
                         AlbumId = albumEntity?.Id,
                         PictureId = albumEntity?.PictureId,
                         CodecName = track.AudioFormat.ShortName,
+                        MimeType = track.AudioFormat.MimeList.FirstOrDefault(),
                         ArtistEntities = artistEntities,
                         DirectoryId = directoryEntity.Id,
                         GenreId = genre.Id
