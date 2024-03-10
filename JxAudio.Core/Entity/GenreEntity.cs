@@ -9,6 +9,9 @@ public class GenreEntity: BaseEntity<GenreEntity, Guid>
 {
     [Description("流派名称")]
     public string? Name { get; set; }
+
+    [Column(IsIgnore = true)]
+    public long Count { get; set; }
     
     [Navigate(nameof(TrackEntity.GenreId))]
     public ICollection<TrackEntity>? TrackEntities { get; set; }

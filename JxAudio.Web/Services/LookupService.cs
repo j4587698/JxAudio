@@ -17,4 +17,9 @@ public class LookupService : ILookupService
         }
         return null;
     }
+
+    public IEnumerable<SelectedItem>? GetItemsByKey(string? key, object? data)
+    {
+        return GetItemsByKey(key);
+    }
 }

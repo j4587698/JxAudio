@@ -1,13 +1,59 @@
 ﻿@page "/Admin/GenreManager"
 @using JxAudio.Core.Entity
+@using JxAudio.Core.Extensions
 
+@inject DialogService DialogService
 
-<AdminTable TItem="GenreEntity">
+<AdminTable TItem="GenreEntity" OnQueryAsync="OnQueryAsync">
     <TableColumns>
         <TableColumn @bind-Field="@context.Name"></TableColumn>
+        <TableColumn @bind-Field="@context.Count">
+            <Template Context="value">
+                <Button Color="Color.Link" OnClick="() => ShowTrack(value.Row)">@value.Value</Button>
+            </Template>
+        </TableColumn>
     </TableColumns>
 </AdminTable>
 
 @code {
+
+    private async Task<QueryData<GenreEntity>> OnQueryAsync(QueryPageOptions option)
+    {
+        var select = GenreEntity.Select.WhereDynamicFilter(option.ToDynamicFilter())
+            .OrderByPropertyNameIf(option.SortOrder != SortOrder.Unset, option.SortName,
+                option.SortOrder == SortOrder.Asc)
+            .Count(out var count);
+        if (option.IsPage)
+        {
+            select = select.Page(option.PageIndex, option.PageItems);
+        }
+        var items = await select.ToListAsync(x => new GenreEntity()
+        {
+            Id = x.Id,
+            Name = x.Name,
+            Count = TrackEntity.Select.Where(y => y.GenreId == x.Id).Count(),
+        });
+        return new QueryData<GenreEntity>()
+        {
+            TotalCount = (int)count,
+            Items = items,
+            IsSorted = option.SortOrder != SortOrder.Unset,
+            IsFiltered = option.Filters.Any(),
+            IsAdvanceSearch = option.AdvanceSearches.Any(),
+            IsSearch = option.Searches.Any() || option.CustomerSearches.Any()
+        };
+    }
     
+    public async Task ShowTrack(GenreEntity genreEntity)
+    {
+        await DialogService.Show(new DialogOption()
+        {
+            Component = BootstrapDynamicComponent.CreateComponent<ShowTrackComponent>(new Dictionary<string, object?>()
+            {
+                [nameof(ShowTrackComponent.Id)] = genreEntity.Id,
+                [nameof(ShowTrackComponent.TypeName)] = "genre"
+            })
+        });
+    }
+
 }

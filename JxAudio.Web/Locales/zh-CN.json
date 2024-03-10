@@ -61,6 +61,10 @@
     "MaxBitRate.PlaceHolder": "允许最大比特率",
     "UserName.Required": "{0}不能为空"
   },
+  "JxAudio.Core.Entity.GenreEntity": {
+    "Name": "流派",
+    "TrackEntities": "歌曲数量"
+  },
   "JxAudio.Core.Attributes.GuidRequiredAttribute": {
     "ErrorMessage": "{0}不能为空"
   },

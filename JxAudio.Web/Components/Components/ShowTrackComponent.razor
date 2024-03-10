@@ -1,0 +1,69 @@
+﻿@using JxAudio.Core.Entity
+@using Jx.Toolbox.Extensions
+@using JxAudio.Core.Extensions
+@using JxAudio.Web.Components.Pages
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<MusicManager> MusicLocalizer
+
+<AdminTable TItem="TrackEntity" OnQueryAsync="OnQueryAsync">
+    <TableColumns>
+            <TableColumn @bind-Field="@context.PictureId" Width="50">
+                <Template Context="value">
+                    <Avatar Url="@($"Cover?coverId={value.Value}")"></Avatar>
+                </Template>
+            </TableColumn>
+            <TableColumn @bind-Field="@context.ProviderId" LookupServiceKey="plugin"></TableColumn>
+            <TableColumn @bind-Field="@context.FullName"></TableColumn>
+            <TableColumn @bind-Field="@context.Title">
+                <Template Context="value">
+                    @if (value.Value.IsNullOrEmpty())
+                    {
+                        @MusicLocalizer["NoTitle"]
+                    }
+                    else
+                    {
+                        @value.Value
+                    }
+                </Template>
+            </TableColumn>
+            <TableColumn @bind-Field="@context.Size">
+                <Template Context="value">
+                    @value.Value.ToSizeString()
+                </Template>
+            </TableColumn>
+            <TableColumn @bind-Field="@context.Duration">
+                <Template Context="value">
+                    @value.Value.ToTimeString()
+                </Template>
+            </TableColumn>
+        </TableColumns>
+</AdminTable>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    [Parameter]
+    public string? TypeName { get; set; }
+
+    private async Task<QueryData<TrackEntity>> OnQueryAsync(QueryPageOptions option)
+    {
+        var tracks = await TrackEntity.Select.WhereDynamicFilter(option.ToDynamicFilter())
+            .WhereIf(TypeName == "album", x => x.AlbumId == Id)
+            .WhereIf(TypeName == "artist", x => x.ArtistEntities!.Any(y => y.Id == Id))
+            .WhereIf(TypeName == "genre", x => x.GenreId == Id)
+            .Page(option.PageIndex, option.PageItems)
+            .Count(out var count)
+            .ToListAsync();
+        return new QueryData<TrackEntity>()
+        {
+            TotalCount = (int)count,
+            Items = tracks,
+            IsSorted = option.SortOrder != SortOrder.Unset,
+            IsFiltered = option.Filters.Any(),
+            IsAdvanceSearch = option.AdvanceSearches.Any(),
+            IsSearch = option.Searches.Any() || option.CustomerSearches.Any()
+        };
+    }
+
+}
