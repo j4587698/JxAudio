@@ -1,4 +1,7 @@
-﻿using JxAudio.Core.Subsonic;
+﻿using JxAudio.Core.Entity;
+using JxAudio.Core.Service;
+using JxAudio.Core.Subsonic;
+using Microsoft.Extensions.Localization;
 
 namespace JxAudio.Core.Extensions;
 
@@ -162,57 +165,60 @@ public static class SubsonicExtension
         };
     }
 
-    public static Child CreateDirectoryChild(this Child song)
+    public static Child CreateTrackChild(this TrackEntity trackEntity,
+        IStringLocalizer<ArtistService> artistServiceLocalizer)
     {
         return new Child()
         {
-            id = song.id,
-            parent = "d" + song.artistId,
-            isDir = song.isDir,
-            title = song.title,
-            album = song.album,
-            artist = song.artist,
-            track = song.track,
-            trackSpecified = song.trackSpecified,
-            year = song.year,
-            yearSpecified = song.yearSpecified,
-            genre = song.genre,
-            coverArt = song.coverArt,
-            size = song.size,
-            sizeSpecified = song.sizeSpecified,
-            contentType = song.contentType,
-            suffix = song.suffix,
-            transcodedContentType = song.transcodedContentType,
-            transcodedSuffix = song.transcodedSuffix,
-            duration = song.duration,
-            durationSpecified = song.durationSpecified,
-            bitRate = song.bitRate,
-            bitRateSpecified = song.bitRateSpecified,
-            path = song.path,
-            isVideo = song.isVideo,
-            isVideoSpecified = song.isVideoSpecified,
-            userRating = song.userRating,
-            userRatingSpecified = song.userRatingSpecified,
-            averageRating = song.averageRating,
-            averageRatingSpecified = song.averageRatingSpecified,
-            playCount = song.playCount,
-            playCountSpecified = song.playCountSpecified,
-            discNumber = song.discNumber,
-            discNumberSpecified = song.discNumberSpecified,
-            created = song.created,
-            createdSpecified = song.createdSpecified,
-            starred = song.starred,
-            starredSpecified = song.starredSpecified,
-            albumId = song.albumId,
-            artistId = song.artistId,
-            type = song.type,
-            typeSpecified = song.typeSpecified,
-            bookmarkPosition = song.bookmarkPosition,
-            bookmarkPositionSpecified = song.bookmarkPositionSpecified,
-            originalWidth = song.originalWidth,
-            originalWidthSpecified = song.originalWidthSpecified,
-            originalHeight = song.originalHeight,
-            originalHeightSpecified = song.originalHeightSpecified,
+            id = trackEntity.Id.ToTrackId(),
+            isDir = false,
+            parent = default,
+            title = trackEntity.Title ?? artistServiceLocalizer["NoTrackName"],
+            album = trackEntity.AlbumEntity?.Title ?? artistServiceLocalizer["NoAlbumName"],
+            artist = trackEntity.ArtistEntities == null
+                ? artistServiceLocalizer["NoArtistName"]
+                : string.Join(",", trackEntity.ArtistEntities.Select(y => y.Name)),
+            track = trackEntity.TrackNumber ?? int.MaxValue,
+            trackSpecified = trackEntity.TrackNumber != 0,
+            year = trackEntity.AlbumEntity?.Year ?? 0,
+            yearSpecified = trackEntity.AlbumEntity?.Year.HasValue ?? false,
+            genre = trackEntity.GenreEntity?.Name ?? "",
+            coverArt = trackEntity.AlbumEntity?.PictureId.ToString(),
+            size = trackEntity.Size,
+            sizeSpecified = true,
+            contentType = trackEntity.MimeType ?? "",
+            suffix = Path.GetExtension(trackEntity.FullName)?.TrimStart('.'),
+            duration = (int)Math.Round(trackEntity.Duration),
+            durationSpecified = true,
+            bitRate = trackEntity.BitRate ?? 0,
+            bitRateSpecified = trackEntity.BitRate.HasValue,
+            path = default,
+            isVideo = false,
+            isVideoSpecified = false,
+            userRating = default,
+            userRatingSpecified = false,
+            averageRating = default,
+            averageRatingSpecified = false,
+            playCount = trackEntity.PlayCount,
+            playCountSpecified = true,
+            discNumber = trackEntity.DiscNumber ?? 0,
+            discNumberSpecified = trackEntity.DiscNumber.HasValue,
+            created = trackEntity.CreateTime,
+            createdSpecified = true,
+            starred = trackEntity.TrackStarEntities?.Count > 0
+                ? trackEntity.TrackStarEntities.First().CreateTime
+                : default,
+            starredSpecified = trackEntity.TrackStarEntities?.Count > 0,
+            albumId = trackEntity.AlbumId?.ToAlbumId() ?? default,
+            artistId = trackEntity.AlbumEntity?.ArtistId.ToArtistId() ?? default,
+            type = MediaType.music,
+            typeSpecified = true,
+            bookmarkPosition = default,
+            bookmarkPositionSpecified = false,
+            originalWidth = default,
+            originalHeightSpecified = false,
+            originalHeight = default,
+            originalWidthSpecified = false
         };
     }
 }

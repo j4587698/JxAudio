@@ -31,6 +31,10 @@ public class BrowsingController : AudioController
     [Inject]
     [NotNull]
     private AlbumService? AlbumService { get; set; }
+
+    [Inject]
+    [NotNull]
+    private TrackService? TrackService { get; set; }
     
     [HttpGet("/getMusicFolders")]
     public async Task GetMusicFolders()
@@ -110,7 +114,7 @@ public class BrowsingController : AudioController
                     name = album.name,
                     starred = album.starred,
                     starredSpecified = album.starredSpecified,
-                    child = album.song.Select(x => x.CreateDirectoryChild()).ToArray()
+                    child = album.song
                 };
             }
             else
@@ -179,5 +183,35 @@ public class BrowsingController : AudioController
             var id3 = await AlbumService.GetAlbumAsync(apiUserId.Value, albumId, HttpContext.RequestAborted);
             await HttpContext.WriteResponseAsync(ItemChoiceType.album, id3);
         }
+    }
+
+    [HttpGet("/getSong")]
+    public async Task GetSong(string? id)
+    {
+        if (id.IsNullOrEmpty())
+        {
+            throw RestApiErrorException.RequiredParameterMissingError("id");
+        }
+
+        var trackId = id!.ParseTrackId();
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            var track = await TrackService.GetSongAsync(apiUserId.Value, trackId, HttpContext.RequestAborted);
+            await HttpContext.WriteResponseAsync(ItemChoiceType.song, track); 
+        }
+    }
+    
+    [HttpGet("/getVideos")]
+    public void GetVideos()
+    {
+        throw RestApiErrorException.GenericError("Not implemented.");
+    }
+    
+    [HttpGet("/getVideoInfo")]
+    public void GetVideoInfo()
+    {
+        throw RestApiErrorException.GenericError("Not implemented.");
     }
 }
