@@ -214,4 +214,131 @@ public class BrowsingController : AudioController
     {
         throw RestApiErrorException.GenericError("Not implemented.");
     }
+    
+    [HttpGet("/getArtistInfo")]
+    public Task GetArtistInfo(string? id, int? count, bool includeNotPresent)
+    {
+        if (id.IsNullOrEmpty())
+        {
+            throw RestApiErrorException.RequiredParameterMissingError("id");
+        }
+        
+        var artistInfo = new ArtistInfo
+        {
+            biography = null,
+            musicBrainzId = null,
+            lastFmUrl = null,
+            smallImageUrl = null,
+            mediumImageUrl = null,
+            largeImageUrl = null,
+            similarArtist = null,
+        };
+
+        return HttpContext.WriteResponseAsync(ItemChoiceType.artistInfo, artistInfo);
+    }
+    
+    [HttpGet("/getArtistInfo2")]
+    public Task GetArtistInfo2(string? id, int? count, bool includeNotPresent)
+    {
+        if (id.IsNullOrEmpty())
+        {
+            throw RestApiErrorException.RequiredParameterMissingError("id");
+        }
+        
+        var artistInfo = new ArtistInfo2
+        {
+            biography = null,
+            musicBrainzId = null,
+            lastFmUrl = null,
+            smallImageUrl = null,
+            mediumImageUrl = null,
+            largeImageUrl = null,
+            similarArtist = null,
+        };
+
+        return HttpContext.WriteResponseAsync(ItemChoiceType.artistInfo2, artistInfo);
+    }
+
+    [HttpGet("/getAlbumInfo")]
+    public Task GetAlbumInfo(string? id)
+    {
+        if (id.IsNullOrEmpty())
+        {
+            throw RestApiErrorException.RequiredParameterMissingError("id");
+        }
+        var albumInfo = new AlbumInfo
+        {
+            notes = null,
+            musicBrainzId = null,
+            lastFmUrl = null,
+            smallImageUrl = null,
+            mediumImageUrl = null,
+            largeImageUrl = null,
+        };
+
+        return HttpContext.WriteResponseAsync(ItemChoiceType.albumInfo, albumInfo);
+    }
+    
+    [HttpGet("/getAlbumInfo2")]
+    public Task GetAlbumInfo2(string? id)
+    {
+        if (id.IsNullOrEmpty())
+        {
+            throw RestApiErrorException.RequiredParameterMissingError("id");
+        }
+        var albumInfo = new AlbumInfo
+        {
+            notes = null,
+            musicBrainzId = null,
+            lastFmUrl = null,
+            smallImageUrl = null,
+            mediumImageUrl = null,
+            largeImageUrl = null,
+        };
+
+        return HttpContext.WriteResponseAsync(ItemChoiceType.albumInfo, albumInfo);
+    }
+
+    [HttpGet("/getSimilarSongs")]
+    public Task GetSimilarSongs(string? id, int? count)
+    {
+        if (id.IsNullOrEmpty())
+        {
+            throw RestApiErrorException.RequiredParameterMissingError("id");
+        }
+        
+        var similarSongs = new SimilarSongs
+        {
+            song = null,
+        };
+
+        return HttpContext.WriteResponseAsync(ItemChoiceType.similarSongs, similarSongs);
+    }
+    
+    [HttpGet("/getSimilarSongs2")]
+    public Task GetSimilarSongs2(string? id, int? count)
+    {
+        if (id.IsNullOrEmpty())
+        {
+            throw RestApiErrorException.RequiredParameterMissingError("id");
+        }
+        
+        var similarSongs = new SimilarSongs2
+        {
+            song = null,
+        };
+
+        return HttpContext.WriteResponseAsync(ItemChoiceType.similarSongs2, similarSongs);
+    }
+    
+    [HttpGet("/getTopSongs")]
+    public Task HandleGetTopSongsRequestAsync(string? id, int? count)
+    {
+        var topSongs = new TopSongs
+        {
+            song = null,
+        };
+
+        return HttpContext.WriteResponseAsync(ItemChoiceType.topSongs, topSongs);
+    }
 }
