@@ -65,7 +65,7 @@ public class TrackEntity : BaseEntity<TrackEntity, int>
     public DirectoryEntity? DirectoryEntity { get; set; }
 
     [Description("流派Id")]
-    public int GenreId { get; set; }
+    public int? GenreId { get; set; }
     
     [Navigate(nameof(GenreId))]
     public GenreEntity? GenreEntity { get; set; }

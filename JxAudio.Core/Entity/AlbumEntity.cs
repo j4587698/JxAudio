@@ -29,7 +29,7 @@ public class AlbumEntity : BaseEntity<AlbumEntity, int>
     public PictureEntity? PictureEntity { get; set; }
     
     [Description("流派Id")]
-    public int GenreId { get; set; }
+    public int? GenreId { get; set; }
     
     [Navigate(nameof(GenreId))]
     public GenreEntity? GenreEntity { get; set; }
