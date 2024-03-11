@@ -4,11 +4,15 @@
 <AdminTable TItem="UserEntity" ShowToolbar="true" ShowExtendButtons="true">
     <TableColumns>
         <TableColumn @bind-Field="@context.UserName"></TableColumn>
+        <TableColumn @bind-Field="@context.Password" Visible="false" IsVisibleWhenAdd="true" ComponentType="typeof(BootstrapPassword)"></TableColumn>
         <TableColumn @bind-Field="@context.IsAdmin"></TableColumn>
         <TableColumn @bind-Field="@context.IsGuest"></TableColumn>
         <TableColumn @bind-Field="@context.MaxBitRate"></TableColumn>
         <TableColumn @bind-Field="@context.CanJukebox"></TableColumn>
     </TableColumns>
+    <RowButtonTemplate>
+        
+    </RowButtonTemplate>
 </AdminTable>
 
 @code {

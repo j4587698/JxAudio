@@ -11,11 +11,6 @@ namespace JxAudio.Core.Service;
 [Transient]
 public class TrackService
 {
-    
-    [Inject]
-    [NotNull]
-    private IStringLocalizer<ArtistService>? ArtistServiceLocalizer { get; set; }
-    
     public async Task<Child> GetSongAsync(Guid userId, int trackId, CancellationToken cancellationToken)
     {
         var track = await TrackEntity.Where(x => x.Id == trackId && (x.DirectoryEntity!.IsAccessControlled == false || x.DirectoryEntity!.UserEntities!.Any(z => z.Id == userId)))
@@ -29,6 +24,6 @@ public class TrackService
             throw RestApiErrorException.DataNotFoundError();
         }
 
-        return track.CreateTrackChild(ArtistServiceLocalizer);
+        return track.CreateTrackChild();
     }
 }

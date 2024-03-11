@@ -43,7 +43,7 @@ builder.Services.AddRequestLocalization<IOptionsMonitor<BootstrapBlazorOptions>>
     }
 });
 
-var app = builder.Build();
+var app = builder.Build().Use();
 //app.UseSerilogRequestLogging();
 // 启用本地化
 var option = app.Services.GetService<IOptions<RequestLocalizationOptions>>();

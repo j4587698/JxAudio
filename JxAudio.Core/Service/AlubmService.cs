@@ -58,7 +58,7 @@ public class AlbumService
             year = album.Year ?? 0,
             yearSpecified = album.Year.HasValue,
             genre = album.GenreEntity?.Name ?? "",
-            song = tracks.Select(x => x.CreateTrackChild(ArtistServiceLocalizer)).ToArray()
+            song = tracks.Select(x => x.CreateTrackChild()).ToArray()
             
         };
 

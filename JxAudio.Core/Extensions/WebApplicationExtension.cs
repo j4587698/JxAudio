@@ -201,4 +201,10 @@ public static class WebApplicationExtension
             }
         }
     }
+
+    public static WebApplication Use(this WebApplication webApplication)
+    {
+        Application.ServiceProvider = webApplication.Services;
+        return webApplication;
+    }
 }

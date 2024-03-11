@@ -1,6 +1,7 @@
 ﻿using JxAudio.Core.Entity;
 using JxAudio.Core.Service;
 using JxAudio.Core.Subsonic;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 
 namespace JxAudio.Core.Extensions;
@@ -165,18 +166,18 @@ public static class SubsonicExtension
         };
     }
 
-    public static Child CreateTrackChild(this TrackEntity trackEntity,
-        IStringLocalizer<ArtistService> artistServiceLocalizer)
+    public static Child CreateTrackChild(this TrackEntity trackEntity)
     {
+        var artistServiceLocalizer = Application.GetRequiredService<IStringLocalizer<ArtistService>>();
         return new Child()
         {
             id = trackEntity.Id.ToTrackId(),
             isDir = false,
             parent = default,
-            title = trackEntity.Title ?? artistServiceLocalizer["NoTrackName"],
-            album = trackEntity.AlbumEntity?.Title ?? artistServiceLocalizer["NoAlbumName"],
+            title = trackEntity.Title ?? artistServiceLocalizer!["NoTrackName"],
+            album = trackEntity.AlbumEntity?.Title ?? artistServiceLocalizer!["NoAlbumName"],
             artist = trackEntity.ArtistEntities == null
-                ? artistServiceLocalizer["NoArtistName"]
+                ? artistServiceLocalizer!["NoArtistName"]
                 : string.Join(",", trackEntity.ArtistEntities.Select(y => y.Name)),
             track = trackEntity.TrackNumber ?? int.MaxValue,
             trackSpecified = trackEntity.TrackNumber != 0,
