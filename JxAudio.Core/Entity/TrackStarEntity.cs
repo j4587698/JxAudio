@@ -5,13 +5,13 @@ using FreeSql.DataAnnotations;
 namespace JxAudio.Core.Entity;
 
 [Description("歌曲星标表")]
-public class TrackStarEntity: BaseEntity<TrackStarEntity, Guid>
+public class TrackStarEntity: BaseEntity<TrackStarEntity, int>
 {
     [Description("用户Id")]
     public Guid UserId { get; set; }
 
     [Description("歌曲Id")]
-    public Guid TrackId { get; set; }
+    public int TrackId { get; set; }
 
     [Navigate(nameof(UserId))]
     public UserEntity? UserEntity { get; set; }

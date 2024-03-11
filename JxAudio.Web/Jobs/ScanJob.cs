@@ -106,7 +106,7 @@ public class ScanJob : ITask
                             await albumEntity.SaveAsync();
                             Log.Information("查找到新专辑{album}", albumEntity.Title);
                         }
-                        else if (albumEntity.PictureId is null || albumEntity.PictureId == Guid.Empty)
+                        else if (albumEntity.PictureId is null or 0)
                         {
                             var picture = await GetPicture(providerPlugin, fsInfo, track);
                             if (picture != null)

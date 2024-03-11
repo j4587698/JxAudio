@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Jx.Toolbox.Extensions;
 using JxAudio.Core;
+using JxAudio.Core.Extensions;
 using JxAudio.Core.Service;
 using JxAudio.Core.Subsonic;
 using JxAudio.Utils;
@@ -7,6 +9,7 @@ using JxAudio.Web.Extensions;
 using JxAudio.Web.Utils;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
+using Directory = JxAudio.Core.Subsonic.Directory;
 using Index = JxAudio.Core.Subsonic.Index;
 
 namespace JxAudio.Web.Controllers;
@@ -42,7 +45,7 @@ public class BrowsingController : AudioController
     }
     
     [HttpGet("/getIndexes")]
-    public async Task GetIndexes(Guid? musicFolderId, long? ifModifiedSince)
+    public async Task GetIndexes(int? musicFolderId, long? ifModifiedSince)
     {
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
         var apiUserId = apiContext?.User?.Id;
@@ -72,6 +75,54 @@ public class BrowsingController : AudioController
         }
     }
 
+    [HttpGet("/getMusicDirectory")]
+    public async Task GetMusicDirectory(string? id)
+    {
+        if (id.IsNullOrEmpty())
+        {
+            throw RestApiErrorException.RequiredParameterMissingError("id");
+        }
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            Directory? directory = null;
+            if (id!.TryParseArtistId(out var artistId))
+            {
+                var id3 = await ArtistService.GetArtistAsync(apiUserId.Value, artistId, HttpContext.RequestAborted);
+                directory = new Directory()
+                {
+                    id = id3.id,
+                    parent = null,
+                    name = id3.name,
+                    starred = id3.starred,
+                    starredSpecified = id3.starredSpecified,
+                    child = id3.album.Select(x => x.CreateDirectoryChild()).ToArray()
+                };
+            }
+            else if (id!.TryParseAlbumId(out var albumId))
+            {
+                var album = await AlbumService.GetAlbumAsync(apiUserId.Value, albumId, HttpContext.RequestAborted);
+                directory = new Directory()
+                {
+                    id = album.id,
+                    parent = null,
+                    name = album.name,
+                    starred = album.starred,
+                    starredSpecified = album.starredSpecified,
+                    child = album.song.Select(x => x.CreateDirectoryChild()).ToArray()
+                };
+            }
+            else
+            {
+                throw RestApiErrorException.GenericError($"Invalid id for {id}.");
+            }
+            
+            await HttpContext.WriteResponseAsync(ItemChoiceType.directory, directory);
+        }
+    }
+    
+
     [HttpGet("/getGenres")]
     public async Task GetGenres()
     {
@@ -85,7 +136,7 @@ public class BrowsingController : AudioController
     }
     
     [HttpGet("/getArtists")]
-    public async Task GetArtists(Guid? musicFolderId)
+    public async Task GetArtists(int? musicFolderId)
     {
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
         var apiUserId = apiContext?.User?.Id;
@@ -97,33 +148,35 @@ public class BrowsingController : AudioController
     }
 
     [HttpGet("/getArtist")]
-    public async Task GetArtist(Guid? id)
+    public async Task GetArtist(string? id)
     {
-        if (id == null || id == Guid.Empty)
+        if (id.IsNullOrEmpty())
         {
             throw RestApiErrorException.RequiredParameterMissingError("id");
         }
+        var artistId = id!.ParseArtistId();
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var id3 = await ArtistService.GetArtistAsync(apiUserId.Value, id.Value, HttpContext.RequestAborted);
+            var id3 = await ArtistService.GetArtistAsync(apiUserId.Value, artistId, HttpContext.RequestAborted);
             await HttpContext.WriteResponseAsync(ItemChoiceType.artist, id3);
         }
     }
     
     [HttpGet("/getAlbum")]
-    public async Task GetAlbum(Guid? id)
+    public async Task GetAlbum(string? id)
     {
-        if (id == null || id == Guid.Empty)
+        if (id.IsNullOrEmpty())
         {
             throw RestApiErrorException.RequiredParameterMissingError("id");
         }
+        var albumId = id!.ParseAlbumId();
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var id3 = await AlbumService.GetAlbumAsync(apiUserId.Value, id.Value, "", HttpContext.RequestAborted);
+            var id3 = await AlbumService.GetAlbumAsync(apiUserId.Value, albumId, HttpContext.RequestAborted);
             await HttpContext.WriteResponseAsync(ItemChoiceType.album, id3);
         }
     }

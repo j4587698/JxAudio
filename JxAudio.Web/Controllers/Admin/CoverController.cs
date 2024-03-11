@@ -8,9 +8,9 @@ namespace JxAudio.Web.Controllers.Admin;
 public class CoverController: ControllerBase
 {
     
-    public IActionResult GetCover(Guid? coverId)
+    public IActionResult GetCover(int? coverId)
     {
-        if (coverId is null || coverId == Guid.Empty)
+        if (coverId is null or 0)
         {
             return File(Path.Combine("Images", "NoCover.png"), "image/png");
         }

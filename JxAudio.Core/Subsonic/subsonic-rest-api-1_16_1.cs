@@ -1759,7 +1759,7 @@ public partial class MusicFolder {
 
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]
-    public Guid id;
+    public int id;
 
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute()]

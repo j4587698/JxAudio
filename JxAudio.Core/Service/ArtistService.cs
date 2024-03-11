@@ -2,6 +2,7 @@
 using System.Globalization;
 using JxAudio.Core.Attributes;
 using JxAudio.Core.Entity;
+using JxAudio.Core.Extensions;
 using JxAudio.Core.Subsonic;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
@@ -15,7 +16,7 @@ public class ArtistService
     [NotNull]
     private IStringLocalizer<ArtistService>? ArtistServiceLocalizer { get; set; }
     
-    public async Task<ArtistsID3> GetArtistsAsync(Guid userId, Guid? musicFolderId, long? ifModifiedSince, CancellationToken cancellationToken)
+    public async Task<ArtistsID3> GetArtistsAsync(Guid userId, int? musicFolderId, long? ifModifiedSince, CancellationToken cancellationToken)
     {
         var artist = await ArtistEntity.Select
             .WhereIf(musicFolderId != null, x => x.TrackEntities!.Any(y => y.DirectoryId == musicFolderId))
@@ -56,7 +57,7 @@ public class ArtistService
         };
     }
 
-    public async Task<ArtistWithAlbumsID3> GetArtistAsync(Guid userId, Guid artistId, CancellationToken cancellationToken)
+    public async Task<ArtistWithAlbumsID3> GetArtistAsync(Guid userId, int artistId, CancellationToken cancellationToken)
     {
         var id3 = await ArtistEntity.Where(x => x.Id == artistId)
             .IncludeMany(x => x.ArtistStarEntities, then => then.Where(y => y.UserId == userId))
@@ -84,10 +85,10 @@ public class ArtistService
         var albumId3 = albums
             .Select(x => new AlbumID3()
         {
-            id = x.Id.ToString(),
+            id = x.Id.ToAlbumId(),
             name = x.Title ?? ArtistServiceLocalizer["NoAlbumName"],
             artist = x.ArtistEntity?.Name ?? ArtistServiceLocalizer["NoArtistName"],
-            artistId = x.ArtistId.ToString(),
+            artistId = x.ArtistId.ToArtistId(),
             coverArt = x.PictureId.ToString(),
             songCount = x.TrackEntities?.Count ?? 0,
             duration = x.TrackEntities?.Sum(y => (int)y.Duration) ?? 0,
@@ -104,7 +105,7 @@ public class ArtistService
         return new ArtistWithAlbumsID3()
         {
             album = albumId3.ToArray(),
-            id = id3.Id.ToString(),
+            id = id3.Id.ToArtistId(),
             name = id3.Name ?? ArtistServiceLocalizer["NoArtistName"],
             starred = id3.ArtistStarEntities?.Count > 0 ? id3.ArtistStarEntities.First().CreateTime : default,
             starredSpecified = id3.ArtistStarEntities?.Count > 0,

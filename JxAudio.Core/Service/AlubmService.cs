@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using JxAudio.Core.Attributes;
 using JxAudio.Core.Entity;
+using JxAudio.Core.Extensions;
 using JxAudio.Core.Subsonic;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
@@ -14,8 +15,7 @@ public class AlbumService
     [NotNull]
     private IStringLocalizer<ArtistService>? ArtistServiceLocalizer { get; set; }
     
-    public async Task<AlbumWithSongsID3> GetAlbumAsync(Guid userId, Guid albumId, string transcodedSuffix,
-        CancellationToken cancellationToken)
+    public async Task<AlbumWithSongsID3> GetAlbumAsync(Guid userId, int albumId, CancellationToken cancellationToken)
     {
         var album = await AlbumEntity.Where(x => x.Id == albumId && x.TrackEntities!.Any(y => 
                 y.DirectoryEntity!.IsAccessControlled == false || y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
@@ -41,10 +41,10 @@ public class AlbumService
         }
         var albumId3 = new AlbumWithSongsID3()
         {
-            id = album.Id.ToString(),
+            id = album.Id.ToAlbumId(),
             name = album.Title ?? ArtistServiceLocalizer["NoAlbumName"],
             artist = album.ArtistEntity?.Name ?? ArtistServiceLocalizer["NoArtistName"],
-            artistId = album.ArtistId.ToString(),
+            artistId = album.ArtistId.ToArtistId(),
             coverArt = album.PictureId.ToString(),
             songCount = album.TrackEntities?.Count ?? 0,
             duration = album.TrackEntities?.Sum(y => (int)y.Duration) ?? 0,
@@ -58,7 +58,7 @@ public class AlbumService
             genre = album.GenreEntity?.Name ?? "",
             song = tracks.Select(x => new Child()
             {
-                id = x.Id.ToString(),
+                id = x.Id.ToTrackId(),
                 isDir = false,
                 parent = default,
                 title = x.Title ?? ArtistServiceLocalizer["NoTrackName"],
@@ -93,8 +93,8 @@ public class AlbumService
                 createdSpecified = true,
                 starred = x.TrackStarEntities?.Count > 0 ? x.TrackStarEntities.First().CreateTime : default,
                 starredSpecified = x.TrackStarEntities?.Count > 0,
-                albumId = x.AlbumId?.ToString() ?? default,
-                artistId = album.ArtistEntity?.Id.ToString() ?? default,
+                albumId = x.AlbumId?.ToAlbumId() ?? default,
+                artistId = album.ArtistEntity?.Id.ToArtistId() ?? default,
                 type = MediaType.music,
                 typeSpecified = true,
                 bookmarkPosition = default,

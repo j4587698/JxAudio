@@ -9,7 +9,7 @@ using JxAudio.Core.Attributes;
 namespace JxAudio.Core.Entity;
 
 [Description("目录信息表")]
-public class DirectoryEntity : BaseEntity<DirectoryEntity, Guid>
+public class DirectoryEntity : BaseEntity<DirectoryEntity, int>
 {
     [Description("提供器Id")]
     [GuidRequired]
