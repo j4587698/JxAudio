@@ -1,5 +1,10 @@
 ﻿@page "/Admin/UserManager"
 @using JxAudio.Core.Entity
+@using Microsoft.Extensions.Localization
+@using System.Diagnostics.CodeAnalysis
+@using JxAudio.Web.Vo
+
+@inject IStringLocalizer<UserManager> StringLocalizer
 
 <AdminTable TItem="UserEntity" ShowToolbar="true" ShowExtendButtons="true">
     <TableColumns>
@@ -11,10 +16,50 @@
         <TableColumn @bind-Field="@context.CanJukebox"></TableColumn>
     </TableColumns>
     <RowButtonTemplate>
-        
+        <TableCellButton Text="@StringLocalizer["ChangePassword"]" OnClick="() => ChangePassword(context)"></TableCellButton>
     </RowButtonTemplate>
 </AdminTable>
 
+<Modal @ref="Modal">
+    <ModalDialog IsCentered="true" Title="@StringLocalizer["ChangePassword"]" ShowFooter="false">
+        <BodyTemplate>
+            <ValidateForm Model="_reSetPassword">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <BootstrapPassword @bind-Value="_reSetPassword!.NewPassword"></BootstrapPassword>
+                    </div>
+                    <div class="col-12">
+                        <BootstrapPassword @bind-Value="_reSetPassword.RePassword"></BootstrapPassword>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <Button Text="Save"></Button>
+                    <Button Text="Close"></Button>
+                </div>
+            </ValidateForm>
+        </BodyTemplate>
+    </ModalDialog>
+</Modal>
+
 @code {
     
+    [NotNull]
+    private Modal? Modal { get; set; }
+
+    private ResetPasswordVo? _reSetPassword;
+
+    private void ChangePassword(UserEntity userEntity)
+    {
+        _reSetPassword = new ResetPasswordVo()
+        {
+            UserEntity = userEntity
+        };
+        Modal.Toggle();
+    }
+
+    private Task<bool> OnSaveAsync()
+    {
+        throw new NotImplementedException();
+    }
+
 }

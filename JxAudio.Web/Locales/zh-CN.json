@@ -96,5 +96,14 @@
   "JxAudio.Web.Components.Pages.MusicManager": {
     "NoTitle": "【未知标题】",
     "DeleteMusicText": "删除音乐时会同时删除文件并不可恢复，是否继续？"
+  },
+  "JxAudio.Web.Components.Pages.UserManager": {
+    "ChangePassword": "修改密码"
+  },
+  "JxAudio.Web.Vo.ResetPasswordVo": {
+    "NewPassword": "新密码",
+    "NewPassword.PlaceHolder": "请输入新密码",
+    "RePassword": "重复新密码",
+    "RePassword.PlaceHolder": "请重复输入新密码"
   }
 }
