@@ -82,10 +82,8 @@ public class BrowsingController : AudioController
     [HttpGet("/getMusicDirectory")]
     public async Task GetMusicDirectory(string? id)
     {
-        if (id.IsNullOrEmpty())
-        {
-            throw RestApiErrorException.RequiredParameterMissingError("id");
-        }
+        Util.CheckRequiredParameters(nameof(id), id);
+        
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
@@ -154,10 +152,8 @@ public class BrowsingController : AudioController
     [HttpGet("/getArtist")]
     public async Task GetArtist(string? id)
     {
-        if (id.IsNullOrEmpty())
-        {
-            throw RestApiErrorException.RequiredParameterMissingError("id");
-        }
+        Util.CheckRequiredParameters(nameof(id), id);
+        
         var artistId = id!.ParseArtistId();
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
         var apiUserId = apiContext?.User?.Id;
@@ -171,10 +167,8 @@ public class BrowsingController : AudioController
     [HttpGet("/getAlbum")]
     public async Task GetAlbum(string? id)
     {
-        if (id.IsNullOrEmpty())
-        {
-            throw RestApiErrorException.RequiredParameterMissingError("id");
-        }
+        Util.CheckRequiredParameters(nameof(id), id);
+        
         var albumId = id!.ParseAlbumId();
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
         var apiUserId = apiContext?.User?.Id;
@@ -188,10 +182,7 @@ public class BrowsingController : AudioController
     [HttpGet("/getSong")]
     public async Task GetSong(string? id)
     {
-        if (id.IsNullOrEmpty())
-        {
-            throw RestApiErrorException.RequiredParameterMissingError("id");
-        }
+        Util.CheckRequiredParameters(nameof(id), id);
 
         var trackId = id!.ParseTrackId();
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
@@ -206,22 +197,19 @@ public class BrowsingController : AudioController
     [HttpGet("/getVideos")]
     public void GetVideos()
     {
-        throw RestApiErrorException.GenericError("Not implemented.");
+        throw RestApiErrorException.NotImplemented();
     }
     
     [HttpGet("/getVideoInfo")]
     public void GetVideoInfo()
     {
-        throw RestApiErrorException.GenericError("Not implemented.");
+        throw RestApiErrorException.NotImplemented();
     }
     
     [HttpGet("/getArtistInfo")]
     public Task GetArtistInfo(string? id, int? count, bool includeNotPresent)
     {
-        if (id.IsNullOrEmpty())
-        {
-            throw RestApiErrorException.RequiredParameterMissingError("id");
-        }
+        Util.CheckRequiredParameters(nameof(id), id);
         
         var artistInfo = new ArtistInfo
         {
@@ -240,10 +228,7 @@ public class BrowsingController : AudioController
     [HttpGet("/getArtistInfo2")]
     public Task GetArtistInfo2(string? id, int? count, bool includeNotPresent)
     {
-        if (id.IsNullOrEmpty())
-        {
-            throw RestApiErrorException.RequiredParameterMissingError("id");
-        }
+        Util.CheckRequiredParameters(nameof(id), id);
         
         var artistInfo = new ArtistInfo2
         {

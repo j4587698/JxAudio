@@ -79,7 +79,7 @@ public static class SubsonicExtension
             return result;
         }
 
-        throw RestApiErrorException.GenericError($"Invalid id for '{id}'.");
+        throw RestApiErrorException.InvalidParameterError(nameof(id));
     }
     
     public static int ParseAlbumId(this string id)
@@ -89,7 +89,7 @@ public static class SubsonicExtension
             return result;
         }
 
-        throw RestApiErrorException.GenericError($"Invalid id for '{id}'.");
+        throw RestApiErrorException.InvalidParameterError(nameof(id));
     }
     
     public static int ParseTrackId(this string id)
@@ -99,7 +99,7 @@ public static class SubsonicExtension
             return result;
         }
 
-        throw RestApiErrorException.GenericError($"Invalid id for '{id}'.");
+        throw RestApiErrorException.InvalidParameterError(nameof(id));
     }
     
     public static int ParsePlaylistId(this string id)
@@ -109,7 +109,7 @@ public static class SubsonicExtension
             return result;
         }
 
-        throw RestApiErrorException.GenericError($"Invalid id for '{id}'.");
+        throw RestApiErrorException.InvalidParameterError(nameof(id));
     }
 
     public static Child CreateDirectoryChild(this AlbumID3 album)

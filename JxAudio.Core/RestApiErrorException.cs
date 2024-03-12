@@ -13,6 +13,16 @@ public sealed class RestApiErrorException : Exception
     }
 
     public int Code { get; }
+    
+    public static RestApiErrorException NotImplemented()
+    {
+        return new RestApiErrorException(0, "Not implemented.");
+    }
+    
+    public static RestApiErrorException InvalidParameterError(string parameter)
+    {
+        return new RestApiErrorException(5, $"Invalid value '{parameter}'.");
+    }
 
     public static RestApiErrorException GenericError(string message)
     {
