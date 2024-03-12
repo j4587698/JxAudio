@@ -222,4 +222,30 @@ public static class SubsonicExtension
             originalWidthSpecified = false
         };
     }
+
+    public static AlbumID3 CreateAlbumId3(this AlbumEntity albumEntity)
+    {
+        var artistServiceLocalizer = Application.GetRequiredService<IStringLocalizer<ArtistService>>();
+        return new AlbumID3()
+        {
+            id = albumEntity.Id.ToAlbumId(),
+            name = albumEntity.Title ?? artistServiceLocalizer!["NoAlbumName"],
+            artist = albumEntity.ArtistEntity?.Name ?? artistServiceLocalizer!["NoArtistName"],
+            artistId = albumEntity.ArtistId.ToArtistId(),
+            coverArt = albumEntity.PictureId.ToString(),
+            songCount = albumEntity.TrackEntities?.Count ?? 0,
+            duration = albumEntity.TrackEntities?.Sum(y => (int)y.Duration) ?? 0,
+            playCount = default,
+            playCountSpecified = false,
+            created = albumEntity.CreateTime,
+            starred = albumEntity.AlbumStarEntities?.Count > 0
+                ? albumEntity.AlbumStarEntities.First().CreateTime
+                : default,
+            starredSpecified = albumEntity.AlbumStarEntities?.Count > 0,
+            year = albumEntity.Year ?? 0,
+            yearSpecified = albumEntity.Year.HasValue,
+            genre = albumEntity.GenreEntity?.Name ?? ""
+        };
+    }
+    
 }

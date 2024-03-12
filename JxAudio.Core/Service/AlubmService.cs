@@ -64,4 +64,29 @@ public class AlbumService
 
         return albumId3;
     }
+
+    public async Task<AlbumList2> GetAlbumList2RandomAsync(Guid userId, int? musicFolderId, int count, CancellationToken cancellationToken)
+    {
+        var albums = await AlbumEntity.Where(x => x.TrackEntities!.Any(y =>
+                y.DirectoryEntity!.IsAccessControlled == false ||
+                y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
+            .WhereIf(musicFolderId != null, x => x.TrackEntities!.Any(y => y.DirectoryId == musicFolderId))
+            .Include(x => x.ArtistEntity)
+            .Include(x => x.GenreEntity)
+            .IncludeMany(x => x.AlbumStarEntities, then => then.Where(y => y.UserId == userId))
+            .IncludeMany(x => x.TrackEntities!.Select(y => new TrackEntity()
+            {
+                Id = y.Id,
+                Duration = y.Duration
+            }), then => then.Where(y => y.DirectoryEntity!.IsAccessControlled == false || y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
+            .OrderByRandom()
+            .Take(count)
+            .ToListAsync(cancellationToken);
+
+        return new AlbumList2()
+        {
+            album = albums.Select(x => x.CreateAlbumId3()).ToArray()
+        };
+    }
+
 }

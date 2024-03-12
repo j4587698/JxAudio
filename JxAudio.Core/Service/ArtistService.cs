@@ -83,24 +83,7 @@ public class ArtistService
         }
         
         var albumId3 = albums
-            .Select(x => new AlbumID3()
-        {
-            id = x.Id.ToAlbumId(),
-            name = x.Title ?? ArtistServiceLocalizer["NoAlbumName"],
-            artist = x.ArtistEntity?.Name ?? ArtistServiceLocalizer["NoArtistName"],
-            artistId = x.ArtistId.ToArtistId(),
-            coverArt = x.PictureId.ToString(),
-            songCount = x.TrackEntities?.Count ?? 0,
-            duration = x.TrackEntities?.Sum(y => (int)y.Duration) ?? 0,
-            playCount = default,
-            playCountSpecified = false,
-            created = x.CreateTime,
-            starred = x.AlbumStarEntities?.Count > 0 ? x.AlbumStarEntities.First().CreateTime : default,
-            starredSpecified = x.AlbumStarEntities?.Count > 0,
-            year = x.Year ?? 0,
-            yearSpecified = x.Year.HasValue,
-            genre = x.GenreEntity?.Name ?? ""
-        });
+            .Select(x => x.CreateAlbumId3());
 
         return new ArtistWithAlbumsID3()
         {
