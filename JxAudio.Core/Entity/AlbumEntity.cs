@@ -16,6 +16,9 @@ public class AlbumEntity : BaseEntity<AlbumEntity, int>
     [Description("播放次数")]
     public long PlayCount { get; set; }
 
+    [Description("最后播放时间")]
+    public DateTime? LatestPlayTime { get; set; }
+
     [Description("歌手Id")]
     public int ArtistId { get; set; }
 

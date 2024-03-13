@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using FreeSql;
 using JxAudio.Core.Attributes;
 using JxAudio.Core.Entity;
 using JxAudio.Core.Extensions;
@@ -14,15 +15,30 @@ public class AlbumService
     [Inject]
     [NotNull]
     private IStringLocalizer<ArtistService>? ArtistServiceLocalizer { get; set; }
+
+    private ISelect<AlbumEntity> GetAlbumBase(Guid? userId, int? musicFolderId)
+    {
+        return AlbumEntity.Where(x => x.TrackEntities!.Any(y =>
+                y.DirectoryEntity!.IsAccessControlled == false ||
+                y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
+            .WhereIf(musicFolderId != null, x => x.TrackEntities!.Any(y => y.DirectoryId == musicFolderId))
+            .Include(x => x.ArtistEntity)
+            .Include(x => x.GenreEntity)
+            .IncludeMany(x => x.AlbumStarEntities, then => then.Where(y => y.UserId == userId))
+            .IncludeMany(x => x.TrackEntities!.Select(y => new TrackEntity()
+                {
+                    Id = y.Id,
+                    Duration = y.Duration
+                }),
+                then => then.Where(y =>
+                    y.DirectoryEntity!.IsAccessControlled == false ||
+                    y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)));
+    }
+    
     
     public async Task<AlbumWithSongsID3> GetAlbumAsync(Guid userId, int albumId, CancellationToken cancellationToken)
     {
-        var album = await AlbumEntity.Where(x => x.Id == albumId && x.TrackEntities!.Any(y => 
-                y.DirectoryEntity!.IsAccessControlled == false || y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
-            .IncludeMany(x => x.TrackEntities, then => then.Where(y => y.DirectoryEntity!.IsAccessControlled == false || y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
-            .IncludeMany(x => x.AlbumStarEntities, then => then.Where(y => y.UserId == userId))
-            .Include(x => x.ArtistEntity)
-            .FirstAsync(cancellationToken);
+        var album = await GetAlbumBase(userId, null).FirstAsync(cancellationToken);
 
         if (album == null)
         {
@@ -67,18 +83,7 @@ public class AlbumService
 
     public async Task<AlbumList2> GetAlbumList2RandomAsync(Guid userId, int? musicFolderId, int count, CancellationToken cancellationToken)
     {
-        var albums = await AlbumEntity.Where(x => x.TrackEntities!.Any(y =>
-                y.DirectoryEntity!.IsAccessControlled == false ||
-                y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
-            .WhereIf(musicFolderId != null, x => x.TrackEntities!.Any(y => y.DirectoryId == musicFolderId))
-            .Include(x => x.ArtistEntity)
-            .Include(x => x.GenreEntity)
-            .IncludeMany(x => x.AlbumStarEntities, then => then.Where(y => y.UserId == userId))
-            .IncludeMany(x => x.TrackEntities!.Select(y => new TrackEntity()
-            {
-                Id = y.Id,
-                Duration = y.Duration
-            }), then => then.Where(y => y.DirectoryEntity!.IsAccessControlled == false || y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
+        var albums = await GetAlbumBase(userId, musicFolderId)
             .OrderByRandom()
             .Take(count)
             .ToListAsync(cancellationToken);
@@ -89,4 +94,94 @@ public class AlbumService
         };
     }
 
+    public async Task<AlbumList2> GetAlbumList2NewestAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    {
+        var albums = await GetAlbumBase(userId, musicFolderId)
+            .OrderByDescending(x => x.CreateTime)
+            .OrderBy(x => x.Id)
+            .Skip(offset)
+            .Take(count)
+            .ToListAsync(cancellationToken);
+
+        return new AlbumList2()
+        {
+            album = albums.Select(x => x.CreateAlbumId3()).ToArray()
+        };
+    }
+
+    public async Task<AlbumList2> GetAlbumList2FrequentAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    {
+        var albums = await GetAlbumBase(userId, musicFolderId)
+            .OrderByDescending(x => x.PlayCount)
+            .OrderBy(x => x.Id)
+            .Skip(offset)
+            .Take(count)
+            .ToListAsync(cancellationToken);
+
+        return new AlbumList2()
+        {
+            album = albums.Select(x => x.CreateAlbumId3()).ToArray()
+        };
+    }
+    
+    public async Task<AlbumList2> GetAlbumList2RecentAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    {
+        var albums = await GetAlbumBase(userId, musicFolderId)
+            .OrderByDescending(x => x.LatestPlayTime)
+            .OrderBy(x => x.Id)
+            .Skip(offset)
+            .Take(count)
+            .ToListAsync(cancellationToken);
+
+        return new AlbumList2()
+        {
+            album = albums.Select(x => x.CreateAlbumId3()).ToArray()
+        };
+    }
+    
+    public async Task<AlbumList2> GetAlbumList2OrderedByAlbumTitleAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    {
+        var albums = await GetAlbumBase(userId, musicFolderId)
+            .OrderBy(x => x.Title)
+            .OrderBy(x => x.Id)
+            .Skip(offset)
+            .Take(count)
+            .ToListAsync(cancellationToken);
+
+        return new AlbumList2()
+        {
+            album = albums.Select(x => x.CreateAlbumId3()).ToArray()
+        };
+    }
+    
+    public async Task<AlbumList2> GetAlbumList2OrderedByArtistNameAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    {
+        var albums = await GetAlbumBase(userId, musicFolderId)
+            .Where(x => x.ArtistEntity != null)
+            .OrderBy(x => x.ArtistEntity!.Name)
+            .OrderBy(x => x.Id)
+            .Skip(offset)
+            .Take(count)
+            .ToListAsync(cancellationToken);
+
+        return new AlbumList2()
+        {
+            album = albums.Select(x => x.CreateAlbumId3()).ToArray()
+        };
+    }
+    
+    public async Task<AlbumList2> GetAlbumList2StarredAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    {
+        var albums = await GetAlbumBase(userId, musicFolderId)
+            .OrderBy(x => x.Id)
+            .Skip(offset)
+            .Take(count)
+            .ToListAsync(cancellationToken);
+
+        return new AlbumList2()
+        {
+            album = albums.Where(x => x.AlbumStarEntities is { Count: > 0 })
+                .Select(x => x.CreateAlbumId3()).ToArray()
+        };
+    }
 }

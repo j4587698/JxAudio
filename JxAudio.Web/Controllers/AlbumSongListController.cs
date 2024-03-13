@@ -44,6 +44,25 @@ public class AlbumSongListController : AudioController
                 case "random":
                     albumList2 = await AlbumService.GetAlbumList2RandomAsync(apiUserId.Value, musicFolderId, size.Value, HttpContext.RequestAborted);
                     break;
+                case "newest":
+                    albumList2 = await AlbumService.GetAlbumList2NewestAsync(apiUserId.Value, musicFolderId,  offset.Value, size.Value, HttpContext.RequestAborted);
+                    break;
+                case "highest": // 与最高播放一致
+                case "frequent":
+                    albumList2 = await AlbumService.GetAlbumList2FrequentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    break;
+                case "recent":
+                    albumList2 = await AlbumService.GetAlbumList2RecentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    break;
+                case "alphabeticalByName":
+                    albumList2 = await AlbumService.GetAlbumList2OrderedByAlbumTitleAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    break;
+                case "alphabeticalByArtist":
+                    albumList2 = await AlbumService.GetAlbumList2OrderedByArtistNameAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    break;
+                case "starred":
+                    albumList2 = await AlbumService.GetAlbumList2StarredAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    break;
             }
 
             var albumList = new AlbumList()
