@@ -2,14 +2,17 @@
 @using JxAudio.Core.Entity
 @using Microsoft.Extensions.Localization
 @using System.Diagnostics.CodeAnalysis
+@using JxAudio.Web.Validators
 @using JxAudio.Web.Vo
 
 @inject IStringLocalizer<UserManager> StringLocalizer
+@inject IIconTheme IconTheme
+@inject MessageService MessageService
 
 <AdminTable TItem="UserEntity" ShowToolbar="true" ShowExtendButtons="true">
     <TableColumns>
         <TableColumn @bind-Field="@context.UserName"></TableColumn>
-        <TableColumn @bind-Field="@context.Password" Visible="false" IsVisibleWhenAdd="true" ComponentType="typeof(BootstrapPassword)"></TableColumn>
+        <TableColumn @bind-Field="@context.Password" Visible="false" IsVisibleWhenEdit="false" IsVisibleWhenAdd="true" ComponentType="typeof(BootstrapPassword)"></TableColumn>
         <TableColumn @bind-Field="@context.IsAdmin"></TableColumn>
         <TableColumn @bind-Field="@context.IsGuest"></TableColumn>
         <TableColumn @bind-Field="@context.MaxBitRate"></TableColumn>
@@ -23,18 +26,18 @@
 <Modal @ref="Modal">
     <ModalDialog IsCentered="true" Title="@StringLocalizer["ChangePassword"]" ShowFooter="false">
         <BodyTemplate>
-            <ValidateForm Model="_reSetPassword">
+            <ValidateForm @ref="ValidateForm" Model="_reSetPassword" OnValidSubmit="OnValidSubmit">
                 <div class="row g-3">
                     <div class="col-12">
                         <BootstrapPassword @bind-Value="_reSetPassword!.NewPassword"></BootstrapPassword>
                     </div>
                     <div class="col-12">
-                        <BootstrapPassword @bind-Value="_reSetPassword.RePassword"></BootstrapPassword>
+                        <BootstrapPassword @bind-Value="_reSetPassword.RePassword" ValidateRules="_validators"></BootstrapPassword>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <Button Text="Save"></Button>
-                    <Button Text="Close"></Button>
+                    <DialogCloseButton Text="@StringLocalizer["Close"]" Icon="@IconTheme.GetIconByKey(ComponentIcons.DialogCloseButtonIcon)"></DialogCloseButton>
+                    <Button ButtonType="ButtonType.Submit" Color="Color.Primary" Text="@StringLocalizer["ChangePassword"]" Icon="@IconTheme.GetIconByKey(ComponentIcons.DialogSaveButtonIcon)" ></Button>
                 </div>
             </ValidateForm>
         </BodyTemplate>
@@ -45,21 +48,33 @@
     
     [NotNull]
     private Modal? Modal { get; set; }
+    
+    [NotNull]
+    private ValidateForm? ValidateForm { get; set; }
 
     private ResetPasswordVo? _reSetPassword;
+    
+    private readonly List<IValidator> _validators = [new RePasswordValidator()];
 
-    private void ChangePassword(UserEntity userEntity)
+    private async Task ChangePassword(UserEntity userEntity)
     {
         _reSetPassword = new ResetPasswordVo()
         {
             UserEntity = userEntity
         };
-        Modal.Toggle();
+        await Modal.Toggle();
     }
 
-    private Task<bool> OnSaveAsync()
+    private async Task OnValidSubmit(EditContext arg)
     {
-        throw new NotImplementedException();
+        var userEntity = _reSetPassword!.UserEntity!;
+        userEntity.Password = _reSetPassword.NewPassword;
+        await userEntity.SaveAsync();
+        await Modal.Toggle();
+        await MessageService.Show(new MessageOption()
+        {
+            Content = StringLocalizer["Success"]
+        });
     }
 
 }

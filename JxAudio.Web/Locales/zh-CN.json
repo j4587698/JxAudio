@@ -12,6 +12,12 @@
   "JxAudio.Core.Attributes.IntAttribute": {
     "ErrorMessage": "{0}必须为整数"
   },
+  "JxAudio.Core.Attributes.GuidRequiredAttribute": {
+    "ErrorMessage": "{0}不能为空"
+  },
+  "System.ComponentModel.DataAnnotations.RequiredAttribute": {
+    "ErrorMessage": "{0}不能为空"
+  },
   "JxAudio.Web.Components.Layout.MainLayout": {
     "Home": "首页",
     "User": "用户管理",
@@ -54,20 +60,18 @@
   },
   "JxAudio.Core.Entity.UserEntity": {
     "UserName": "用户名",
+    "Password": "密码",
     "IsAdmin": "管理员",
     "IsGuest": "游客",
     "MaxBitRate": "最大比特率",
     "CanJukebox": "允许音乐盒",
-    "MaxBitRate.PlaceHolder": "允许最大比特率",
-    "UserName.Required": "{0}不能为空"
+    "MaxBitRate.PlaceHolder": "允许最大比特率"
   },
   "JxAudio.Core.Entity.GenreEntity": {
     "Name": "流派",
     "Count": "歌曲数量"
   },
-  "JxAudio.Core.Attributes.GuidRequiredAttribute": {
-    "ErrorMessage": "{0}不能为空"
-  },
+  
   "JxAudio.Web.Enums.SearchType": {
     "Interval": "时间间隔",
     "Cron": "Cron表达式"
@@ -98,7 +102,10 @@
     "DeleteMusicText": "删除音乐时会同时删除文件并不可恢复，是否继续？"
   },
   "JxAudio.Web.Components.Pages.UserManager": {
-    "ChangePassword": "修改密码"
+    "ChangePassword": "修改密码",
+    "Close": "关闭",
+    "RePassword": "两次密码输入不一致",
+    "Success": "修改成功"
   },
   "JxAudio.Web.Vo.ResetPasswordVo": {
     "NewPassword": "新密码",
