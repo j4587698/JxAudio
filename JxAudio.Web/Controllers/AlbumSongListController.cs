@@ -18,7 +18,7 @@ public class AlbumSongListController : AudioController
     private AlbumService? AlbumService { get; set; }
     
     [HttpGet("/getAlbumList")]
-    public async Task GetAlbumList(int? musicFolderId, string? type, int? size, int? offset)
+    public async Task GetAlbumList(int? musicFolderId, string? type, int? size, int? offset, int? fromYear, int? toYear, string? genre)
     {
         Util.CheckRequiredParameters(nameof(type), type);
         
@@ -63,6 +63,17 @@ public class AlbumSongListController : AudioController
                 case "starred":
                     albumList2 = await AlbumService.GetAlbumList2StarredAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
                     break;
+                case "byYear":
+                    Util.CheckRequiredParameters(nameof(fromYear), fromYear);
+                    Util.CheckRequiredParameters(nameof(toYear), toYear);
+                    albumList2 = await AlbumService.GetAlbumList2ByYearAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value,fromYear!.Value, toYear!.Value,  HttpContext.RequestAborted);
+                    break;
+                case "byGenre":
+                    Util.CheckRequiredParameters(nameof(genre), genre);
+                    albumList2 = await AlbumService.GetAlbumList2ByGenreAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, genre!, HttpContext.RequestAborted);
+                    break;
+                default:
+                    throw RestApiErrorException.InvalidParameterError("type");
             }
 
             var albumList = new AlbumList()
@@ -71,6 +82,69 @@ public class AlbumSongListController : AudioController
             };
 
             await HttpContext.WriteResponseAsync(ItemChoiceType.albumList, albumList);
+        }
+    }
+
+    [HttpGet("/getAlbumList2")]
+    public async Task GetAlbumList2(int? musicFolderId, string? type, int? size, int? offset, int? fromYear, int? toYear, string? genre)
+    {
+        Util.CheckRequiredParameters(nameof(type), type);
+        
+        size ??= 10;
+        if (size is < 1 or > 500)
+        {
+            throw RestApiErrorException.InvalidParameterError(nameof(size));
+        }
+        
+        offset ??= 0;
+        if (offset < 0)
+        {
+            throw RestApiErrorException.InvalidParameterError(nameof(offset));
+        }
+        
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            AlbumList2? albumList2 = null;
+            switch (type)
+            {
+                case "random":
+                    albumList2 = await AlbumService.GetAlbumList2RandomAsync(apiUserId.Value, musicFolderId, size.Value, HttpContext.RequestAborted);
+                    break;
+                case "newest":
+                    albumList2 = await AlbumService.GetAlbumList2NewestAsync(apiUserId.Value, musicFolderId,  offset.Value, size.Value, HttpContext.RequestAborted);
+                    break;
+                case "highest": // 与最高播放一致
+                case "frequent":
+                    albumList2 = await AlbumService.GetAlbumList2FrequentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    break;
+                case "recent":
+                    albumList2 = await AlbumService.GetAlbumList2RecentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    break;
+                case "alphabeticalByName":
+                    albumList2 = await AlbumService.GetAlbumList2OrderedByAlbumTitleAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    break;
+                case "alphabeticalByArtist":
+                    albumList2 = await AlbumService.GetAlbumList2OrderedByArtistNameAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    break;
+                case "starred":
+                    albumList2 = await AlbumService.GetAlbumList2StarredAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    break;
+                case "byYear":
+                    Util.CheckRequiredParameters(nameof(fromYear), fromYear);
+                    Util.CheckRequiredParameters(nameof(toYear), toYear);
+                    albumList2 = await AlbumService.GetAlbumList2ByYearAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value,fromYear!.Value, toYear!.Value,  HttpContext.RequestAborted);
+                    break;
+                case "byGenre":
+                    Util.CheckRequiredParameters(nameof(genre), genre);
+                    albumList2 = await AlbumService.GetAlbumList2ByGenreAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, genre!, HttpContext.RequestAborted);
+                    break;
+                default:
+                    throw RestApiErrorException.InvalidParameterError("type");
+            }
+            
+            await HttpContext.WriteResponseAsync(ItemChoiceType.albumList2, albumList2);
         }
     }
 }

@@ -116,11 +116,12 @@ public static class Util
         await memoryStream.CopyToAsync(response.Body);
     }
     
-    public static void CheckRequiredParameters(string name, string? value)
+    public static void CheckRequiredParameters<T>(string name, T? value)
     {
-        if (value.IsNullOrEmpty())
+        if (value == null)
         {
             throw RestApiErrorException.RequiredParameterMissingError(name);
         }
     }
+    
 }

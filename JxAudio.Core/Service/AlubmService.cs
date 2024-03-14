@@ -88,6 +88,11 @@ public class AlbumService
             .Take(count)
             .ToListAsync(cancellationToken);
 
+        if (albums is {Count: 0})
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+        
         return new AlbumList2()
         {
             album = albums.Select(x => x.CreateAlbumId3()).ToArray()
@@ -103,6 +108,11 @@ public class AlbumService
             .Take(count)
             .ToListAsync(cancellationToken);
 
+        if (albums is {Count: 0})
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+        
         return new AlbumList2()
         {
             album = albums.Select(x => x.CreateAlbumId3()).ToArray()
@@ -118,6 +128,11 @@ public class AlbumService
             .Take(count)
             .ToListAsync(cancellationToken);
 
+        if (albums is {Count: 0})
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+        
         return new AlbumList2()
         {
             album = albums.Select(x => x.CreateAlbumId3()).ToArray()
@@ -133,6 +148,11 @@ public class AlbumService
             .Take(count)
             .ToListAsync(cancellationToken);
 
+        if (albums is {Count: 0})
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+        
         return new AlbumList2()
         {
             album = albums.Select(x => x.CreateAlbumId3()).ToArray()
@@ -148,6 +168,11 @@ public class AlbumService
             .Take(count)
             .ToListAsync(cancellationToken);
 
+        if (albums is {Count: 0})
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+        
         return new AlbumList2()
         {
             album = albums.Select(x => x.CreateAlbumId3()).ToArray()
@@ -164,6 +189,11 @@ public class AlbumService
             .Take(count)
             .ToListAsync(cancellationToken);
 
+        if (albums is {Count: 0})
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+        
         return new AlbumList2()
         {
             album = albums.Select(x => x.CreateAlbumId3()).ToArray()
@@ -178,10 +208,55 @@ public class AlbumService
             .Take(count)
             .ToListAsync(cancellationToken);
 
+        if (albums is {Count: 0})
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+        
         return new AlbumList2()
         {
             album = albums.Where(x => x.AlbumStarEntities is { Count: > 0 })
                 .Select(x => x.CreateAlbumId3()).ToArray()
+        };
+    }
+    
+    public async Task<AlbumList2> GetAlbumList2ByYearAsync(Guid userId, int? musicFolderId, int offset, int count, int fromYear, int toYear, CancellationToken cancellationToken)
+    {
+        var albums = await GetAlbumBase(userId, musicFolderId)
+            .Where(x => x.Year >= fromYear && x.Year <= toYear)
+            .OrderBy(x => x.Id)
+            .Skip(offset)
+            .Take(count)
+            .ToListAsync(cancellationToken);
+
+        if (albums is {Count: 0})
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+        
+        return new AlbumList2()
+        {
+            album = albums.Select(x => x.CreateAlbumId3()).ToArray()
+        };
+    }
+    
+    public async Task<AlbumList2> GetAlbumList2ByGenreAsync(Guid userId, int? musicFolderId, int offset, int count, string genre, CancellationToken cancellationToken)
+    {
+        var albums = await GetAlbumBase(userId, musicFolderId)
+            .Where(x => x.GenreEntity!.Name == genre)
+            .OrderBy(x => x.Id)
+            .Skip(offset)
+            .Take(count)
+            .ToListAsync(cancellationToken);
+
+        if (albums is {Count: 0})
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+
+        return new AlbumList2()
+        {
+            album = albums.Select(x => x.CreateAlbumId3()).ToArray()
         };
     }
 }
