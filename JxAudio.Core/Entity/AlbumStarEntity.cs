@@ -5,7 +5,7 @@ using FreeSql.DataAnnotations;
 namespace JxAudio.Core.Entity;
 
 [Description("专辑星标表")]
-public class AlbumStarEntity: BaseEntity<AlbumEntity, int>
+public class AlbumStarEntity: BaseEntity<AlbumStarEntity, int>
 {
     [Description("用户Id")]
     [Column(IsPrimary = true)]

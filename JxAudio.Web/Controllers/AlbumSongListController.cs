@@ -188,5 +188,22 @@ public class AlbumSongListController : AudioController
             await HttpContext.WriteResponseAsync(ItemChoiceType.songsByGenre, songs);
         }
     }
+
+    [HttpGet("/getNowPlaying")]
+    public void GetNowPlaying()
+    {
+        throw RestApiErrorException.NotImplemented();
+    }
+
+    [HttpGet("/getStarred")]
+    public void GetStarred(int? musicFolderId)
+    {
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            
+        }
+    }
     
 }
