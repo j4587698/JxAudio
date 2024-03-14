@@ -58,4 +58,24 @@ public class TrackService
             song = songs.Select(x => x.CreateTrackChild()).ToArray()
         };
     }
+
+    public async Task<Songs> GetSongsByGenreAsync(Guid userId, int? musicFolderId, string genre, int offset, int count, CancellationToken cancellationToken)
+    {
+        var songs = await GetTrackBase(userId)
+            .Where(x => x.GenreEntity!.Name == genre)
+            .WhereIf(musicFolderId != null, x => x.DirectoryId == musicFolderId)
+            .Skip(offset)
+            .Take(count)
+            .ToListAsync(cancellationToken);
+
+        if (songs == null || songs.Count == 0)
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+        
+        return new Songs()
+        {
+            song = songs.Select(x => x.CreateTrackChild()).ToArray()
+        };
+    }
 }

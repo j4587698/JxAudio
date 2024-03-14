@@ -171,5 +171,22 @@ public class AlbumSongListController : AudioController
             await HttpContext.WriteResponseAsync(ItemChoiceType.randomSongs, randomSongs);
         }
     }
+
+    [HttpGet("/getSongsByGenre")]
+    public async Task GetSongsByGenre(int? musicFolderId, int? count, int? offset, string? genre)
+    {
+        Util.CheckRequiredParameters(nameof(genre), genre);
+        count ??= 10;
+        offset ??= 0;
+        
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            var songs = await TrackService.GetSongsByGenreAsync(apiUserId.Value, musicFolderId, genre!, offset.Value, count.Value, HttpContext.RequestAborted);
+
+            await HttpContext.WriteResponseAsync(ItemChoiceType.songsByGenre, songs);
+        }
+    }
     
 }
