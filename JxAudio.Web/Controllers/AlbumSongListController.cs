@@ -17,6 +17,10 @@ public class AlbumSongListController : AudioController
     [NotNull]
     private AlbumService? AlbumService { get; set; }
     
+    [Inject]
+    [NotNull]
+    private TrackService? TrackService { get; set; }
+    
     [HttpGet("/getAlbumList")]
     public async Task GetAlbumList(int? musicFolderId, string? type, int? size, int? offset, int? fromYear, int? toYear, string? genre)
     {
@@ -147,4 +151,25 @@ public class AlbumSongListController : AudioController
             await HttpContext.WriteResponseAsync(ItemChoiceType.albumList2, albumList2);
         }
     }
+
+    [HttpGet("/getRandomSongs")]
+    public async Task GetRandomSongs(int? musicFolderId, string? type, int? size, int? fromYear, int? toYear, string? genre)
+    {
+        size ??= 10;
+        if (size is < 1 or > 500)
+        {
+            throw RestApiErrorException.InvalidParameterError(nameof(size));
+        }
+        
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            var randomSongs = await TrackService.GetRandomSongsAsync(apiUserId.Value, musicFolderId, genre, fromYear, toYear,
+                size.Value, HttpContext.RequestAborted);
+
+            await HttpContext.WriteResponseAsync(ItemChoiceType.randomSongs, randomSongs);
+        }
+    }
+    
 }
