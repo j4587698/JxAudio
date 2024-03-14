@@ -21,6 +21,8 @@ public static class WebApplicationExtension
         Action<AppConfigOption>? configOption = null,
         Action<ContainerBuilder>? containerBuilder = null)
     {
+        Application.WebHostEnvironment = webApplicationBuilder.Environment;
+        
         var jsonPattern = @"^(?<name>[^.]+)(\.(?<env>[^.]+))?\.json$";
         var xmlPattern = @"^(?<name>[^.]+)(\.(?<env>[^.]+))?\.xml";
 

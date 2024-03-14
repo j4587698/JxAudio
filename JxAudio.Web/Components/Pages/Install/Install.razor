@@ -1,0 +1,36 @@
+﻿@page "/Install"
+@using JxAudio.Web.Components.Layout
+@using JxAudio.Web.Components.Components.Install
+
+@layout EmptyLayout
+
+<div class="container">
+    <Step @ref="_step" Items="_stepItems" class="install_step">
+        <FinishedTemplate>
+            <FinishStep></FinishStep>
+        </FinishedTemplate>
+    </Step>
+</div>
+
+@code {
+    private readonly List<StepOption> _stepItems = new List<StepOption>();
+
+    private Step? _step;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _stepItems.Add(new StepOption()
+        {
+            Template = BootstrapDynamicComponent.CreateComponent<DbSetup>(new Dictionary<string, object?>()
+            {
+                {nameof(StepBase.Next), () => { _step?.Next();StateHasChanged(); }},
+                {nameof(StepBase.Prev), () => { _step?.Prev();StateHasChanged(); }}
+            }).Render(),
+            Description = "配置使用的数据库",
+            Title = "配置数据库",
+            FinishedIcon = "fas fa-check"
+        });
+    }
+
+}

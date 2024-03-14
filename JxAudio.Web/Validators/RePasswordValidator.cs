@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using BootstrapBlazor.Components;
 using JxAudio.Core;
-using JxAudio.Web.Components.Pages;
+using JxAudio.Web.Components.Pages.Admin;
 using JxAudio.Web.Vo;
 using Microsoft.Extensions.Localization;
 
