@@ -221,4 +221,25 @@ public class AlbumSongListController : AudioController
         }
     }
     
+    [HttpGet("/getStarred2")]
+    public async Task GetStarred2(int? musicFolderId)
+    {
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            var artistsId3 = await ArtistService.GetStar2ArtistsId3(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
+            var albumsId3 = await AlbumService.GetStar2AlbumsId3(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
+            var tracks = await TrackService.GeStar2Songs(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
+
+            var starred = new Starred2()
+            {
+                artist = artistsId3,
+                album = albumsId3,
+                song = tracks
+            };
+
+            await HttpContext.WriteResponseAsync(ItemChoiceType.starred2, starred);
+        }
+    }
 }
