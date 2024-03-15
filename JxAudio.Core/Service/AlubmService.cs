@@ -268,4 +268,20 @@ public class AlbumService
         
         return albums.Select(x => x.CreateAlbumId3()).ToArray();
     }
+
+    public async Task<AlbumID3[]> GetSearch3AlbumId3(Guid userId, int? musicFolderId, string query, int albumCount, int albumOffset, CancellationToken cancellationToken)
+    {
+        if (albumCount == 0)
+        {
+            return Array.Empty<AlbumID3>();
+        }
+
+        var albums = await GetAlbumBase(userId, musicFolderId)
+            .Where(x => x.Title!.Contains(query))
+            .Skip(albumOffset)
+            .Take(albumCount)
+            .ToListAsync(cancellationToken);
+
+        return albums.Select(x => x.CreateAlbumId3()).ToArray();
+    }
 }

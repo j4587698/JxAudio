@@ -110,4 +110,20 @@ public class ArtistService
         
         return artist.Select(x => x.CreateArtistId3()).ToArray();
     }
+    
+    public async Task<ArtistID3[]> GetSearch3ArtistId3(Guid userId, int? musicFolderId, string query, int artistCount, int artistOffset, CancellationToken cancellationToken)
+    {
+        if (artistCount == 0)
+        {
+            return Array.Empty<ArtistID3>();
+        }
+
+        var artists = await GetArtistBase(userId, musicFolderId)
+            .Where(x => x.Name!.Contains(query))
+            .Skip(artistOffset)
+            .Take(artistCount)
+            .ToListAsync(cancellationToken);
+
+        return artists.Select(x => x.CreateArtistId3()).ToArray();
+    }
 }
