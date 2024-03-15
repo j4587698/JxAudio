@@ -78,4 +78,14 @@ public class TrackService
             song = songs.Select(x => x.CreateTrackChild()).ToArray()
         };
     }
+
+    public async Task<Child[]> GeStar2Songs(Guid userId, int? musicFolderId, CancellationToken cancellationToken)
+    {
+        var tracks = await GetTrackBase(userId)
+            .WhereIf(musicFolderId != null, x => x.DirectoryId == musicFolderId)
+            .Where(x => x.TrackStarEntities!.Any(y => y.UserId == userId))
+            .ToListAsync(cancellationToken);
+
+        return tracks.Select(x => x.CreateTrackChild()).ToArray();
+    }
 }

@@ -259,4 +259,13 @@ public class AlbumService
             album = albums.Select(x => x.CreateAlbumId3()).ToArray()
         };
     }
+    
+    public async Task<AlbumID3[]> GetStar2AlbumsId3(Guid userId, int? musicFolderId, CancellationToken cancellationToken)
+    {
+        var albums = await GetAlbumBase(userId, musicFolderId)
+            .Where(x => x.AlbumStarEntities!.Any(y => y.UserId == userId))
+            .ToListAsync(cancellationToken);
+        
+        return albums.Select(x => x.CreateAlbumId3()).ToArray();
+    }
 }

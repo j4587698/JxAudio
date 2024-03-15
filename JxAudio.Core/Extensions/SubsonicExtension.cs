@@ -238,14 +238,39 @@ public static class SubsonicExtension
             playCount = default,
             playCountSpecified = false,
             created = albumEntity.CreateTime,
-            starred = albumEntity.AlbumStarEntities?.Count > 0
-                ? albumEntity.AlbumStarEntities.First().CreateTime
-                : default,
+            starred = albumEntity.AlbumStarEntities?.FirstOrDefault()?.CreateTime ?? default,
             starredSpecified = albumEntity.AlbumStarEntities?.Count > 0,
             year = albumEntity.Year ?? 0,
             yearSpecified = albumEntity.Year.HasValue,
             genre = albumEntity.GenreEntity?.Name ?? ""
         };
     }
-    
+
+    public static ArtistID3 CreateArtistId3(this ArtistEntity artistEntity)
+    {
+        return new ArtistID3()
+        {
+            albumCount = artistEntity.AlbumEntities?.Count ?? 0,
+            coverArt = null,
+            id = artistEntity.Id.ToArtistId(),
+            name = artistEntity.Name,
+            starred = artistEntity.ArtistStarEntities?.FirstOrDefault()?.CreateTime ?? default,
+            starredSpecified = artistEntity.ArtistStarEntities?.Count > 0
+        };
+    }
+
+    public static Artist CreateArtist(this ArtistID3 artistId3)
+    {
+        return new Artist()
+        {
+            id = artistId3.id,
+            name = artistId3.name,
+            starred = artistId3.starred,
+            starredSpecified = artistId3.starredSpecified,
+            userRating = default,
+            userRatingSpecified = false,
+            averageRating = default,
+            averageRatingSpecified = false,
+        };
+    }
 }

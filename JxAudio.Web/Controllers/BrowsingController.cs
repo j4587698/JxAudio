@@ -62,17 +62,7 @@ public class BrowsingController : AudioController
                 index = id3.index.Select(x => new Index()
                 {
                     name = x.name,
-                    artist = x.artist.Select(y => new Artist()
-                    {
-                        id = y.id,
-                        name = y.name,
-                        starred = y.starred,
-                        starredSpecified = y.starredSpecified,
-                        userRating = default,
-                        userRatingSpecified = false,
-                        averageRating = default,
-                        averageRatingSpecified = false,
-                    }).ToArray()
+                    artist = x.artist.Select(y => y.CreateArtist()).ToArray()
                 }).ToArray()
             };
             await HttpContext.WriteResponseAsync(ItemChoiceType.indexes, index);

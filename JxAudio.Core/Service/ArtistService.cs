@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using FreeSql;
 using JxAudio.Core.Attributes;
 using JxAudio.Core.Entity;
 using JxAudio.Core.Extensions;
@@ -15,23 +16,27 @@ public class ArtistService
     [Inject]
     [NotNull]
     private IStringLocalizer<ArtistService>? ArtistServiceLocalizer { get; set; }
+
+    private ISelect<ArtistEntity> GetArtistBase(Guid userId, int? musicFolderId)
+    {
+        return ArtistEntity.Where(x => x.TrackEntities!.Any(y =>
+                y.DirectoryEntity!.IsAccessControlled == false ||
+                y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
+            .WhereIf(musicFolderId != null, x => x.TrackEntities!.Any(y => y.DirectoryId == musicFolderId))
+            .IncludeMany(x => x.ArtistStarEntities, then => then.Where(y => y.UserId == userId))
+            .IncludeMany(x => x.AlbumEntities!.Select(y => new AlbumEntity()
+            {
+                Id = x.Id
+            }));
+    }
     
     public async Task<ArtistsID3> GetArtistsAsync(Guid userId, int? musicFolderId, long? ifModifiedSince, CancellationToken cancellationToken)
     {
-        var artist = await ArtistEntity.Select
-            .WhereIf(musicFolderId != null, x => x.TrackEntities!.Any(y => y.DirectoryId == musicFolderId))
-            .WhereIf(ifModifiedSince != null, x => x.CreateTime > DateTimeOffset.FromUnixTimeMilliseconds(ifModifiedSince!.Value))
-            .IncludeMany(x => x.ArtistStarEntities, then => then.Where(y => y.UserId == userId))
+        var artist = await GetArtistBase(userId, musicFolderId)
+            .WhereIf(ifModifiedSince != null,
+                x => x.CreateTime > DateTimeOffset.FromUnixTimeMilliseconds(ifModifiedSince!.Value))
             .ToListAsync(cancellationToken);
-        var id3List = artist.Select(x => new ArtistID3()
-        {
-            albumCount = (int)AlbumEntity.Select.Where(y => y.ArtistId == x.Id).Count(),
-            coverArt = null,
-            id = x.Id.ToString(),
-            name = x.Name,
-            starred = x.ArtistStarEntities?.Count > 0 ? x.ArtistStarEntities.First().CreateTime : default,
-            starredSpecified = x.ArtistStarEntities?.Count > 0
-        })
+        var id3List = artist.Select(x => x.CreateArtistId3())
         .GroupBy(x =>
         {
             string name = x.name;
@@ -95,5 +100,14 @@ public class ArtistService
             coverArt = null,
             albumCount = albums.Count
         };
+    }
+
+    public async Task<ArtistID3[]> GetStar2ArtistsId3(Guid userId, int? musicFolderId, CancellationToken cancellationToken)
+    {
+        var artist = await GetArtistBase(userId, musicFolderId)
+            .Where(x => x.ArtistStarEntities!.Any(y => y.UserId == userId))
+            .ToListAsync(cancellationToken);
+        
+        return artist.Select(x => x.CreateArtistId3()).ToArray();
     }
 }

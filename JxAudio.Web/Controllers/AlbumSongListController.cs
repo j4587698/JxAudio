@@ -15,6 +15,10 @@ public class AlbumSongListController : AudioController
 {
     [Inject]
     [NotNull]
+    private ArtistService? ArtistService { get; set; }
+    
+    [Inject]
+    [NotNull]
     private AlbumService? AlbumService { get; set; }
     
     [Inject]
@@ -196,13 +200,24 @@ public class AlbumSongListController : AudioController
     }
 
     [HttpGet("/getStarred")]
-    public void GetStarred(int? musicFolderId)
+    public async Task GetStarred(int? musicFolderId)
     {
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            
+            var artistsId3 = await ArtistService.GetStar2ArtistsId3(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
+            var albumsId3 = await AlbumService.GetStar2AlbumsId3(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
+            var tracks = await TrackService.GeStar2Songs(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
+
+            var starred = new Starred()
+            {
+                artist = artistsId3.Select(x => x.CreateArtist()).ToArray(),
+                album = albumsId3.Select(x => x.CreateDirectoryChild()).ToArray(),
+                song = tracks
+            };
+
+            await HttpContext.WriteResponseAsync(ItemChoiceType.starred, starred);
         }
     }
     
