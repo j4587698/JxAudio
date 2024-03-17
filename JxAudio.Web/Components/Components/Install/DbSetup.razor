@@ -3,8 +3,10 @@
 @using JxAudio.Core.Enums
 @using JxAudio.Core.Options
 @using JxAudio.Web.Validators
+@using Microsoft.Extensions.Localization
 @inherits StepBase
 @inject SwalService SwalService
+@inject IStringLocalizer<DbSetup> DbStringLocalizer
 
 <ValidateForm Model="@DbConfig" OnValidSubmit="@OnSubmit">
     <GroupBox class="install_content">
@@ -56,11 +58,29 @@
         DbConfig = new DbConfigOption(){DbType = "Sqlite", Prefix = "jx_", DbName = $"{Application.WebHostEnvironment.ContentRootPath}/config/JxAudio.db"};
     }
     
-    private Task OnSubmit(EditContext arg)
+    private async Task OnSubmit(EditContext arg)
     {
-
+        var ret = Setup.SetupDb(DbConfig);
+        if (!ret.isSuccess)
+        {
+            await SwalService.Show(new SwalOption()
+            {
+                Category = SwalCategory.Error,
+                Title = DbStringLocalizer["Fail"],
+                Content = ret.msg
+            });
+        }
+        if (!Setup.CreateTables(DbConfig))
+        {
+            await SwalService.Show(new SwalOption()
+            {
+                Category = SwalCategory.Error,
+                Title = DbStringLocalizer["Fail"],
+                Content = DbStringLocalizer["CreateTableFail"],
+            });
+            return;
+        }
         Next?.Invoke();
-        return Task.CompletedTask;
     }
     
     private Task OnSelectedItemChanged(SelectedItem arg)
@@ -75,27 +95,27 @@
                     DbConfig.DbPort = null;
                     DbConfig.Username = null;
                     DbConfig.Password = null;
-                    DbConfig.DbName = $"{Application.WebHostEnvironment.ContentRootPath}/config/JxPhotos.db";
+                    DbConfig.DbName = $"{Application.WebHostEnvironment.ContentRootPath}/config/JxAudio.db";
                     break;
                 case DbType.Mysql:
                     _needShow = true;
                     DbConfig.DbPort = "3306";
-                    DbConfig.DbName = "JxPhotos";
+                    DbConfig.DbName = "JxAudio";
                     break;
                 case DbType.SqlServer:
                     _needShow = true;
                     DbConfig.DbPort = "1433";
-                    DbConfig.DbName = "JxPhotos";
+                    DbConfig.DbName = "JxAudio";
                     break;
                 case DbType.Oracle:
                     _needShow = true;
                     DbConfig.DbPort = "1521";
-                    DbConfig.DbName = "JxPhotos";
+                    DbConfig.DbName = "JxAudio";
                     break;
                 case DbType.Postgresql:
                     _needShow = true;
                     DbConfig.DbPort = "5432";
-                    DbConfig.DbName = "JxPhotos";
+                    DbConfig.DbName = "JxAudio";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

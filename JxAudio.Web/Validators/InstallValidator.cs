@@ -8,9 +8,9 @@ using Microsoft.Extensions.Localization;
 
 namespace JxAudio.Web.Validators;
 
-public class InstallValidator: ValidatorBase
+public class InstallValidator : ValidatorBase
 {
-     /// <summary>
+    /// <summary>
     /// 校验规则
     /// </summary>
     /// <param name="propertyValue"></param>
@@ -28,28 +28,33 @@ public class InstallValidator: ValidatorBase
                     case nameof(dbConfig.DbUrl):
                         if (dbConfig.DbUrl.IsNullOrEmpty())
                         {
-                            results.Add(new ValidationResult(stringLocalizer!["NotNull"], new[] { context.MemberName }));
+                            results.Add(new ValidationResult(
+                                string.Format(stringLocalizer!["NotNull"], context.DisplayName),
+                                new[] { context.MemberName }));
                         }
 
                         break;
                     case nameof(dbConfig.DbPort):
                         if (dbConfig.DbPort.IsNullOrEmpty())
                         {
-                            results.Add(new ValidationResult(stringLocalizer!["NotNull"], new[] { context.MemberName }));
+                            results.Add(new ValidationResult(string.Format(stringLocalizer!["NotNull"], context.DisplayName),
+                                new[] { context.MemberName }));
                         }
 
                         break;
                     case nameof(dbConfig.Username):
                         if (dbConfig.Username.IsNullOrEmpty())
                         {
-                            results.Add(new ValidationResult(stringLocalizer!["NotNull"], new[] { context.MemberName }));
+                            results.Add(new ValidationResult(string.Format(stringLocalizer!["NotNull"], context.DisplayName),
+                                new[] { context.MemberName }));
                         }
 
                         break;
                     case nameof(dbConfig.Password):
                         if (dbConfig.Password.IsNullOrEmpty())
                         {
-                            results.Add(new ValidationResult(stringLocalizer!["NotNull"], new[] { context.MemberName }));
+                            results.Add(new ValidationResult(string.Format(stringLocalizer!["NotNull"], context.DisplayName),
+                                new[] { context.MemberName }));
                         }
 
                         break;

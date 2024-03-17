@@ -6,6 +6,11 @@
     "NoArtistName": "[未知歌手]",
     "NoAlbumName": "[未知专辑]"
   },
+  "JxAudio.Core.Setup": {
+    "InvalidDbType": "数据库类型错误",
+    "InitDbFail": "数据库初始化失败",
+    "ConnectDbFail": "连接数据库失败"
+  },
   "JxAudio.Core.Attributes.CronAttribute": {
     "ErrorMessage": "Cron表达式有误"
   },
@@ -27,6 +32,28 @@
     "Genre": "流派管理",
     "Music": "音乐管理",
     "Setting": "系统设置"
+  },
+  "JxAudio.Core.Enums.DbType": {
+    "Sqlite": "Sqlite",
+    "Mysql": "Mysql",
+    "SqlServer": "SQL Server",
+    "Oracle": "Oracle",
+    "Postgresql": "Postgresql"
+  },
+  "JxAudio.Core.Options.DbConfigOption": {
+    "DbType": "数据库类型",
+    "DbUrl": "数据库地址(Sqlite为全路径)",
+    "DbUrl.PlaceHolder": "请输入数据库地址",
+    "DbPort": "数据库端口号",
+    "DbPort.PlaceHolder": "请输入端口号",
+    "DbName": "数据库名",
+    "DbName.PlaceHolder": "请输入数据库名",
+    "Username": "数据库用户名",
+    "Username.PlaceHolder": "请输入用户名",
+    "Password": "数据库密码",
+    "Password.PlaceHolder": "请输入密码",
+    "Prefix": "表前缀",
+    "Prefix.PlaceHolder": "请输入表前缀"
   },
   "JxAudio.Core.Entity.DirectoryEntity": {
     "Provider": "提供者",
@@ -76,6 +103,9 @@
     "Interval": "时间间隔",
     "Cron": "Cron表达式"
   },
+  "JxAudio.Web.Validators.InstallValidator": {
+    "NotNull": "{0}不能为空"
+  },
   "JxAudio.Web.Vo.SettingsVo": {
     "ScanInterval": "扫描间隔",
     "SearchType": "扫描时间设置方式",
@@ -90,6 +120,12 @@
     "Minute": "分",
     "Hour": "小时",
     "Day": "天"
+  },
+  "JxAudio.Web.Components.Pages.Install.Install": {
+    "Language": "语言选择",
+    "LanguageDesc": "选择您的语言",
+    "Db": "数据库配置",
+    "DbDesc": "配置您的数据库信息"
   },
   "JxAudio.Web.Components.Pages.Settings": {
     "Title": "系统设置",
@@ -106,6 +142,10 @@
     "Close": "关闭",
     "RePassword": "两次密码输入不一致",
     "Success": "修改成功"
+  },
+  "JxAudio.Web.Components.Components.Install": {
+    "Fail": "失败",
+    "CreateTableFail": "建表失败"
   },
   "JxAudio.Web.Vo.ResetPasswordVo": {
     "NewPassword": "新密码",

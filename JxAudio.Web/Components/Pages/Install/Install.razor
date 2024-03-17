@@ -1,6 +1,9 @@
 ﻿@page "/Install"
 @using JxAudio.Web.Components.Layout
 @using JxAudio.Web.Components.Components.Install
+@using Microsoft.Extensions.Localization
+
+@inject IStringLocalizer<Install> InstallLocalizer
 
 @layout EmptyLayout
 
@@ -22,13 +25,24 @@
         base.OnInitialized();
         _stepItems.Add(new StepOption()
         {
+            Template = BootstrapDynamicComponent.CreateComponent<CultureSelect>(new Dictionary<string, object?>()
+            {
+                {nameof(StepBase.Next), () => { _step?.Next();StateHasChanged(); }},
+                {nameof(StepBase.Prev), () => { _step?.Prev();StateHasChanged(); }}
+            }).Render(),
+            Description = InstallLocalizer["LanguageDesc"],
+            Title = InstallLocalizer["Language"],
+            FinishedIcon = "fas fa-check"
+        });
+        _stepItems.Add(new StepOption()
+        {
             Template = BootstrapDynamicComponent.CreateComponent<DbSetup>(new Dictionary<string, object?>()
             {
                 {nameof(StepBase.Next), () => { _step?.Next();StateHasChanged(); }},
                 {nameof(StepBase.Prev), () => { _step?.Prev();StateHasChanged(); }}
             }).Render(),
-            Description = "配置使用的数据库",
-            Title = "配置数据库",
+            Description = InstallLocalizer["DbDesc"],
+            Title = InstallLocalizer["Db"],
             FinishedIcon = "fas fa-check"
         });
     }
