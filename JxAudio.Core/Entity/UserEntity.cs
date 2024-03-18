@@ -15,6 +15,9 @@ public class UserEntity : BaseEntity<UserEntity, Guid>
     [Description("密码")]
     public string? Password { get; set; }
 
+    [Description("Email")]
+    public string? Email { get; set; }
+
     [Description("允许最大bit")]
     public int MaxBitRate { get; set; }
 

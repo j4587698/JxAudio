@@ -7,6 +7,8 @@ namespace JxAudio.Web.Utils;
 
 public static class Util
 {
+    public static bool IsInstalled = false;
+    
     public static string HexDecodePassword(string password)
     {
         if (password.StartsWith("enc:", StringComparison.Ordinal))
