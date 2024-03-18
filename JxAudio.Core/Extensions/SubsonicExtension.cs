@@ -273,4 +273,23 @@ public static class SubsonicExtension
             averageRatingSpecified = false,
         };
     }
+
+    public static Playlist CreatePlaylist(this PlaylistEntity playlistEntity)
+    {
+        return new Playlist()
+        {
+            allowedUser = null,
+            id = playlistEntity.Id.ToPlaylistId(),
+            name = playlistEntity.Name ?? "",
+            comment = playlistEntity.Description ?? "",
+            owner = playlistEntity.UserEntity?.UserName ?? "",
+            @public = playlistEntity.IsPublic,
+            publicSpecified = true,
+            songCount = playlistEntity.TrackEntities?.Count ?? 0,
+            duration = playlistEntity.TrackEntities?.Sum(y => (int)y.Duration) ?? 0,
+            created = playlistEntity.CreateTime,
+            changed = playlistEntity.UpdateTime,
+            coverArt = null
+        };
+    }
 }
