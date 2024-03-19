@@ -129,4 +129,74 @@ public class PlaylistService
         await playlist.SaveAsync();
         await playlist.SaveManyAsync(nameof(playlist.TrackEntities));
     }
+
+    public async Task UpdatePlaylistAsync(Guid userId, int playlistId, string? name, string? comment, bool? @public, List<int>? songId, int[]? songIndexToRemove, CancellationToken cancellationToken)
+    {
+        if (songId != null)
+        {
+            if (await TrackEntity.Where(x => songId.Contains(x.Id)).CountAsync(cancellationToken) != songId.Count)
+            {
+                throw RestApiErrorException.DataNotFoundError();
+            }
+        }
+        
+        var playlist = await PlaylistEntity
+            .Where(x => (x.UserId == userId || x.IsPublic) && x.Id == playlistId)
+            .IncludeMany(x => x.TrackEntities!.Select(y => new TrackEntity(){Id = y.Id}),
+                then => then.Where(y => y.DirectoryEntity!.IsAccessControlled == false ||
+                                        y.DirectoryEntity.UserEntities!.Any(z =>
+                                            z.Id == userId)))
+            .FirstAsync(cancellationToken);
+        if (playlist == null)
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+        
+        if (playlist.UserId != userId)
+        {
+            throw RestApiErrorException.UserNotAuthorizedError();
+        }
+
+        if (songIndexToRemove is { Length: > 0 } && playlist.TrackEntities is List<TrackEntity> trackEntities)
+        {
+            foreach (var i in songIndexToRemove.OrderDescending())
+            {
+                if (trackEntities.Count > i)
+                {
+                    trackEntities.RemoveAt(i);
+                }
+            }
+        }
+
+        if (!name.IsNullOrEmpty())
+        {
+            playlist.Name = name;
+        }
+
+        if (!comment.IsNullOrEmpty())
+        {
+            playlist.Description = comment;
+        }
+        
+        if (@public != null)
+        {
+            playlist.IsPublic = @public.Value;
+        }
+
+        playlist.TrackEntities ??= new List<TrackEntity>();
+
+        if (playlist.TrackEntities is List<TrackEntity> trackEntities1)
+        {
+            if (songId != null)
+            {
+                trackEntities1.AddRange(songId.Select(x => new TrackEntity()
+                {
+                    Id = x
+                }));
+            }
+        }
+        
+        await playlist.SaveAsync();
+        await playlist.SaveManyAsync(nameof(playlist.TrackEntities));
+    }
 }

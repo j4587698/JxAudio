@@ -71,4 +71,22 @@ public class PlaylistsController: AudioController
             await HttpContext.WriteResponseAsync(ItemChoiceType.playlist, playlist);
         }
     }
+
+    [HttpGet("/updatePlaylist")]
+    public async Task UpdatePlaylist(string? playlistId, string? name, string? comment, bool? @public, string[]? songIdToAdd, int[]? songIndexToRemove)
+    {
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            Util.CheckRequiredParameters(nameof(playlistId), playlistId);
+
+            await PlaylistService.UpdatePlaylistAsync(apiUserId.Value, playlistId!.ParsePlaylistId(), name, comment, @public,
+                songIdToAdd?.Select(x => x.ParseTrackId()).ToList(), songIndexToRemove, HttpContext.RequestAborted);
+        
+            var playlist = await PlaylistService.GetPlaylistAsync(apiUserId.Value, playlistId!.ParsePlaylistId(), HttpContext.RequestAborted);
+            
+            await HttpContext.WriteResponseAsync(ItemChoiceType.playlist, playlist);
+        }
+    }
 }
