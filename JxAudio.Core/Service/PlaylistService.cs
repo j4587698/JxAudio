@@ -33,4 +33,37 @@ public class PlaylistService
             playlist = playlists.Select(x => x.CreatePlaylist()).ToArray()
         };
     }
+
+    public async Task<PlaylistWithSongs> GetPlaylistAsync(Guid userId, int playlistId, CancellationToken cancellationToken)
+    {
+        var playlist = await PlaylistEntity.Where(x => (x.IsPublic || x.UserId == userId) && x.Id == playlistId)
+            .Include(x => x.UserEntity)
+            .IncludeMany(x => x.TrackEntities,
+                then => then.Where(y => y.DirectoryEntity!.IsAccessControlled == false ||
+                                        y.DirectoryEntity.UserEntities!.Any(z =>
+                                            z.Id == userId)))
+            .FirstAsync(cancellationToken);
+
+        if (playlist == null)
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+
+        return new PlaylistWithSongs()
+        {
+            allowedUser = null,
+            id = playlist.Id.ToPlaylistId(),
+            name = playlist.Name,
+            comment = playlist.Description,
+            owner = playlist.UserEntity?.UserName,
+            @public = playlist.IsPublic,
+            publicSpecified = true,
+            songCount = playlist.TrackEntities?.Count ?? 0,
+            duration = playlist.TrackEntities?.Sum(x => (int)x.Duration) ?? 0,
+            created = playlist.CreateTime,
+            changed = playlist.UpdateTime,
+            coverArt = null,
+            entry = playlist.TrackEntities?.Select(x => x.CreateTrackChild()).ToArray()
+        };
+    }
 }
