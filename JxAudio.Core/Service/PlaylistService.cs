@@ -1,4 +1,5 @@
 ﻿using FreeSql;
+using Jx.Toolbox.Extensions;
 using JxAudio.Core.Attributes;
 using JxAudio.Core.Entity;
 using JxAudio.Core.Extensions;
@@ -19,7 +20,7 @@ public class PlaylistService
 
     public async Task<Playlists> GetPlaylistsAsync(Guid apiUserId, CancellationToken cancellationToken)
     {
-        var playlists = await GetPlaylistBase(apiUserId)
+        var playlists = await PlaylistEntity.Where(x => x.UserId == apiUserId || x.IsPublic)
             .Include(x => x.UserEntity)
             .IncludeMany(x => x.TrackEntities!.Select(y => new TrackEntity()
             {
@@ -41,7 +42,9 @@ public class PlaylistService
             .IncludeMany(x => x.TrackEntities,
                 then => then.Where(y => y.DirectoryEntity!.IsAccessControlled == false ||
                                         y.DirectoryEntity.UserEntities!.Any(z =>
-                                            z.Id == userId)))
+                                            z.Id == userId))
+                    .Include(y => y.AlbumEntity)
+                    .IncludeMany(y => y.ArtistEntities))
             .FirstAsync(cancellationToken);
 
         if (playlist == null)
@@ -65,5 +68,65 @@ public class PlaylistService
             coverArt = null,
             entry = playlist.TrackEntities?.Select(x => x.CreateTrackChild()).ToArray()
         };
+    }
+
+    public async Task<string> CreatePlaylistAsync(Guid userId, string name, List<int>? songId, CancellationToken cancellationToken)
+    {
+        if (songId != null)
+        {
+            if (await TrackEntity.Where(x => songId.Contains(x.Id)).CountAsync(cancellationToken) != songId.Count)
+            {
+                throw RestApiErrorException.DataNotFoundError();
+            }
+        }
+        
+        var playlist = new PlaylistEntity()
+        {
+            Name = name,
+            UserId = userId,
+            IsPublic = false,
+            TrackEntities = songId?.Select(x => new TrackEntity()
+            {
+                Id = x
+            }).ToList()
+        };
+        await playlist.SaveAsync();
+        await playlist.SaveManyAsync(nameof(playlist.TrackEntities));
+
+        return playlist.Id.ToPlaylistId();
+    }
+
+    public async Task RecreatePlaylistAsync(Guid userId, int playlistId, string? name, List<int>? songId, CancellationToken cancellationToken)
+    {
+        if (songId != null)
+        {
+            if (await TrackEntity.Where(x => songId.Contains(x.Id)).CountAsync(cancellationToken) != songId.Count)
+            {
+                throw RestApiErrorException.DataNotFoundError();
+            }
+        }
+        
+        var playlist = await PlaylistEntity.Where(x => (x.UserId == userId || x.IsPublic) && x.Id == playlistId).FirstAsync(cancellationToken);
+        if (playlist == null)
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+
+        if (playlist.UserId != userId)
+        {
+            throw RestApiErrorException.UserNotAuthorizedError();
+        }
+
+        if (!name.IsNullOrEmpty())
+        {
+            playlist.Name = name;
+        }
+        
+        playlist.TrackEntities = songId?.Select(x => new TrackEntity()
+        {
+            Id = x
+        }).ToList();
+        await playlist.SaveAsync();
+        await playlist.SaveManyAsync(nameof(playlist.TrackEntities));
     }
 }

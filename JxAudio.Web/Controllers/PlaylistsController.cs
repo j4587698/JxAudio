@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Jx.Toolbox.Extensions;
 using JxAudio.Core.Extensions;
 using JxAudio.Core.Service;
 using JxAudio.Core.Subsonic;
@@ -40,6 +41,32 @@ public class PlaylistsController: AudioController
         if (apiUserId != null)
         {
             var playlist = await PlaylistService.GetPlaylistAsync(apiUserId.Value, playlistId, HttpContext.RequestAborted);
+            
+            await HttpContext.WriteResponseAsync(ItemChoiceType.playlist, playlist);
+        }
+    }
+
+    [HttpGet("/createPlaylist")]
+    public async Task CreatePlaylist(string? playlistId, string? name, string[]? songId)
+    {
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            if (playlistId.IsNullOrEmpty())
+            {
+                Util.CheckRequiredParameters(nameof(name), name);
+
+                playlistId = await PlaylistService.CreatePlaylistAsync(apiUserId.Value, name!,
+                    songId?.Select(x => x.ParseTrackId()).ToList(), HttpContext.RequestAborted);
+            }
+            else
+            {
+                await PlaylistService.RecreatePlaylistAsync(apiUserId.Value, playlistId!.ParsePlaylistId(), name,
+                    songId?.Select(x => x.ParseTrackId()).ToList(), HttpContext.RequestAborted);
+            }
+            
+            var playlist = await PlaylistService.GetPlaylistAsync(apiUserId.Value, playlistId!.ParsePlaylistId(), HttpContext.RequestAborted);
             
             await HttpContext.WriteResponseAsync(ItemChoiceType.playlist, playlist);
         }
