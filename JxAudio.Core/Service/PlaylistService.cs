@@ -199,4 +199,14 @@ public class PlaylistService
         await playlist.SaveAsync();
         await playlist.SaveManyAsync(nameof(playlist.TrackEntities));
     }
+    
+    public async Task DeletePlaylistAsync(Guid userId, int playlistId, CancellationToken cancellationToken)
+    {
+        var playlistRepository = BaseEntity.Orm.GetRepository<PlaylistEntity>();
+        var playlist = await playlistRepository.DeleteCascadeByDatabaseAsync(x => x.Id == playlistId && x.UserId == userId, cancellationToken: cancellationToken);
+        if (playlist is {Count:0})
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+    }
 }

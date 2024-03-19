@@ -89,4 +89,19 @@ public class PlaylistsController: AudioController
             await HttpContext.WriteResponseAsync(ItemChoiceType.playlist, playlist);
         }
     }
+
+    [HttpGet("/deletePlaylist")]
+    public async Task DeletePlaylist(string? id)
+    {
+        Util.CheckRequiredParameters(nameof(id), id);
+        var playlistId = id!.ParsePlaylistId();
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            await PlaylistService.DeletePlaylistAsync(apiUserId.Value, playlistId, HttpContext.RequestAborted);
+            
+            await HttpContext.WriteResponseAsync(0, null);
+        }
+    }
 }
