@@ -115,7 +115,7 @@ public class MediaRetrievalController: AudioController
                 case "raw":
                     HttpContext.Response.ContentType = track.MimeType;
                     HttpContext.Response.ContentLength = track.Size;
-                    await stream.CopyToAsync(HttpContext.Response.Body);
+                    await stream.CopyToAsync(HttpContext.Response.Body, HttpContext.RequestAborted);
                     break;
                 default:
                     throw RestApiErrorException.GenericError("Specified value for 'format' is not supported.");
@@ -165,7 +165,30 @@ public class MediaRetrievalController: AudioController
             HttpContext.Response.ContentType = track.MimeType;
             HttpContext.Response.ContentLength = track.Size;
             HttpContext.Response.Headers.Append("Content-Disposition", $"attachment; filename=\"{track.Name}\"");
-            await stream.CopyToAsync(HttpContext.Response.Body);
+            await stream.CopyToAsync(HttpContext.Response.Body, HttpContext.RequestAborted);
+        }
+    }
+
+    [HttpGet("/hls")]
+    public void Hls()
+    {
+        throw RestApiErrorException.NotImplemented();
+    }
+
+    [HttpGet("/getCaptions")]
+    public void GetCaptions()
+    {
+        throw RestApiErrorException.NotImplemented();
+    }
+
+    [HttpGet("/getCoverArt")]
+    public void GetCoverArt(string? id)
+    {
+        Util.CheckRequiredParameters(nameof(id), id);
+        
+        if (id!.TryParseTrackId(out var trackId))
+        {
+            
         }
     }
 }

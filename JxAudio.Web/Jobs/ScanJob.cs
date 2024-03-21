@@ -1,4 +1,5 @@
 ﻿using ATL;
+using FreeSql;
 using Jx.Toolbox.Extensions;
 using JxAudio.Core;
 using JxAudio.Core.Entity;
@@ -118,7 +119,16 @@ public class ScanJob : ITask
                             {
                                 albumEntity.PictureId = picture.Id;
                                 await albumEntity.SaveAsync();
-                                
+
+                                var tracks = await TrackEntity
+                                    .Where(x => x.AlbumId == albumEntity.Id)
+                                    .ToListAsync();
+                                foreach (var entity in tracks)
+                                {
+                                    entity.PictureId = picture.Id;
+                                }
+
+                                BaseEntity.Orm.Update<TrackEntity>(tracks);
                             }
                         }
                     }
@@ -178,7 +188,9 @@ public class ScanJob : ITask
             var pictureEntity = new PictureEntity
             {
                 MimeType = mimeType,
-                Path = picName
+                Path = picName,
+                Height = image.Height,
+                Width = image.Width
             };
             await pictureEntity.SaveAsync();
             return pictureEntity;
