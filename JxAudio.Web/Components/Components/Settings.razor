@@ -1,0 +1,44 @@
+﻿@using System.Diagnostics.CodeAnalysis
+@using JxAudio.Core.Service
+@using JxAudio.Web.Vo
+@using JxAudio.Web.Enums
+@using Microsoft.Extensions.Localization
+
+@inject IStringLocalizer<SettingsVo> SettingsVoLocalizer
+@inject IStringLocalizer<Settings> SettingsLocalizer
+<div class="row g-3">
+    <div class="col-12 col-md-6">
+        <Select @bind-Value="@SettingsVo.SearchType"></Select>
+    </div>
+    <div class="col-12 col-md-6">
+        @if (SettingsVo.SearchType == SearchType.Cron)
+        {
+            <BootstrapInput @bind-Value="@SettingsVo.CronExpress"></BootstrapInput>
+        }
+        else
+        {
+            <BootstrapInputGroupLabel DisplayText="@SettingsVoLocalizer["ScanInterval"]"></BootstrapInputGroupLabel>
+            <BootstrapInputGroup>
+                <BootstrapInput @bind-Value="@SettingsVo.ScanInterval"></BootstrapInput>
+                <Dropdown @bind-Value="SettingsVo.TimeUnit"></Dropdown>
+            </BootstrapInputGroup>
+        }
+    </div>
+    <div class="col-12 col-md-6 col-sm-4">
+
+    </div>
+    <div class="col-12 col-md-6 col-sm-4">
+
+    </div>
+    <div class="col-12 col-md-6 col-sm-4">
+
+    </div>
+</div>
+
+@code {
+    [NotNull]
+    [Parameter]
+    public SettingsVo? SettingsVo { get; set; }
+    
+
+}

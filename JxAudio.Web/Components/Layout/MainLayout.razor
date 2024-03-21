@@ -73,7 +73,7 @@
             new() { Text = Localizer["Artist"], Icon = "fa fa-fw fa-home", Url = "/Admin/ArtistManager", Match = NavLinkMatch.All } ,
             new() { Text = Localizer["Genre"], Icon = "fa fa-fw fa-home", Url = "/Admin/GenreManager", Match = NavLinkMatch.All } ,
             new() { Text = Localizer["Music"], Icon = "fa fa-fw fa-home", Url = "/Admin/MusicManager", Match = NavLinkMatch.All } ,
-            new() { Text = Localizer["Setting"], Icon = "fa fa-fw fa-home", Url = "/Admin/Settings", Match = NavLinkMatch.All } 
+            new() { Text = Localizer["Setting"], Icon = "fa fa-fw fa-home", Url = "/Admin/SettingsManager", Match = NavLinkMatch.All } 
         };
         var nowPath = NavigationManager.ToAbsoluteUri(NavigationManager.Uri).LocalPath;
         var menu = MenuItems.FirstOrDefault(x => x.Url == nowPath);

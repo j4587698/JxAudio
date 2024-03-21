@@ -127,17 +127,17 @@
     "Db": "数据库配置",
     "DbDesc": "配置您的数据库信息"
   },
-  "JxAudio.Web.Components.Pages.Settings": {
+  "JxAudio.Web.Components.Pages.Admin.SettingsManager": {
     "Title": "系统设置",
     "Save": "保存",
     "ToastTitle": "保存设置",
     "SuccessContent": "设置保存成功"
   },
-  "JxAudio.Web.Components.Pages.MusicManager": {
+  "JxAudio.Web.Components.Pages.Admin.MusicManager": {
     "NoTitle": "【未知标题】",
     "DeleteMusicText": "删除音乐时会同时删除文件并不可恢复，是否继续？"
   },
-  "JxAudio.Web.Components.Pages.UserManager": {
+  "JxAudio.Web.Components.Pages.Admin.UserManager": {
     "ChangePassword": "修改密码",
     "Close": "关闭",
     "RePassword": "两次密码输入不一致",

@@ -45,6 +45,17 @@
             Title = InstallLocalizer["Db"],
             FinishedIcon = "fas fa-check"
         });
+        _stepItems.Add(new StepOption()
+        {
+            Template = BootstrapDynamicComponent.CreateComponent<SettingStep>(new Dictionary<string, object?>()
+            {
+                {nameof(StepBase.Next), () => { _step?.Next();StateHasChanged(); }},
+                {nameof(StepBase.Prev), () => { _step?.Prev();StateHasChanged(); }}
+            }).Render(),
+            Description = InstallLocalizer["DbDesc"],
+            Title = InstallLocalizer["Db"],
+            FinishedIcon = "fas fa-check"
+        });
     }
 
 }

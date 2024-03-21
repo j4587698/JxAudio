@@ -1,0 +1,24 @@
+﻿@using JxAudio.Web.Vo
+@using System.Diagnostics.CodeAnalysis
+@using JxAudio.Core.Service
+@inherits StepBase
+@inject SwalService SwalService
+@inject SettingsService SettingsService
+
+<ValidateForm Model="SettingsVo">
+    <GroupBox class="install_content">
+        <Settings SettingsVo="SettingsVo"></Settings>
+    </GroupBox>
+    <div class="text-center">
+            <Button Text="上一步" OnClick="() => Prev?.Invoke()"></Button>
+            <Button ButtonType="ButtonType.Submit">继续</Button>
+        </div>
+</ValidateForm>
+
+
+@code {
+
+    private SettingsVo SettingsVo { get; set; } = new SettingsVo();
+    
+
+}

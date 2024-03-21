@@ -9,7 +9,7 @@
         <TableColumn @bind-Field="@context.Name"></TableColumn>
         <TableColumn @bind-Field="@context.Count">
             <Template Context="value">
-                <Button Color="Color.Link" OnClick="() => ShowTrack(value.Row)">@value.Value</Button>
+                <LinkButton OnClick="() => ShowTrack(value.Row)">@value.Value</LinkButton>
             </Template>
         </TableColumn>
     </TableColumns>

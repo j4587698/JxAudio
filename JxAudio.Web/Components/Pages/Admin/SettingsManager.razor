@@ -1,4 +1,4 @@
-﻿@page "/Admin/Settings"
+﻿@page "/Admin/SettingsManager"
 @using JxAudio.Web.Vo
 @using JxAudio.Web.Enums
 @using Microsoft.Extensions.Localization
@@ -6,7 +6,7 @@
 @using System.Diagnostics.CodeAnalysis
 
 @inject IStringLocalizer<SettingsVo> SettingsVoLocalizer
-@inject IStringLocalizer<Settings> SettingsLocalizer
+@inject IStringLocalizer<SettingsManager> SettingsLocalizer
 @inject SettingsService SettingsService
 @inject ToastService ToastService
 
@@ -18,35 +18,8 @@
         <div class="col-auto ms-auto">
             <Button Text="@SettingsLocalizer["Save"]" ButtonType="ButtonType.Submit"></Button>
         </div>
-        <div class="col-12 col-md-6">
-            <Select @bind-Value="@SettingsVo.SearchType"></Select>
-        </div>
-        <div class="col-12 col-md-6">
-            @if (SettingsVo.SearchType == SearchType.Cron)
-            {
-                <BootstrapInput @bind-Value="@SettingsVo.CronExpress"></BootstrapInput>
-            }
-            else
-            {
-                <BootstrapInputGroupLabel DisplayText="@SettingsVoLocalizer["ScanInterval"]"></BootstrapInputGroupLabel>
-                <BootstrapInputGroup>
-                    <BootstrapInput @bind-Value="@SettingsVo.ScanInterval"></BootstrapInput>
-                    <Dropdown @bind-Value="SettingsVo.TimeUnit"></Dropdown>
-                </BootstrapInputGroup>
-            }
-        </div>
-        <div class="col-12 col-md-6 col-sm-4">
-
-        </div>
-        <div class="col-12 col-md-6 col-sm-4">
-
-        </div>
-        <div class="col-12 col-md-6 col-sm-4">
-
-        </div>
     </div>
-    
-
+    <Settings SettingsVo="SettingsVo"></Settings>
 </ValidateForm>
 
 @code {
