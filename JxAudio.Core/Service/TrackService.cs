@@ -24,6 +24,29 @@ public class TrackService
             .IncludeMany(x => x.TrackStarEntities, 
                 then => then.Where(y => y.UserId == userId));
     }
+
+    public async Task<TrackEntity> GetSongEntityAsync(Guid userId, int trackId, CancellationToken cancellationToken)
+    {
+        var track = await GetTrackBase(userId, null)
+            .Where(x => x.Id == trackId)
+            .FirstAsync(cancellationToken);
+        if (track == null)
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+
+        track.PlayCount += 1;
+        if (track.AlbumEntity != null)
+        {
+            track.AlbumEntity.PlayCount += 1;
+            track.AlbumEntity.LatestPlayTime = DateTime.Now;
+            await track.AlbumEntity.SaveAsync();
+        }
+
+        await track.SaveAsync();
+
+        return track;
+    }
     
     public async Task<Child> GetSongAsync(Guid userId, int trackId, CancellationToken cancellationToken)
     {

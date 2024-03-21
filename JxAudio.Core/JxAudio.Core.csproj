@@ -15,6 +15,7 @@
       <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
       <PackageReference Include="BootstrapBlazor" Version="8.3.2-beta01" />
       <PackageReference Include="BootstrapBlazor.FontAwesome" Version="8.0.1" />
+      <PackageReference Include="FFMpegCore" Version="5.0.0" />
       <PackageReference Include="FreeSql.All" Version="3.2.815" />
       <PackageReference Include="FreeSql.Extensions.BaseEntity" Version="3.2.815" />
       <PackageReference Include="Jx.Toolbox" Version="0.3.7" />

@@ -139,7 +139,7 @@ public static class HttpContextExtension
 
             apiContext.User = user;
 
-            apiContext.Suffix = context.Items.TryGetValue(Constant.SuffixKey, out object? suffix) ? suffix?.ToString() : "opus";
+            apiContext.Suffix = context.Items.TryGetValue(Constant.SuffixKey, out object? suffix) ? suffix?.ToString() : "mp3";
 
             return apiContext;
         }

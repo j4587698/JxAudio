@@ -37,6 +37,13 @@ public interface IProviderPlugin
     /// <param name="name"></param>
     /// <returns></returns>
     Task<Stream?> GetThumbAsync(string name);
+    
+    /// <summary>
+    /// 获取文件信息
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    Task<FsInfo?> GetFileInfoAsync(string name);
 
     /// <summary>
     /// 获取文件

@@ -63,6 +63,24 @@ public class LocalFileProvider : IProviderPlugin
         return null;
     }
 
+    public Task<FsInfo?> GetFileInfoAsync(string name)
+    {
+        if (!File.Exists(name))
+        {
+            return Task.FromResult<FsInfo?>(null);
+        }
+        
+        var fileInfo = new FileInfo(name);
+        return Task.FromResult<FsInfo?>(new FsInfo
+        {
+            Name = fileInfo.Name,
+            FullName = fileInfo.FullName,
+            IsDir = false,
+            Size = fileInfo.Length,
+            ModifyTime = fileInfo.LastWriteTime
+        });
+    }
+
     public Task<Stream?> GetFileAsync(string name)
     {
         if (!File.Exists(name))
