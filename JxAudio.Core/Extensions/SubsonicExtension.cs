@@ -72,8 +72,13 @@ public static class SubsonicExtension
         return false;
     }
     
-    public static int ParseArtistId(this string id)
+    public static int ParseArtistId(this string? id)
     {
+        if (id == null)
+        {
+            throw RestApiErrorException.InvalidParameterError(nameof(id));
+        }
+        
         if (TryParseArtistId(id, out var result))
         {
             return result;
@@ -82,8 +87,13 @@ public static class SubsonicExtension
         throw RestApiErrorException.InvalidParameterError(nameof(id));
     }
     
-    public static int ParseAlbumId(this string id)
+    public static int ParseAlbumId(this string? id)
     {
+        if (id == null)
+        {
+            throw RestApiErrorException.InvalidParameterError(nameof(id));
+        }
+        
         if (TryParseAlbumId(id, out var result))
         {
             return result;
@@ -92,8 +102,12 @@ public static class SubsonicExtension
         throw RestApiErrorException.InvalidParameterError(nameof(id));
     }
     
-    public static int ParseTrackId(this string id)
+    public static int ParseTrackId(this string? id)
     {
+        if (id == null)
+        {
+            throw RestApiErrorException.InvalidParameterError(nameof(id));
+        }
         if (TryParseTrackId(id, out var result))
         {
             return result;
@@ -102,8 +116,13 @@ public static class SubsonicExtension
         throw RestApiErrorException.InvalidParameterError(nameof(id));
     }
     
-    public static int ParsePlaylistId(this string id)
+    public static int ParsePlaylistId(this string? id)
     {
+        if (id == null)
+        {
+            throw RestApiErrorException.InvalidParameterError(nameof(id));
+        }
+        
         if (TryParsePlaylistId(id, out var result))
         {
             return result;

@@ -7,6 +7,7 @@ using JxAudio.Core.Extensions;
 using JxAudio.Core.Service;
 using JxAudio.Extensions;
 using JxAudio.Utils;
+using JxAudio.Web.Extensions;
 using JxAudio.Web.Utils;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
@@ -22,10 +23,9 @@ public class MediaRetrievalController: AudioController
     [HttpGet("/stream")]
     public async Task Stream(string? id, int? maxBitRate, string? format, string? timeOffset, string? timeEnd, string? size)
     {
-        Util.CheckRequiredParameters(nameof(id), id);
         maxBitRate ??= 0;
 
-        var trackId = id!.ParseTrackId();
+        var trackId = id.ParseTrackId();
         
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
         var apiUserId = apiContext?.User?.Id;
@@ -120,6 +120,52 @@ public class MediaRetrievalController: AudioController
                 default:
                     throw RestApiErrorException.GenericError("Specified value for 'format' is not supported.");
             }
+        }
+    }
+
+    [HttpGet("/download")]
+    public async Task Download(string? id)
+    {
+        var trackId = id.ParseTrackId();
+        
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            var track = await TrackService.GetSongEntityAsync(apiUserId.Value, trackId, HttpContext.RequestAborted);
+            var providerPlugin = Constant.ProviderPlugins.FirstOrDefault(x => x.Id == track.ProviderId);
+            if (providerPlugin == null)
+            {
+                throw RestApiErrorException.GenericError("Provider not found");
+            }
+
+            var info = await providerPlugin.GetFileInfoAsync(track.FullName!);
+
+            if (info == null)
+            {
+                throw RestApiErrorException.GenericError("File not found");
+            }
+
+            if (info.ModifyTime < HttpContext.Request.GetIfModifiedSince()?.AddSeconds(1))
+            {
+                HttpContext.Response.StatusCode = StatusCodes.Status304NotModified;
+                return;
+            }
+
+            var stream = await providerPlugin.GetFileAsync(track.FullName!);
+            if (stream == null)
+            {
+                throw RestApiErrorException.GenericError("File not found");
+            }
+
+            var now = DateTime.UtcNow;
+            HttpContext.Response.SetDate(now);
+            HttpContext.Response.SetLastModified(info.ModifyTime);
+            HttpContext.Response.SetExpires(now);
+            HttpContext.Response.ContentType = track.MimeType;
+            HttpContext.Response.ContentLength = track.Size;
+            HttpContext.Response.Headers.Append("Content-Disposition", $"attachment; filename=\"{track.Name}\"");
+            await stream.CopyToAsync(HttpContext.Response.Body);
         }
     }
 }
