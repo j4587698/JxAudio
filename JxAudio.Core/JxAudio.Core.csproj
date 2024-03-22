@@ -36,4 +36,11 @@
       <Folder Include="Assets\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Assets\NoCover.png" />
+      <EmbeddedResource Include="Assets\NoCover.png" />
+      <None Remove="Assets\avatar.png" />
+      <EmbeddedResource Include="Assets\avatar.png" />
+    </ItemGroup>
+
 </Project>

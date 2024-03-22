@@ -1,4 +1,5 @@
-﻿using JxAudio.Core.Attributes;
+﻿using System.Reflection;
+using JxAudio.Core.Attributes;
 using JxAudio.Core.Entity;
 using JxAudio.Core.Extensions;
 using SixLabors.ImageSharp;
@@ -21,7 +22,7 @@ public class PictureService
 
             if (track?.PictureEntity == null)
             {
-                return null;
+                return Assembly.GetExecutingAssembly().GetManifestResourceStream("JxAudio.Core.Assets.NoCover.png");
             }
 
             pictureEntity = track.PictureEntity;
@@ -35,14 +36,14 @@ public class PictureService
 
             if (album?.PictureEntity == null)
             {
-                return null;
+                return Assembly.GetExecutingAssembly().GetManifestResourceStream("JxAudio.Core.Assets.NoCover.png");
             }
 
             pictureEntity = album.PictureEntity;
         }
         else if (id.TryParseArtistId(out var artistId))
         {
-            return null;
+            return Assembly.GetExecutingAssembly().GetManifestResourceStream("JxAudio.Core.Assets.avatar.png");
         }
         else
         {
@@ -51,10 +52,10 @@ public class PictureService
         
         if (size == null || size > pictureEntity.Width)
         {
-            return new MemoryStream(await File.ReadAllBytesAsync(pictureEntity!.Path!, cancellationToken));
+            return new MemoryStream(await File.ReadAllBytesAsync(Path.Combine(AppContext.BaseDirectory, Constants.CoverCachePath, pictureEntity!.Path!), cancellationToken));
         }
         
-        using var image = Image.Load(await File.ReadAllBytesAsync(pictureEntity.Path!, cancellationToken));
+        using var image = Image.Load(await File.ReadAllBytesAsync(Path.Combine(AppContext.BaseDirectory, Constants.CoverCachePath, pictureEntity!.Path!), cancellationToken));
         image.Mutate(x => x.Resize(size.Value, size.Value));
 
         var memoryStream = new MemoryStream();

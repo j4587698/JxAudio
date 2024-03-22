@@ -14,12 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JxAudio.Web.Controllers;
 
-public class MediaRetrievalController: AudioController
+public class MediaRetrievalController(PictureService pictureService, TrackService trackService): AudioController
 {
-    [Inject]
-    [NotNull]
-    private TrackService? TrackService { get; set; }
-    
     [HttpGet("/stream")]
     public async Task Stream(string? id, int? maxBitRate, string? format, string? timeOffset, string? timeEnd, string? size)
     {
@@ -31,7 +27,7 @@ public class MediaRetrievalController: AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var track = await TrackService.GetSongEntityAsync(apiUserId.Value, trackId, HttpContext.RequestAborted);
+            var track = await trackService.GetSongEntityAsync(apiUserId.Value, trackId, HttpContext.RequestAborted);
             var providerPlugin = Constant.ProviderPlugins.FirstOrDefault(x => x.Id == track.ProviderId);
             if (providerPlugin == null)
             {
@@ -132,7 +128,7 @@ public class MediaRetrievalController: AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var track = await TrackService.GetSongEntityAsync(apiUserId.Value, trackId, HttpContext.RequestAborted);
+            var track = await trackService.GetSongEntityAsync(apiUserId.Value, trackId, HttpContext.RequestAborted);
             var providerPlugin = Constant.ProviderPlugins.FirstOrDefault(x => x.Id == track.ProviderId);
             if (providerPlugin == null)
             {
@@ -182,13 +178,18 @@ public class MediaRetrievalController: AudioController
     }
 
     [HttpGet("/getCoverArt")]
-    public void GetCoverArt(string? id)
+    public async Task GetCoverArt(string? id, int? size)
     {
         Util.CheckRequiredParameters(nameof(id), id);
-        
-        if (id!.TryParseTrackId(out var trackId))
+
+        var stream = await pictureService.GetPictureAsync(id!, size, HttpContext.RequestAborted);
+
+        if (stream == null)
         {
-            
+            throw RestApiErrorException.DataNotFoundError();
         }
+        
+        HttpContext.Response.ContentType = "image/png";
+        await stream.CopyToAsync(HttpContext.Response.Body, HttpContext.RequestAborted);
     }
 }
