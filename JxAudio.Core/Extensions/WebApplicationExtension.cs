@@ -22,11 +22,12 @@ public static class WebApplicationExtension
         Action<ContainerBuilder>? containerBuilder = null)
     {
         Application.WebHostEnvironment = webApplicationBuilder.Environment;
+        Application.Configuration = webApplicationBuilder.Configuration;
         
         var jsonPattern = @"^(?<name>[^.]+)(\.(?<env>[^.]+))?\.json$";
         var xmlPattern = @"^(?<name>[^.]+)(\.(?<env>[^.]+))?\.xml";
 
-
+        
         AppConfigOption option = new AppConfigOption();
         configOption?.Invoke(option);
         webApplicationBuilder.Services.Configure(configOption ?? (appConfigOption => { }) );

@@ -4,6 +4,7 @@ using Jx.Toolbox.Extensions;
 using JxAudio.Core;
 using JxAudio.Core.Enums;
 using JxAudio.Core.Options;
+using JxAudio.Web.Vo;
 using Microsoft.Extensions.Localization;
 
 namespace JxAudio.Web.Validators;
@@ -19,60 +20,18 @@ public class InstallValidator : ValidatorBase
     public override void Validate(object? propertyValue, ValidationContext context, List<ValidationResult> results)
     {
         var stringLocalizer = Application.GetRequiredService<IStringLocalizer<InstallValidator>>();
-        if (context.ObjectInstance is DbConfigOption dbConfig)
+        if (context.ObjectInstance is UserInstallVo infoVo)
         {
-            if (dbConfig.DbType != DbType.Sqlite.ToString())
+            switch (context.MemberName)
             {
-                switch (context.MemberName)
-                {
-                    case nameof(dbConfig.DbUrl):
-                        if (dbConfig.DbUrl.IsNullOrEmpty())
-                        {
-                            results.Add(new ValidationResult(
-                                string.Format(stringLocalizer!["NotNull"], context.DisplayName),
-                                new[] { context.MemberName }));
-                        }
-
-                        break;
-                    case nameof(dbConfig.DbPort):
-                        if (dbConfig.DbPort.IsNullOrEmpty())
-                        {
-                            results.Add(new ValidationResult(string.Format(stringLocalizer!["NotNull"], context.DisplayName),
-                                new[] { context.MemberName }));
-                        }
-
-                        break;
-                    case nameof(dbConfig.Username):
-                        if (dbConfig.Username.IsNullOrEmpty())
-                        {
-                            results.Add(new ValidationResult(string.Format(stringLocalizer!["NotNull"], context.DisplayName),
-                                new[] { context.MemberName }));
-                        }
-
-                        break;
-                    case nameof(dbConfig.Password):
-                        if (dbConfig.Password.IsNullOrEmpty())
-                        {
-                            results.Add(new ValidationResult(string.Format(stringLocalizer!["NotNull"], context.DisplayName),
-                                new[] { context.MemberName }));
-                        }
-
-                        break;
-                }
+                case nameof(infoVo.RePassword):
+                    if (infoVo.RePassword != infoVo.Password)
+                    {
+                        results.Add(new ValidationResult(stringLocalizer!["PasswordNotEqual"], new []{context.MemberName}));
+                    }
+                    break;
             }
         }
-        // else if (context.ObjectInstance is UserInstallVo infoVo)
-        // {
-        //     switch (context.MemberName)
-        //     {
-        //         case nameof(infoVo.RePassword):
-        //             if (infoVo.RePassword != infoVo.Password)
-        //             {
-        //                 results.Add(new ValidationResult("两次密码不一致", new []{context.MemberName}));
-        //             }
-        //             break;
-        //     }
-        // }
         // else if (context.ObjectInstance is CronInstallVo cronInstallVo)
         // {
         //     if (context.MemberName.IsNullOrEmpty())

@@ -75,7 +75,8 @@ public class Setup
 
             var freeSql = new FreeSqlBuilder()
                 .UseAutoSyncStructure(isDevelopment)
-                .UseNoneCommandParameter(true)
+                .UseAutoSyncStructure(Application.WebHostEnvironment!.IsDevelopment())
+                .UseMonitorCommand(cmd => Console.WriteLine($"Sql：{cmd.CommandText}"))//监听SQL语句
                 .UseConnectionString(dataType, connStr)
                 .Build();
 

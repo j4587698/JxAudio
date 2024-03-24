@@ -14,25 +14,33 @@
             <div class="form-group col-12">
                 <Select @bind-Value="DbConfig.DbType" Items="typeof(DbType).ToSelectList()" OnSelectedItemChanged="OnSelectedItemChanged"></Select>
             </div>
-            <div class="form-group col-12" style="@(!_needShow ? "display: none" : "")">
-                <BootstrapInput @bind-Value="@DbConfig.DbUrl" ValidateRules="@_validators">
-                </BootstrapInput>
-            </div>
-            <div class="form-group col-12" style="@(!_needShow ? "display: none" : "")">
-                <BootstrapInput @bind-Value="@DbConfig.DbPort" type="number" ValidateRules="@_validators">
-                </BootstrapInput>
-            </div>
+            @if (_needShow)
+            {
+                <div class="form-group col-12">
+                    <BootstrapInput @bind-Value="@DbConfig.DbUrl">
+                    </BootstrapInput>
+                </div>
+                <div class="form-group col-12">
+                    <BootstrapInput @bind-Value="@DbConfig.DbPort" type="number">
+                    </BootstrapInput>
+                </div>
+            }
+            
             <div class="form-group col-12">
                 <BootstrapInput @bind-Value="@DbConfig.DbName"></BootstrapInput>
             </div>
-            <div class="form-group col-12" style="@(!_needShow ? "display: none" : "")">
-                <BootstrapInput @bind-Value="@DbConfig.Username" ValidateRules="@_validators">
-                </BootstrapInput>
-            </div>
-            <div class="form-group col-12" style="@(!_needShow ? "display: none" : "")">
-                <BootstrapInput @bind-Value="@DbConfig.Password" type="password" ValidateRules="@_validators">
-                </BootstrapInput>
-            </div>
+            @if (_needShow)
+            {
+                <div class="form-group col-12">
+                    <BootstrapInput @bind-Value="@DbConfig.Username">
+                    </BootstrapInput>
+                </div>
+                <div class="form-group col-12">
+                    <BootstrapInput @bind-Value="@DbConfig.Password" type="password">
+                    </BootstrapInput>
+                </div>
+            }
+            
             <div class="form-group col-12">
                 <BootstrapInput @bind-Value="@DbConfig.Prefix"></BootstrapInput>
             </div>
@@ -46,17 +54,10 @@
 
 @code {
     [NotNull]
-    private DbConfigOption? DbConfig { get; set; }
+    [Parameter]
+    public DbConfigOption? DbConfig { get; set; }
     
     private bool _needShow = false;
-
-    private readonly List<IValidator> _validators = [new InstallValidator()];
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        DbConfig = new DbConfigOption(){DbType = "Sqlite", Prefix = "jx_", DbName = $"{Application.WebHostEnvironment.ContentRootPath}/config/JxAudio.db"};
-    }
     
     private async Task OnSubmit(EditContext arg)
     {
@@ -68,15 +69,6 @@
                 Category = SwalCategory.Error,
                 Title = DbStringLocalizer["Fail"],
                 Content = ret.msg
-            });
-        }
-        if (!Setup.CreateTables(DbConfig))
-        {
-            await SwalService.Show(new SwalOption()
-            {
-                Category = SwalCategory.Error,
-                Title = DbStringLocalizer["Fail"],
-                Content = DbStringLocalizer["CreateTableFail"],
             });
             return;
         }

@@ -1,0 +1,50 @@
+﻿<div class="row justify-content-md-center">
+    <div class="col-md-auto">
+        <Circle Width="@Width" Value="@Value" Color="@Color" StrokeWidth="10" ShowProgress="false" class="m-auto">
+                <div class="count-down">
+                    <h2>@(CountDownSecond - NowSecond)</h2>
+                </div>
+            </Circle>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int CountDownSecond { get; set; }
+    
+    [Parameter]
+    public int Width { get; set; } = 250;
+    
+    [Parameter]
+    public Color Color { get; set; } = Color.Success;
+
+    private int NowSecond { get; set; }
+    
+    private int Value { get; set; }
+    
+    [Parameter]
+    public Func<Task>? OnTimeout { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        NowSecond = 1;
+        Value = 100;
+        OnStart();
+    }
+
+    private void OnStart()
+    {
+        Task.Run(async () =>
+        {
+            do
+            {
+                await Task.Delay(1000);
+                NowSecond++;
+                Value = (int)((1 - NowSecond * 1.0 / CountDownSecond) * 100);
+                await InvokeAsync(StateHasChanged);
+            } while (NowSecond < CountDownSecond);
+            OnTimeout?.Invoke();
+        });
+    }
+}

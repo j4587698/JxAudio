@@ -2,6 +2,7 @@
 @using JxAudio.Web.Validators
 @using JxAudio.Core.Entity
 @using JxAudio.Web.Utils
+@using System.Diagnostics.CodeAnalysis
 @inherits StepBase
 
 <ValidateForm Model="@UserInstallVo" OnValidSubmit="@OnSubmit">
@@ -14,7 +15,7 @@
                 <BootstrapInput @bind-Value="@UserInstallVo.Email"></BootstrapInput>
             </div>
             <div class="form-group col-12">
-                <InputNumber @bind-Value="@UserInstallVo.MaxBitRate"></InputNumber>
+                <BootstrapInputNumber @bind-Value="@UserInstallVo.MaxBitRate"></BootstrapInputNumber>
             </div>
             <div class="form-group col-12">
                 <BootstrapInput @bind-Value="@UserInstallVo.Password" type="password"></BootstrapInput>
@@ -33,23 +34,16 @@
 </ValidateForm>
 
 @code {
-    private UserInstallVo UserInstallVo { get; set; } = new UserInstallVo() { UserName = "Admin"};
+    [NotNull]
+    [Parameter]
+    public UserInstallVo? UserInstallVo { get; set; }
 
     private List<IValidator> Validators { get; set; } = [new InstallValidator()];
 
-    private async Task OnSubmit(EditContext arg)
+    private Task OnSubmit(EditContext arg)
     {
-        var userEntity = new UserEntity()
-        {
-            UserName = UserInstallVo.UserName,
-            Password = UserInstallVo.Password,
-            MaxBitRate = UserInstallVo.MaxBitRate,
-            Email = UserInstallVo.Email,
-            IsAdmin = true
-        };
-        await userEntity.SaveAsync();
-        File.Create(Path.Combine(AppContext.BaseDirectory, "config", "install.lock"));
-        Util.IsInstalled = true;
+        
         Next?.Invoke();
+        return Task.CompletedTask;
     }
 }

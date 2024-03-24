@@ -1,7 +1,10 @@
 ﻿@page "/Install"
 @using JxAudio.Web.Components.Layout
 @using JxAudio.Web.Components.Components.Install
+@using JxAudio.Web.Vo
 @using Microsoft.Extensions.Localization
+@using JxAudio.Core.Options
+@using JxAudio.Core
 
 @inject IStringLocalizer<Install> InstallLocalizer
 
@@ -10,7 +13,7 @@
 <div class="container">
     <Step @ref="_step" Items="_stepItems" class="install_step">
         <FinishedTemplate>
-            <FinishStep></FinishStep>
+            <FinishStep DbConfigOption="_dbConfigOption" SettingsVo="_settingsVo" UserInstallVo="_userInstallVo"></FinishStep>
         </FinishedTemplate>
     </Step>
 </div>
@@ -19,6 +22,12 @@
     private readonly List<StepOption> _stepItems = new List<StepOption>();
 
     private Step? _step;
+
+    private DbConfigOption _dbConfigOption = new() { DbType = "Sqlite", Prefix = "jx_", DbName = $"{Application.WebHostEnvironment.ContentRootPath}/config/JxAudio.db" };
+
+    private SettingsVo _settingsVo = new();
+
+    private UserInstallVo _userInstallVo = new() { UserName = "Admin"};
 
     protected override void OnInitialized()
     {
@@ -39,7 +48,8 @@
             Template = BootstrapDynamicComponent.CreateComponent<DbSetup>(new Dictionary<string, object?>()
             {
                 {nameof(StepBase.Next), () => { _step?.Next();StateHasChanged(); }},
-                {nameof(StepBase.Prev), () => { _step?.Prev();StateHasChanged(); }}
+                {nameof(StepBase.Prev), () => { _step?.Prev();StateHasChanged(); }},
+                {nameof(DbSetup.DbConfig), _dbConfigOption}
             }).Render(),
             Description = InstallLocalizer["DbDesc"],
             Title = InstallLocalizer["Db"],
@@ -50,10 +60,23 @@
             Template = BootstrapDynamicComponent.CreateComponent<SettingStep>(new Dictionary<string, object?>()
             {
                 {nameof(StepBase.Next), () => { _step?.Next();StateHasChanged(); }},
-                {nameof(StepBase.Prev), () => { _step?.Prev();StateHasChanged(); }}
+                {nameof(StepBase.Prev), () => { _step?.Prev();StateHasChanged(); }},
+                {nameof(SettingStep.SettingsVo), _settingsVo}
             }).Render(),
-            Description = InstallLocalizer["DbDesc"],
-            Title = InstallLocalizer["Db"],
+            Description = InstallLocalizer["SettingsDesc"],
+            Title = InstallLocalizer["Settings"],
+            FinishedIcon = "fas fa-check"
+        });
+        _stepItems.Add(new StepOption()
+        {
+            Template = BootstrapDynamicComponent.CreateComponent<UserSetup>(new Dictionary<string, object?>()
+            {
+                {nameof(StepBase.Next), () => { _step?.Next();StateHasChanged(); }},
+                {nameof(StepBase.Prev), () => { _step?.Prev();StateHasChanged(); }},
+                {nameof(UserSetup.UserInstallVo), _userInstallVo}
+            }).Render(),
+            Description = InstallLocalizer["UserDesc"],
+            Title = InstallLocalizer["User"],
             FinishedIcon = "fas fa-check"
         });
     }

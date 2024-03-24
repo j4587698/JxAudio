@@ -5,7 +5,7 @@
 @inject SwalService SwalService
 @inject SettingsService SettingsService
 
-<ValidateForm Model="SettingsVo">
+<ValidateForm Model="SettingsVo" OnValidSubmit="OnValidSubmit">
     <GroupBox class="install_content">
         <Settings SettingsVo="SettingsVo"></Settings>
     </GroupBox>
@@ -18,7 +18,14 @@
 
 @code {
 
-    private SettingsVo SettingsVo { get; set; } = new SettingsVo();
-    
+    [NotNull]
+    [Parameter]
+    public SettingsVo? SettingsVo { get; set; }
+
+    private Task OnValidSubmit(EditContext arg)
+    {
+        Next?.Invoke();
+        return Task.CompletedTask;
+    }
 
 }

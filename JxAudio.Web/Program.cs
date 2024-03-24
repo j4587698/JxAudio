@@ -1,25 +1,45 @@
+using System.DirectoryServices.Protocols;
 using BootstrapBlazor.Components;
 using FreeSql;
+using JxAudio.Core;
 using JxAudio.Core.Extensions;
+using JxAudio.Core.Options;
 using JxAudio.Web.Components;
+using JxAudio.Web.Middlewares;
 using JxAudio.Web.Services;
+using JxAudio.Web.Utils;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Console = System.Console;
-
-IFreeSql fsql = new FreeSqlBuilder()
-    .UseConnectionString(FreeSql.DataType.Sqlite, @"Data Source=freedb.db")
-    .UseMonitorCommand(cmd => Console.WriteLine($"Sql：{cmd.CommandText}"))//监听SQL语句
-    .UseAutoSyncStructure(true) //自动同步实体结构到数据库，FreeSql不会扫描程序集，只有CRUD时才会生成表。
-    .Build();
-BaseEntity.Initialization(fsql, null);
+using SearchOption = System.IO.SearchOption;
 
 Log.Logger = new LoggerConfiguration().WriteTo
     .File("./log/log.txt", rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
     .WriteTo.Console().CreateLogger();
 
-var builder = WebApplication.CreateBuilder(args).Inject();
+var builder = WebApplication.CreateBuilder(args).Inject(configOption =>
+{
+    configOption.ConfigSearchFolder = ["config"];
+});
+
 //builder.Host.UseSerilog();
+
+var dbConfigOption = builder.Configuration.GetSection("Db").Get<DbConfigOption>();
+if (dbConfigOption != null)
+{
+    var ret = Setup.SetupDb(dbConfigOption);
+    if (!ret.isSuccess)
+    {
+        throw new Exception(ret.msg);
+    }
+
+    builder.Services.Configure<DbConfigOption>(x => { });
+}
+else if (Util.IsInstalled)
+{
+    throw new Exception("Init Db fail");
+}
+
 builder.Services.AddTaskServices();
 builder.Services.AddHostedService<JobHostedService>();
 builder.Services.AddServiceController();
@@ -67,6 +87,9 @@ app.UseStatusCodePages();
 
 app.UsePathBase("/rest");
 app.UseStaticFiles();
+
+app.UseMiddleware<InstallMiddleware>();
+
 app.UseAntiforgery();
 
 app.MapDefaultControllerRoute();

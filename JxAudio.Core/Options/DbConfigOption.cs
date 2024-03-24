@@ -13,12 +13,14 @@ public class DbConfigOption
     /// <summary>
     /// 数据库URL
     /// </summary>
+    [Required]
     public string? DbUrl { get; set; }
 
     /// <summary>
     /// 数据库端口号
     /// </summary>
     [Range(1, 65535)]
+    [Required]
     public string? DbPort { get; set; }
 
     /// <summary>
@@ -30,11 +32,13 @@ public class DbConfigOption
     /// <summary>
     /// 数据库用户名
     /// </summary>
+    [Required]
     public string? Username { get; set; }
 
     /// <summary>
     /// 数据库密码
     /// </summary>
+    [Required]
     public string? Password { get; set; }
 
     /// <summary>

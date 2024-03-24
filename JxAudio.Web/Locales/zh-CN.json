@@ -104,7 +104,7 @@
     "Cron": "Cron表达式"
   },
   "JxAudio.Web.Validators.InstallValidator": {
-    "NotNull": "{0}不能为空"
+    "PasswordNotEqual": "两次输入的密码不一致"
   },
   "JxAudio.Web.Vo.SettingsVo": {
     "ScanInterval": "扫描间隔",
@@ -125,7 +125,11 @@
     "Language": "语言选择",
     "LanguageDesc": "选择您的语言",
     "Db": "数据库配置",
-    "DbDesc": "配置您的数据库信息"
+    "DbDesc": "配置您的数据库信息",
+    "Settings": "设置配置",
+    "SettingsDesc": "初始化您的设置",
+    "User": "创建用户",
+    "UserDesc": "创建您的第一个管理员用户"
   },
   "JxAudio.Web.Components.Pages.Admin.SettingsManager": {
     "Title": "系统设置",
@@ -152,5 +156,25 @@
     "NewPassword.PlaceHolder": "请输入新密码",
     "RePassword": "重复新密码",
     "RePassword.PlaceHolder": "请重复输入新密码"
+  },
+  "JxAudio.Web.Vo.UserInstallVo": {
+    "UserName.PlaceHolder": "请输入用户名",
+    "UserName": "用户名",
+    "Email.PlaceHolder": "请输入Email地址，用于获取头像",
+    "Email": "Email地址",
+    "Password.PlaceHolder": "请输入密码",
+    "Password": "用户密码",
+    "RePassword.PlaceHolder": "请再次输入密码",
+    "RePassword": "重复密码",
+    "MaxBitRate.PlaceHolder": "请输入限制的最大比特率",
+    "MaxBitRate": "最大比特率（0为不限制）"
+  },
+  "JxAudio.Web.Components.Components.Install.FinishStep": {
+    "SetupDb": "正在创建数据表，请稍后...",
+    "SetupSettings": "正在设置基础配置，请稍后...",
+    "SetupUser": "正在创建管理员用户请稍后...",
+    "Finish": "恭喜你，所有设置已完成，3秒后自动跳转",
+    "Fail": "失败",
+    "CreateTableFail": "建表失败，请确认数据库有建表权限后重新运行Install"
   }
 }
