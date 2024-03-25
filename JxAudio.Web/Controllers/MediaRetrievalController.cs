@@ -1,10 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Encodings.Web;
 using FFMpegCore;
 using FFMpegCore.Enums;
 using FFMpegCore.Pipes;
 using JxAudio.Core;
 using JxAudio.Core.Extensions;
 using JxAudio.Core.Service;
+using JxAudio.Core.Subsonic;
 using JxAudio.Extensions;
 using JxAudio.Utils;
 using JxAudio.Web.Extensions;
@@ -14,7 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JxAudio.Web.Controllers;
 
-public class MediaRetrievalController(PictureService pictureService, TrackService trackService): AudioController
+public class MediaRetrievalController(PictureService pictureService, TrackService trackService, LrcService lrcService): AudioController
 {
     [HttpGet("/stream")]
     public async Task Stream(string? id, int? maxBitRate, string? format, string? timeOffset, string? timeEnd, string? size)
@@ -191,5 +193,18 @@ public class MediaRetrievalController(PictureService pictureService, TrackServic
         
         HttpContext.Response.ContentType = "image/png";
         await stream.CopyToAsync(HttpContext.Response.Body, HttpContext.RequestAborted);
+    }
+
+    [HttpGet("/getLyrics")]
+    public async Task GetLyrics(string? artist, string? title)
+    {
+        var text = await lrcService.GetLrcAsync(artist, title);
+        var html = HtmlEncoder.Default.Encode(text);
+        await HttpContext.WriteResponseAsync(ItemChoiceType.lyrics, new Lyrics()
+        {
+            artist = artist,
+            title = title,
+            Text = [text]
+        });
     }
 }

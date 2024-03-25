@@ -95,7 +95,7 @@ public class ScanJob : ITask
                     
 
                     AlbumEntity? albumEntity = null;
-                    if (!track.Album.IsNullOrEmpty() && artistEntities.Count > 0)
+                    if (!track.Album.IsNullOrEmpty())
                     {
                         albumEntity = await AlbumEntity.Where(x => x.Title == track.Album && x.ArtistId == artistEntities[0].Id).FirstAsync();
                         if (albumEntity == null)
@@ -103,7 +103,7 @@ public class ScanJob : ITask
                             albumEntity = new AlbumEntity
                             {
                                 Title = track.Album,
-                                ArtistId = artistEntities[0].Id,
+                                ArtistId = artistEntities is { Count: > 0 } ? artistEntities[0].Id : 0,
                                 Year = track.Year,
                                 GenreId = genre?.Id,
                                 PictureId = (await GetPicture(providerPlugin, fsInfo, track))?.Id
@@ -132,6 +132,31 @@ public class ScanJob : ITask
                             }
                         }
                     }
+
+                    LrcEntity? lrcEntity = null;
+
+                    var lrc = await providerPlugin.GetLrcAsync(path);
+
+                    if (!lrc.IsNullOrEmpty())
+                    {
+                        lrcEntity = new LrcEntity
+                        {
+                            Artist = artistEntities is { Count: > 0 } ? string.Join(",", artistEntities.Select(y => y.Name)) : "",
+                            Title = track.Title,
+                            Lrc = lrc
+                        };
+                        await lrcEntity.SaveAsync();
+                    }
+                    else if (track.Lyrics != null && track.Lyrics.SynchronizedLyrics.Count > 0)
+                    {
+                        lrcEntity = new LrcEntity
+                        {
+                            Artist = artistEntities is { Count: > 0 } ? string.Join(",", artistEntities.Select(y => y.Name)) : "",
+                            Title = track.Title,
+                            Lrc = track.Lyrics.FormatSynchToLRC()
+                        };
+                        await lrcEntity.SaveAsync();
+                    }
                     
                     var trackEntity = new TrackEntity()
                     {
@@ -151,7 +176,8 @@ public class ScanJob : ITask
                         MimeType = track.AudioFormat.MimeList.FirstOrDefault(),
                         ArtistEntities = artistEntities,
                         DirectoryId = directoryEntity.Id,
-                        GenreId = genre?.Id
+                        GenreId = genre?.Id,
+                        LrcId = lrcEntity?.Id ?? 0
                     };
                     await trackEntity.SaveAsync();
                     await trackEntity.SaveManyAsync(nameof(TrackEntity.ArtistEntities));

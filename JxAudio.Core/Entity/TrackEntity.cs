@@ -69,6 +69,12 @@ public class TrackEntity : BaseEntity<TrackEntity, int>
     
     [Navigate(nameof(GenreId))]
     public GenreEntity? GenreEntity { get; set; }
+
+    [Description("歌词Id")]
+    public int LrcId { get; set; }
+
+    [Navigate(nameof(LrcId))]
+    public LrcEntity? LrcEntity { get; set; }
     
     [Navigate(ManyToMany = typeof(TrackArtistEntity))]
     public ICollection<ArtistEntity>? ArtistEntities { get; set; }

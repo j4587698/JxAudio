@@ -8,6 +8,11 @@ namespace JxAudio.Web.Utils;
 public static class Util
 {
     public static bool IsInstalled = false;
+
+    static Util()
+    {
+        IsInstalled = File.Exists(Path.Combine(AppContext.BaseDirectory, "config", "install.lock"));
+    }
     
     public static string HexDecodePassword(string password)
     {
