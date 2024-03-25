@@ -15,6 +15,16 @@ public static class Constant
         new LocalFileProvider()
     };
     
+    public const string SearchTypeKey = "SearchType";
+    
+    public const string ScanIntervalKey = "ScanInterval";
+    
+    public const string CronExpressKey = "CronExpress";
+    
+    public const string TimeUnitKey = "TimeUnit";
+    
+    
+    
     public const string SuffixKey = "SuffixKey";
     
     public const string PathExtensionKey = "PathExtensionKey";

@@ -4,6 +4,7 @@ using Jx.Toolbox.Extensions;
 using JxAudio.Core.Attributes;
 using JxAudio.Core.Service;
 using JxAudio.Web.Enums;
+using JxAudio.Web.Utils;
 
 namespace JxAudio.Web.Vo;
 
@@ -27,19 +28,19 @@ public class SettingsVo
     {
         SettingsVo settingsVo = new()
         {
-            SearchType = settingsService.GetValue(nameof(SearchType)).ToEnum(SearchType.Interval),
-            ScanInterval = settingsService.GetValue(nameof(ScanInterval)),
-            CronExpress = settingsService.GetValue(nameof(CronExpress)),
-            TimeUnit = settingsService.GetValue(nameof(TimeUnit)).ToEnum(TimeUnit.Second)
+            SearchType = settingsService.GetValue(Constant.SearchTypeKey).ToEnum(SearchType.Interval),
+            ScanInterval = settingsService.GetValue(Constant.ScanIntervalKey),
+            CronExpress = settingsService.GetValue(Constant.CronExpressKey),
+            TimeUnit = settingsService.GetValue(Constant.TimeUnitKey).ToEnum(TimeUnit.Second)
         };
         return settingsVo;
     }
 
     public void SetSettings(SettingsService settingsService)
     {
-        settingsService.SetValue(nameof(SearchType), SearchType.ToString());
-        settingsService.SetValue(nameof(ScanInterval), ScanInterval ?? "");
-        settingsService.SetValue(nameof(TimeUnit), TimeUnit.ToString());
-        settingsService.SetValue(nameof(CronExpress), CronExpress ?? "");
+        settingsService.SetValue(Constant.SearchTypeKey, SearchType.ToString());
+        settingsService.SetValue(Constant.ScanIntervalKey, ScanInterval ?? "");
+        settingsService.SetValue(Constant.TimeUnitKey, TimeUnit.ToString());
+        settingsService.SetValue(Constant.CronExpressKey, CronExpress ?? "");
     }
 }
