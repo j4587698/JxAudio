@@ -14,6 +14,11 @@ public static class Constant
     {
         new LocalFileProvider()
     };
+
+    public static IProviderPlugin? GetProvider(Guid providerId)
+    {
+        return ProviderPlugins.FirstOrDefault(x => x.Id == providerId);
+    }
     
     public const string SearchTypeKey = "SearchType";
     

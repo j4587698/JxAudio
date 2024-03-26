@@ -46,6 +46,20 @@ public interface IProviderPlugin
     Task<FsInfo?> GetFileInfoAsync(string name);
 
     /// <summary>
+    /// 上传文件集
+    /// </summary>
+    /// <param name="uploadInfo"></param>
+    /// <returns></returns>
+    Task UploadFiles(params UploadInfo[] uploadInfos);
+
+    /// <summary>
+    /// 删除文件集
+    /// </summary>
+    /// <param name="fullpaths"></param>
+    /// <returns></returns>
+    Task DeleteFiles(params string[] fullpaths);
+
+    /// <summary>
     /// 获取文件
     /// </summary>
     /// <param name="name"></param>

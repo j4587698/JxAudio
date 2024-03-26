@@ -81,6 +81,31 @@ public class LocalFileProvider : IProviderPlugin
         });
     }
 
+    public Task UploadFiles(params UploadInfo[] uploadInfos)
+    {
+        foreach (var uploadInfo in uploadInfos)
+        {
+            using FileStream fileStream = new FileStream(uploadInfo.FullPath, FileMode.Create, FileAccess.Write);
+            // 将sourceStream的内容复制到fileStream
+            uploadInfo.FileStream.CopyTo(fileStream);
+            uploadInfo.FileStream.Dispose();
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteFiles(params string[] fullpaths)
+    {
+        foreach (var fullpath in fullpaths)
+        {
+            if (File.Exists(fullpath))
+            {
+                File.Delete(fullpath);
+            }
+        }
+        return Task.CompletedTask;
+    }
+
     public Task<Stream?> GetFileAsync(string name)
     {
         if (!File.Exists(name))

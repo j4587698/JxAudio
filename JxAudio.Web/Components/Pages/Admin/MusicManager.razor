@@ -3,6 +3,7 @@
 @using Jx.Toolbox.Extensions
 @using Microsoft.Extensions.Localization
 @using FreeSql
+@using JxAudio.Web.Utils
 @inject IStringLocalizer<MusicManager> MusicLocalizer
 
 <AdminTable TItem="TrackEntity" ShowToolbar="true" ShowAddButton="false" ShowExtendButtons="true"
@@ -44,8 +45,17 @@
 
     private async Task<bool> OnDeleteAsync(IEnumerable<TrackEntity> arg)
     {
-        var ids = arg.Select(x => x.Id);
-        await BaseEntity.Orm.GetRepository<TrackEntity>().DeleteCascadeByDatabaseAsync(x => ids.Contains(x.Id));
+        foreach (var trackEntity in arg)
+        {
+            var provider = Constant.GetProvider(trackEntity.ProviderId);
+            if (provider == null || trackEntity.DirectoryEntity == null)
+            {
+                return false;
+            }
+            
+            await provider.DeleteFiles(trackEntity.DirectoryEntity.Path);
+            await BaseEntity.Orm.GetRepository<TrackEntity>().DeleteCascadeByDatabaseAsync(x => x.Id == trackEntity.Id);
+        }
         return true;
     }
 
