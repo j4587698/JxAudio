@@ -307,13 +307,20 @@ public class BrowsingController : AudioController
     }
     
     [HttpGet("/getTopSongs")]
-    public Task HandleGetTopSongsRequestAsync(string? id, int? count)
+    public async Task HandleGetTopSongsRequestAsync(string? artist, int? count)
     {
-        var topSongs = new TopSongs
+        Util.CheckRequiredParameters(nameof(artist), artist);
+        count ??= 50;
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
         {
-            song = null,
-        };
+            var topSongs = new TopSongs
+            {
+                song = await TrackService.GetTopSongsAsync(apiUserId.Value, artist!, count.Value, HttpContext.RequestAborted),
+            };
 
-        return HttpContext.WriteResponseAsync(ItemChoiceType.topSongs, topSongs);
+            await HttpContext.WriteResponseAsync(ItemChoiceType.topSongs, topSongs);
+        }
     }
 }

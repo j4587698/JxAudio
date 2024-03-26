@@ -151,4 +151,14 @@ public class TrackService
             .ToDelete()
             .ExecuteAffrowsAsync(cancellationToken);
     }
+
+    public async Task<Child[]> GetTopSongsAsync(Guid userId, string artistName, int count, CancellationToken cancellationToken)
+    {
+        var tracks = await GetTrackBase(userId, null).Where(x => x.ArtistEntities!.Any(y => y.Name == artistName))
+            .OrderByDescending(x => x.PlayCount)
+            .Take(count)
+            .ToListAsync(cancellationToken);
+        
+        return tracks.Select(x => x.CreateTrackChild()).ToArray();
+    }
 }
