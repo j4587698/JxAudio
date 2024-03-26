@@ -107,11 +107,6 @@ public class AlbumService
             .Skip(offset)
             .Take(count)
             .ToListAsync(cancellationToken);
-
-        if (albums is {Count: 0})
-        {
-            throw RestApiErrorException.DataNotFoundError();
-        }
         
         return new AlbumList2()
         {

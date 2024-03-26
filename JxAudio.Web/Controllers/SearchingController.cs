@@ -36,6 +36,11 @@ public class SearchingController: AudioController
     {
         Util.CheckRequiredParameters(nameof(query), query);
 
+        if (query == "\"\"")
+        {
+            query = "";
+        }
+
         artistCount ??= 20;
         if (artistCount is < 0 or > 500)
         {
@@ -96,6 +101,11 @@ public class SearchingController: AudioController
     {
         Util.CheckRequiredParameters(nameof(query), query);
 
+        if (query == "\"\"")
+        {
+            query = "";
+        }
+        
         artistCount ??= 20;
         if (artistCount is < 0 or > 500)
         {
