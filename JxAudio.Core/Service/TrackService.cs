@@ -144,4 +144,11 @@ public class TrackService
         await BaseEntity.Orm.InsertOrUpdate<TrackStarEntity>().SetSource(trackStarEntities)
             .ExecuteAffrowsAsync(cancellationToken);
     }
+    
+    public async Task UnStarTrackAsync(Guid? userId, List<int> trackIds, CancellationToken cancellationToken)
+    {
+        await BaseEntity.Orm.Select<TrackStarEntity>().Where(x => trackIds.Contains(x.TrackId) && userId == x.UserId)
+            .ToDelete()
+            .ExecuteAffrowsAsync(cancellationToken);
+    }
 }

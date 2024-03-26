@@ -145,5 +145,12 @@ public class ArtistService
         await BaseEntity.Orm.InsertOrUpdate<ArtistStarEntity>().SetSource(artistStarEntities)
             .ExecuteAffrowsAsync(cancellationToken);
     }
+    
+    public async Task UnStarArtistAsync(Guid? userId, List<int> artistIds, CancellationToken cancellationToken)
+    {
+        await BaseEntity.Orm.Select<ArtistStarEntity>().Where(x => artistIds.Contains(x.ArtistId) && userId == x.UserId)
+            .ToDelete()
+            .ExecuteAffrowsAsync(cancellationToken);
+    }
 
 }

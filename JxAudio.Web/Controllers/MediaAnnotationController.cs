@@ -61,4 +61,56 @@ public class MediaAnnotationController(ArtistService artistService, AlbumService
 
         await HttpContext.WriteResponseAsync(0, null);
     }
+
+    [HttpGet("/unstar")]
+    public async Task UnStar(string[]? id, string[]? albumId, string[]? artistId)
+    {
+        var artistIds = new List<int>();
+        var albumIds = new List<int>();
+        var trackIds = new List<int>();
+
+        if (id != null)
+        {
+            foreach (var s in id)
+            {
+                if (s.TryParseArtistId(out var artId))
+                {
+                    artistIds.Add(artId);
+                }
+                else if (s.TryParseAlbumId(out var albId))
+                {
+                    albumIds.Add(albId);
+                }
+                else if (s.TryParseTrackId(out var tId))
+                {
+                    trackIds.Add(tId);
+                }
+                else
+                {
+                    throw RestApiErrorException.InvalidParameterError(nameof(id));
+                }
+            }
+        }
+
+        if (artistId != null)
+        {
+            artistIds.AddRange(artistId.Select(x => x.ParseArtistId()));
+        }
+
+        if (albumId != null)
+        {
+            albumIds.AddRange(albumId.Select(x => x.ParseAlbumId()));
+        }
+        
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            await artistService.UnStarArtistAsync(apiUserId, artistIds, HttpContext.RequestAborted);
+            await albumService.UnStarAlbumAsync(apiUserId, albumIds, HttpContext.RequestAborted);
+            await trackService.UnStarTrackAsync(apiUserId, trackIds, HttpContext.RequestAborted);
+        }
+        
+        await HttpContext.WriteResponseAsync(0, null);
+    }
 }

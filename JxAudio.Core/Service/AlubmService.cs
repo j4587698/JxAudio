@@ -303,4 +303,11 @@ public class AlbumService
         await BaseEntity.Orm.InsertOrUpdate<AlbumStarEntity>().SetSource(albumStarEntities)
             .ExecuteAffrowsAsync(cancellationToken);
     }
+    
+    public async Task UnStarAlbumAsync(Guid? userId, List<int> albumIds, CancellationToken cancellationToken)
+    {
+         await BaseEntity.Orm.Select<AlbumStarEntity>().Where(x => albumIds.Contains(x.AlbumId) && userId == x.UserId)
+            .ToDelete()
+            .ExecuteAffrowsAsync(cancellationToken);
+    }
 }
