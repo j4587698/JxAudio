@@ -125,4 +125,23 @@ public class TrackService
 
         return tracks.Select(x => x.CreateTrackChild()).ToArray();
     }
+    
+    public async Task StarTrackAsync(Guid? userId, List<int> trackIds, CancellationToken cancellationToken)
+    {
+        var count = await TrackEntity.Where(x => trackIds.Contains(x.Id)).CountAsync(cancellationToken);
+        if (count != trackIds.Count)
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+        
+        var trackStarEntities = trackIds.Select(x => new TrackStarEntity()
+        {
+            UserId = userId!.Value,
+            TrackId = x,
+            CreateTime = DateTime.Now
+        });
+
+        await BaseEntity.Orm.InsertOrUpdate<TrackStarEntity>().SetSource(trackStarEntities)
+            .ExecuteAffrowsAsync(cancellationToken);
+    }
 }

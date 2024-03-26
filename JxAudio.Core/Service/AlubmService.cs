@@ -284,4 +284,23 @@ public class AlbumService
 
         return albums.Select(x => x.CreateAlbumId3()).ToArray();
     }
+    
+    public async Task StarAlbumAsync(Guid? userId, List<int> albumIds, CancellationToken cancellationToken)
+    {
+        var count = await AlbumEntity.Where(x => albumIds.Contains(x.Id)).CountAsync(cancellationToken);
+        if (count != albumIds.Count)
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+        
+        var albumStarEntities = albumIds.Select(x => new AlbumStarEntity()
+        {
+            UserId = userId!.Value,
+            AlbumId = x,
+            CreateTime = DateTime.Now
+        });
+
+        await BaseEntity.Orm.InsertOrUpdate<AlbumStarEntity>().SetSource(albumStarEntities)
+            .ExecuteAffrowsAsync(cancellationToken);
+    }
 }

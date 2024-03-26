@@ -126,4 +126,24 @@ public class ArtistService
 
         return artists.Select(x => x.CreateArtistId3()).ToArray();
     }
+
+    public async Task StarArtistAsync(Guid? userId, List<int> artistIds, CancellationToken cancellationToken)
+    {
+        var count = await ArtistEntity.Where(x => artistIds.Contains(x.Id)).CountAsync(cancellationToken);
+        if (count != artistIds.Count)
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+        
+        var artistStarEntities = artistIds.Select(x => new ArtistStarEntity()
+        {
+            UserId = userId!.Value,
+            ArtistId = x,
+            CreateTime = DateTime.Now
+        });
+
+        await BaseEntity.Orm.InsertOrUpdate<ArtistStarEntity>().SetSource(artistStarEntities)
+            .ExecuteAffrowsAsync(cancellationToken);
+    }
+
 }
