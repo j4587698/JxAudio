@@ -1,4 +1,6 @@
-﻿namespace JxAudio.Core;
+﻿using System.Reflection;
+
+namespace JxAudio.Core;
 
 public static class Constants
 {
@@ -30,4 +32,14 @@ public static class Constants
     ];
 
     public const string CoverCachePath = "config/cache/";
+    
+    public static Stream GetDefaultCover()
+    {
+        return Assembly.GetExecutingAssembly().GetManifestResourceStream("JxAudio.Core.Assets.NoCover.png")!;
+    }
+    
+    public static Stream GetDefaultAvatar()
+    {
+        return Assembly.GetExecutingAssembly().GetManifestResourceStream("JxAudio.Core.Assets.avatar.png")!;
+    }
 }

@@ -22,7 +22,7 @@ public class PictureService
 
             if (track?.PictureEntity == null)
             {
-                return Assembly.GetExecutingAssembly().GetManifestResourceStream("JxAudio.Core.Assets.NoCover.png");
+                return Constants.GetDefaultCover();
             }
 
             pictureEntity = track.PictureEntity;
@@ -36,14 +36,14 @@ public class PictureService
 
             if (album?.PictureEntity == null)
             {
-                return Assembly.GetExecutingAssembly().GetManifestResourceStream("JxAudio.Core.Assets.NoCover.png");
+                return Constants.GetDefaultCover();
             }
 
             pictureEntity = album.PictureEntity;
         }
         else if (id.TryParseArtistId(out var artistId))
         {
-            return Assembly.GetExecutingAssembly().GetManifestResourceStream("JxAudio.Core.Assets.avatar.png");
+            return Constants.GetDefaultAvatar();
         }
         else
         {

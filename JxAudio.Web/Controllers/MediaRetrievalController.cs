@@ -3,6 +3,8 @@ using System.Text.Encodings.Web;
 using FFMpegCore;
 using FFMpegCore.Enums;
 using FFMpegCore.Pipes;
+using Jx.Toolbox.Extensions;
+using Jx.Toolbox.Utils;
 using JxAudio.Core;
 using JxAudio.Core.Extensions;
 using JxAudio.Core.Service;
@@ -16,7 +18,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JxAudio.Web.Controllers;
 
-public class MediaRetrievalController(PictureService pictureService, TrackService trackService, LrcService lrcService): AudioController
+public class MediaRetrievalController(PictureService pictureService, TrackService trackService,
+    LrcService lrcService, UserService userService): AudioController
 {
     [HttpGet("/stream")]
     public async Task Stream(string? id, int? maxBitRate, string? format, string? timeOffset, string? timeEnd, string? size)
@@ -199,12 +202,40 @@ public class MediaRetrievalController(PictureService pictureService, TrackServic
     public async Task GetLyrics(string? artist, string? title)
     {
         var text = await lrcService.GetLrcAsync(artist, title);
-        var html = HtmlEncoder.Default.Encode(text);
         await HttpContext.WriteResponseAsync(ItemChoiceType.lyrics, new Lyrics()
         {
             artist = artist,
             title = title,
             Text = [text]
         });
+    }
+
+    [HttpGet("/getAvatar")]
+    public async Task GetAvatar(string? username)
+    {
+        Util.CheckRequiredParameters(nameof(username), username);
+        
+        HttpContext.Response.ContentType = "image/png";
+        var user = await userService.GetUserByUsername(username!, HttpContext.RequestAborted);
+
+        if (user == null)
+        {
+            await Constants.GetDefaultAvatar().CopyToAsync(HttpContext.Response.Body, HttpContext.RequestAborted);
+            return;
+        }
+
+        if (user.Email.IsNullOrEmpty())
+        {
+            await Constants.GetDefaultAvatar().CopyToAsync(HttpContext.Response.Body, HttpContext.RequestAborted);
+        }
+
+        var bytes = await Avatar.GetAvatarBytesAsync(user.Email);
+        if (bytes == null)
+        {
+            await Constants.GetDefaultAvatar().CopyToAsync(HttpContext.Response.Body, HttpContext.RequestAborted);
+            return;
+        }
+        
+        await new MemoryStream(bytes).CopyToAsync(HttpContext.Response.Body, HttpContext.RequestAborted);
     }
 }
