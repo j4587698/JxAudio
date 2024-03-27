@@ -35,16 +35,6 @@ public class TrackService
             throw RestApiErrorException.DataNotFoundError();
         }
 
-        track.PlayCount += 1;
-        if (track.AlbumEntity != null)
-        {
-            track.AlbumEntity.PlayCount += 1;
-            track.AlbumEntity.LatestPlayTime = DateTime.Now;
-            await track.AlbumEntity.SaveAsync();
-        }
-
-        await track.SaveAsync();
-
         return track;
     }
     
@@ -189,5 +179,26 @@ public class TrackService
         }
 
         track.Save();
+    }
+
+    public async Task UpdatePlayCountAsync(int trackId, CancellationToken cancellationToken)
+    {
+        var track = await TrackEntity.Where(x => x.Id == trackId)
+            .Include(x => x.AlbumEntity)
+            .FirstAsync(cancellationToken);
+        if (track == null)
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+        
+        track.PlayCount += 1;
+        if (track.AlbumEntity != null)
+        {
+            track.AlbumEntity.PlayCount += 1;
+            track.AlbumEntity.LatestPlayTime = DateTime.Now;
+            await track.AlbumEntity.SaveAsync();
+        }
+
+        await track.SaveAsync();
     }
 }

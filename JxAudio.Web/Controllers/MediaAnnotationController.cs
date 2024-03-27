@@ -150,4 +150,18 @@ public class MediaAnnotationController(ArtistService artistService, AlbumService
             await HttpContext.WriteResponseAsync(0, null);
         }
     }
+
+    [HttpGet("/scrobble")]
+    public async Task Scrobble(string? id, long? time, bool submission = true)
+    {
+        Util.CheckRequiredParameters(nameof(id), id);
+
+        if (submission)
+        {
+            var trackId = id.ParseTrackId();
+            await trackService.UpdatePlayCountAsync(trackId, HttpContext.RequestAborted);
+        }
+        
+        await HttpContext.WriteResponseAsync(0, null);
+    }
 }
