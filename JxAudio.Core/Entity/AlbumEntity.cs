@@ -45,4 +45,7 @@ public class AlbumEntity : BaseEntity<AlbumEntity, int>
 
     [Navigate(nameof(AlbumStarEntity.AlbumId))]
     public ICollection<AlbumStarEntity>? AlbumStarEntities { get; set; }
+    
+    [Navigate(nameof(AlbumRatingEntity.AlbumId))]
+    public ICollection<AlbumRatingEntity>? AlbumRatingEntities { get; set; }
 }

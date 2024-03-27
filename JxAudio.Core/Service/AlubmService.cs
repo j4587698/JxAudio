@@ -305,4 +305,33 @@ public class AlbumService
             .ToDelete()
             .ExecuteAffrowsAsync(cancellationToken);
     }
+
+    public async Task SetAlbumRatingAsync(Guid userId, int albumId, float rating, CancellationToken cancellationToken)
+    {
+        var album = await AlbumEntity.FindAsync(albumId);
+
+        if (album == null)
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+
+        if (rating == 0)
+        {
+            await BaseEntity.Orm.Delete<AlbumRatingEntity>().Where(x => x.AlbumId == albumId && x.UserId == userId)
+                .ExecuteAffrowsAsync(cancellationToken);
+        }
+        else
+        {
+            var albumRatingEntity = new AlbumRatingEntity()
+            {
+                AlbumId = albumId,
+                UserId = userId,
+                Rating = rating,
+                CreateTime = DateTime.Now
+            };
+
+            await BaseEntity.Orm.InsertOrUpdate<AlbumRatingEntity>().SetSource(albumRatingEntity)
+                .ExecuteAffrowsAsync(cancellationToken);
+        }
+    }
 }

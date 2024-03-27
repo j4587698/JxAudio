@@ -21,4 +21,7 @@ public class ArtistEntity: BaseEntity<ArtistEntity, int>
 
     [Navigate(nameof(ArtistStarEntity.ArtistId))]
     public ICollection<ArtistStarEntity>? ArtistStarEntities { get; set; }
+
+    [Navigate(nameof(ArtistRatingEntity.ArtistId))]
+    public ICollection<ArtistRatingEntity>? ArtistRatingEntities { get; set; }
 }

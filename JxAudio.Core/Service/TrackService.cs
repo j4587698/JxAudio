@@ -161,4 +161,33 @@ public class TrackService
         
         return tracks.Select(x => x.CreateTrackChild()).ToArray();
     }
+    
+    public async Task SetTrackRatingAsync(Guid userId, int trackId, float rating, CancellationToken cancellationToken)
+    {
+        var track = await TrackEntity.FindAsync(trackId);
+        if (track == null)
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+
+        if (rating == 0)
+        {
+            await BaseEntity.Orm.Delete<TrackRatingEntity>().Where(x => x.TrackId == trackId && x.UserId == userId)
+                .ExecuteAffrowsAsync(cancellationToken);
+        }
+        else
+        {
+            var trackRatingEntity = new TrackRatingEntity()
+            {
+                UserId = userId,
+                TrackId = trackId,
+                Rating = rating
+            };
+
+            await BaseEntity.Orm.InsertOrUpdate<TrackRatingEntity>().SetSource(trackRatingEntity)
+                .ExecuteAffrowsAsync(cancellationToken);
+        }
+
+        track.Save();
+    }
 }

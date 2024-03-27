@@ -153,4 +153,31 @@ public class ArtistService
             .ExecuteAffrowsAsync(cancellationToken);
     }
 
+    public async Task SetArtistRatingAsync(Guid userId, int artistId, float rating, CancellationToken cancellationToken)
+    {
+        var artist = await ArtistEntity.FindAsync(artistId);
+        if (artist == null)
+        {
+            throw RestApiErrorException.DataNotFoundError();
+        }
+
+        if (rating == 0)
+        {
+            await BaseEntity.Orm.Delete<ArtistRatingEntity>().Where(x => x.ArtistId == artistId && x.UserId == userId)
+                .ExecuteAffrowsAsync(cancellationToken);
+        }
+        else
+        {
+            var artistStarEntity = new ArtistRatingEntity()
+            {
+                UserId = userId,
+                ArtistId = artistId,
+                Rating = rating,
+                CreateTime = DateTime.Now
+            };
+            await BaseEntity.Orm.InsertOrUpdate<ArtistRatingEntity>().SetSource(artistStarEntity)
+                .ExecuteAffrowsAsync(cancellationToken);
+        }
+    }
+
 }

@@ -85,4 +85,7 @@ public class TrackEntity : BaseEntity<TrackEntity, int>
     [Navigate(ManyToMany = typeof(PlaylistTrackEntity))]
     public ICollection<PlaylistEntity>? PlaylistEntities { get; set; }
 
+    [Navigate(nameof(TrackRatingEntity.TrackId))]
+    public ICollection<TrackRatingEntity>? TrackRatingEntities { get; set; }
+
 }

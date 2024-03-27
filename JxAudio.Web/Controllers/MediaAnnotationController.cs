@@ -113,4 +113,41 @@ public class MediaAnnotationController(ArtistService artistService, AlbumService
         
         await HttpContext.WriteResponseAsync(0, null);
     }
+
+    [HttpGet("/setRating")]
+    public async Task SetRating(string? id, float? rating)
+    {
+        Util.CheckRequiredParameters(nameof(id), id);
+        Util.CheckRequiredParameters(nameof(rating), rating);
+
+        if (rating is < 0 or > 5)
+        {
+            throw RestApiErrorException.InvalidParameterError(nameof(rating));
+        }
+        
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+        var apiUserId = apiContext?.User?.Id;
+        if (apiUserId != null)
+        {
+            if (id!.TryParseAlbumId(out var albumId))
+            {
+                await albumService.SetAlbumRatingAsync(apiUserId.Value, albumId, rating!.Value, HttpContext.RequestAborted);
+            }
+            else if (id!.TryParseArtistId(out var artistId))
+            {
+                await artistService.SetArtistRatingAsync(apiUserId.Value, artistId, rating!.Value,
+                    HttpContext.RequestAborted);
+            }
+            else if (id!.TryParseTrackId(out var trackId))
+            {
+                await trackService.SetTrackRatingAsync(apiUserId.Value, trackId, rating!.Value, HttpContext.RequestAborted);
+            }
+            else
+            {
+                throw RestApiErrorException.InvalidParameterError(nameof(id));
+            }
+            
+            await HttpContext.WriteResponseAsync(0, null);
+        }
+    }
 }
