@@ -216,7 +216,7 @@ public class MediaRetrievalController(PictureService pictureService, TrackServic
         Util.CheckRequiredParameters(nameof(username), username);
         
         HttpContext.Response.ContentType = "image/png";
-        var user = await userService.GetUserByUsername(username!, HttpContext.RequestAborted);
+        var user = await userService.GetUserByUsernameAsync(username!, HttpContext.RequestAborted);
 
         if (user == null)
         {
