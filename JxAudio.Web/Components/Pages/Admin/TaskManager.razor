@@ -1,0 +1,38 @@
+﻿@page "/Admin/TaskManager"
+@using Longbow.Tasks
+@using JxAudio.Web.Vo
+@using System.Diagnostics.CodeAnalysis
+
+<AdminTable TItem="ScheduleVo" Items="ScheduleVos">
+    <TableColumns>
+        <TableColumn @bind-Field="@context.Name"></TableColumn>
+        <TableColumn @bind-Field="@context.Status"></TableColumn>
+        <TableColumn @bind-Field="@context.NextRuntime"></TableColumn>
+        <TableColumn @bind-Field="@context.LastRuntime"></TableColumn>
+        <TableColumn @bind-Field="@context.LastRunResult"></TableColumn>
+        <TableColumn @bind-Field="@context.CreatedTime"></TableColumn>
+    </TableColumns>
+</AdminTable>
+
+@code {
+
+    [NotNull]
+    public List<ScheduleVo>? ScheduleVos { get; set; }
+    
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        var schedulers = TaskServicesManager.ToList();
+        ScheduleVos = schedulers.Select(x => new ScheduleVo()
+        {
+            CreatedTime = x.CreatedTime,
+            LastRunResult = x.LastRunResult,
+            LastRuntime = x.LastRuntime,
+            Name = x.Name,
+            NextRuntime = x.NextRuntime,
+            Status = x.Status,
+            Scheduler = x
+        }).ToList();
+    }
+
+}
