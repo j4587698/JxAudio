@@ -22,7 +22,7 @@ public class UserManagementController(UserService userService): AudioController
             throw RestApiErrorException.UserNotAuthorizedError();
         }
         
-        var user = await userService.GetUserAsync(apiContext!.User!.Id, HttpContext.RequestAborted);
+        var user = await userService.GetUserAsync(apiContext!.User!, HttpContext.RequestAborted);
 
         await HttpContext.WriteResponseAsync(ItemChoiceType.user, user);
     }
@@ -49,5 +49,24 @@ public class UserManagementController(UserService userService): AudioController
     public void DeleteUser()
     {
         throw RestApiErrorException.UserNotAuthorizedError();
+    }
+
+    [HttpGet("/changePassword")]
+    public async Task ChangePassword(string? username, string? password)
+    {
+        Util.CheckRequiredParameters(nameof(username), username);
+        Util.CheckRequiredParameters(nameof(password), password);
+        
+        var decodePassword = Util.HexDecodePassword(password!);
+        
+        var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
+
+        if (username != apiContext?.User?.UserName)
+        {
+            throw RestApiErrorException.UserNotAuthorizedError();
+        }
+        
+        await userService.UpdatePassword(apiContext!.User!, decodePassword);
+        await HttpContext.WriteResponseAsync(0, null);
     }
 }

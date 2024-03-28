@@ -11,18 +11,17 @@ public class UserService
     {
         return await UserEntity.Where(x => x.UserName == username).FirstAsync(cancellationToken);
     }
-    
-    public async Task<User> GetUserAsync(Guid userId, CancellationToken cancellationToken)
+
+    public async Task UpdatePassword(UserEntity userEntity, string password)
     {
-        var userEntity = await UserEntity.Where(x => x.Id == userId).FirstAsync(cancellationToken);
-
-        if (userEntity == null)
-        {
-            throw RestApiErrorException.DataNotFoundError();
-        }
-
+        userEntity.Password = password;
+        await userEntity.SaveAsync();
+    }
+    
+    public async Task<User> GetUserAsync(UserEntity userEntity, CancellationToken cancellationToken)
+    {
         var ids = await DirectoryEntity
-            .Where(x => x.IsAccessControlled == false || x.UserEntities!.Any(y => y.Id == userId))
+            .Where(x => x.IsAccessControlled == false || x.UserEntities!.Any(y => y.Id == userEntity.Id))
             .ToListAsync(x => x.Id, cancellationToken);
         
         return new User()
