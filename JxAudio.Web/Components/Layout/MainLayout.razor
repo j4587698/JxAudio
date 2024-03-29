@@ -67,15 +67,16 @@
         MenuItems = new List<MenuItem>
         {
             new() { Text = Localizer["Home"], Icon = "fa fa-fw fa-home", Url = "/Admin", Match = NavLinkMatch.All} ,
-            new() { Text = Localizer["User"], Icon = "fa fa-fw fa-home", Url = "/Admin/UserManager", Match = NavLinkMatch.All} ,
-            new() { Text = Localizer["Folder"], Icon = "fa fa-fw fa-home", Url = "/Admin/FolderSelect", Match = NavLinkMatch.All} ,
-            new() { Text = Localizer["Album"], Icon = "fa fa-fw fa-home", Url = "/Admin/AlbumManager", Match = NavLinkMatch.All } ,
-            new() { Text = Localizer["Artist"], Icon = "fa fa-fw fa-home", Url = "/Admin/ArtistManager", Match = NavLinkMatch.All } ,
-            new() { Text = Localizer["Genre"], Icon = "fa fa-fw fa-home", Url = "/Admin/GenreManager", Match = NavLinkMatch.All } ,
-            new() { Text = Localizer["Music"], Icon = "fa fa-fw fa-home", Url = "/Admin/MusicManager", Match = NavLinkMatch.All } ,
-            new() { Text = Localizer["Playlist"], Icon = "fa fa-fw fa-home", Url = "/Admin/PlaylistManager", Match = NavLinkMatch.All } ,
-            new() { Text = Localizer["Task"], Icon = "fa fa-fw fa-home", Url = "/Admin/TaskManager", Match = NavLinkMatch.All } ,
-            new() { Text = Localizer["Setting"], Icon = "fa fa-fw fa-home", Url = "/Admin/SettingsManager", Match = NavLinkMatch.All } 
+            new() { Text = Localizer["User"], Icon = "fas fa-fw fa-clipboard-user", Url = "/Admin/UserManager", Match = NavLinkMatch.All} ,
+            new() { Text = Localizer["Folder"], Icon = "fas fa-fw fa-folder", Url = "/Admin/FolderSelect", Match = NavLinkMatch.All} ,
+            new() { Text = Localizer["Album"], Icon = "fas fa-fw fa-compact-disc", Url = "/Admin/AlbumManager", Match = NavLinkMatch.All } ,
+            new() { Text = Localizer["Artist"], Icon = "fas fa-fw fa-microphone", Url = "/Admin/ArtistManager", Match = NavLinkMatch.All } ,
+            new() { Text = Localizer["Genre"], Icon = "fas fa-fw fa-tags", Url = "/Admin/GenreManager", Match = NavLinkMatch.All } ,
+            new() { Text = Localizer["Music"], Icon = "fas fa-fw fa-music", Url = "/Admin/MusicManager", Match = NavLinkMatch.All } ,
+            new() { Text = Localizer["Playlist"], Icon = "fas fa-fw fa-clipboard-list", Url = "/Admin/PlaylistManager", Match = NavLinkMatch.All } ,
+            new() { Text = Localizer["Task"], Icon = "fas fa-fw fa-list-check", Url = "/Admin/TaskManager", Match = NavLinkMatch.All } ,
+            new() { Text = Localizer["Setting"], Icon = "fas fa-fw fa-cog", Url = "/Admin/SettingsManager", Match = NavLinkMatch.All } ,
+            new() { Text = Localizer["Plugin"], Icon = "fas fa-fw fa-puzzle-piece", Url = "/Admin/SettingsManager", Match = NavLinkMatch.All } 
         };
         var nowPath = NavigationManager.ToAbsoluteUri(NavigationManager.Uri).LocalPath;
         var menu = MenuItems.FirstOrDefault(x => x.Url == nowPath);
