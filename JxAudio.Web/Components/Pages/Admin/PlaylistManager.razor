@@ -1,0 +1,14 @@
+﻿@page "/Admin/PlaylistManager"
+@using JxAudio.Core.Entity
+
+<AdminTable TItem="PlaylistEntity">
+    <TableColumns>
+        <TableColumn @bind-Field="@context.Name"></TableColumn>
+        <TableColumn @bind-Field="@context.Description"></TableColumn>
+        <TableColumn @bind-Field="@context.IsPublic"></TableColumn>
+    </TableColumns>
+</AdminTable>
+
+@code {
+    
+}

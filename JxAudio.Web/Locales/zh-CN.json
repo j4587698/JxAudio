@@ -31,6 +31,8 @@
     "Artist": "歌手管理",
     "Genre": "流派管理",
     "Music": "音乐管理",
+    "Playlist": "播放列表管理",
+    "Task": "任务管理",
     "Setting": "系统设置"
   },
   "JxAudio.Core.Enums.DbType": {
@@ -98,7 +100,11 @@
     "Name": "流派",
     "Count": "歌曲数量"
   },
-  
+  "JxAudio.Core.Entity.PlaylistEntity": {
+    "Name": "播放列表名",
+    "Description": "播放列表描述",
+    "IsPublic": "是否公开"
+  },
   "JxAudio.Web.Enums.SearchType": {
     "Interval": "时间间隔",
     "Cron": "Cron表达式"
