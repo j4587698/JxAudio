@@ -22,7 +22,7 @@ var builder = WebApplication.CreateBuilder(args).Inject(configOption =>
     configOption.ConfigSearchFolder = ["config"];
 });
 
-//builder.Host.UseSerilog();
+builder.Host.UseSerilog();
 
 var dbConfigOption = builder.Configuration.GetSection("Db").Get<DbConfigOption>();
 if (dbConfigOption != null)
@@ -66,7 +66,7 @@ builder.Services.AddRequestLocalization<IOptionsMonitor<BootstrapBlazorOptions>>
 });
 
 var app = builder.Build().Use();
-//app.UseSerilogRequestLogging();
+app.UseSerilogRequestLogging();
 // 启用本地化
 var option = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
 if (option != null)

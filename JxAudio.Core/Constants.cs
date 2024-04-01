@@ -32,6 +32,8 @@ public static class Constants
     ];
 
     public const string CoverCachePath = "config/cache/";
+
+    public const string PluginPath = "config/plugins/";
     
     public static Stream GetDefaultCover()
     {

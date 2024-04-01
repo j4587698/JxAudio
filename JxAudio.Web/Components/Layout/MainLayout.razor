@@ -14,7 +14,7 @@
             <div class="flex-fill d-sm-none">
             </div>
             <CultureChooser></CultureChooser>
-            <Logout ImageUrl="/images/" UserName="Admin" DisplayName="Admin">
+            <Logout ImageUrl="/images/logo.png" UserName="Admin" DisplayName="Admin">
                 <LinkTemplate>
                     <LogoutLink Url="/Admin/Logout"></LogoutLink>
                 </LinkTemplate>
@@ -34,12 +34,6 @@
             </CascadingValue>
         </Main>
     </Layout>
-    
-    <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
-    </div>
 
 </BootstrapBlazorRoot>
 
@@ -76,7 +70,7 @@
             new() { Text = Localizer["Playlist"], Icon = "fas fa-fw fa-clipboard-list", Url = "/Admin/PlaylistManager", Match = NavLinkMatch.All } ,
             new() { Text = Localizer["Task"], Icon = "fas fa-fw fa-list-check", Url = "/Admin/TaskManager", Match = NavLinkMatch.All } ,
             new() { Text = Localizer["Setting"], Icon = "fas fa-fw fa-cog", Url = "/Admin/SettingsManager", Match = NavLinkMatch.All } ,
-            new() { Text = Localizer["Plugin"], Icon = "fas fa-fw fa-puzzle-piece", Url = "/Admin/SettingsManager", Match = NavLinkMatch.All } 
+            new() { Text = Localizer["Plugin"], Icon = "fas fa-fw fa-puzzle-piece", Url = "/Admin/PluginManager", Match = NavLinkMatch.All } 
         };
         var nowPath = NavigationManager.ToAbsoluteUri(NavigationManager.Uri).LocalPath;
         var menu = MenuItems.FirstOrDefault(x => x.Url == nowPath);

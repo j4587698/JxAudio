@@ -33,6 +33,7 @@
     "Music": "音乐管理",
     "Playlist": "播放列表管理",
     "Task": "任务管理",
+    "Plugin": "插件管理",
     "Setting": "系统设置"
   },
   "JxAudio.Core.Enums.DbType": {
@@ -105,6 +106,14 @@
     "Description": "播放列表描述",
     "IsPublic": "是否公开"
   },
+  "JxAudio.Plugin.PluginConfig": {
+    "Id": "插件ID",
+    "Name": "插件名",
+    "Author": "插件作者",
+    "Description": "插件描述",
+    "Version": "插件版本",
+    "IsEnable": "是否启用"
+  },
   "JxAudio.Web.Enums.SearchType": {
     "Interval": "时间间隔",
     "Cron": "Cron表达式"
@@ -152,6 +161,10 @@
     "Close": "关闭",
     "RePassword": "两次密码输入不一致",
     "Success": "修改成功"
+  },
+  "JxAudio.Web.Components.Pages.Admin.PluginManager": {
+    "Enable": "启用插件",
+    "Disable": "禁用插件"
   },
   "JxAudio.Web.Components.Components.Install": {
     "Fail": "失败",

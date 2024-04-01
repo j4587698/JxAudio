@@ -1,6 +1,39 @@
 ﻿@page "/Admin/PluginManager"
-<h3>PluginManager</h3>
+@using JxAudio.Plugin
+@using System.Diagnostics.CodeAnalysis
+@using Microsoft.Extensions.Localization
+
+@inject IStringLocalizer<PluginManager> PluginManagerLocalizer
+
+<AdminTable TItem="PluginConfig" Items="PluginConfigs" ShowToolbar="true" ShowDefaultButtons="false" 
+            ShowExtendButtons="true" ShowExtendEditButton="false" ShowExtendDeleteButton="false">
+    <TableColumns>
+        <TableColumn @bind-Field="@context.Id"></TableColumn>
+        <TableColumn @bind-Field="@context.Name"></TableColumn>
+        <TableColumn @bind-Field="@context.Author"></TableColumn>
+        <TableColumn @bind-Field="@context.Description" TextEllipsis="true"></TableColumn>
+        <TableColumn @bind-Field="@context.Version"></TableColumn>
+        <TableColumn @bind-Field="@context.IsEnable"></TableColumn>
+    </TableColumns>
+    <RowButtonTemplate>
+        <TableCellButton Text="@(context.IsEnable ? PluginManagerLocalizer["Disable"] : PluginManagerLocalizer["Enable"])"
+                         OnClick="() => ChangeStatus(context)"></TableCellButton>
+    </RowButtonTemplate>
+</AdminTable>
 
 @code {
-    
+    [NotNull]
+    private List<PluginConfig>? PluginConfigs { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        PluginConfigs = PluginUtil.GetAllPlugins();
+    }
+
+    private void ChangeStatus(PluginConfig pluginConfig)
+    {
+        throw new NotImplementedException();
+    }
+
 }
