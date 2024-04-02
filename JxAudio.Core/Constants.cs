@@ -33,7 +33,7 @@ public static class Constants
 
     public const string CoverCachePath = "config/cache/";
 
-    public const string PluginPath = "config/plugins/";
+    public static readonly string PluginPath = Path.Combine(Directory.GetCurrentDirectory(), "config/plugins/");
     
     public static Stream GetDefaultCover()
     {

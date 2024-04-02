@@ -33,7 +33,10 @@
 
     private void ChangeStatus(PluginConfig pluginConfig)
     {
-        throw new NotImplementedException();
+        if (PluginUtil.ChangePluginStatus(pluginConfig.Id!, out var isEnable))
+        {
+            pluginConfig.IsEnable = isEnable;
+        }
     }
 
 }
