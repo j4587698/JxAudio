@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{E3C6
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalFileProviderPlugin", "Plugins\LocalFileProviderPlugin\LocalFileProviderPlugin.csproj", "{698F015B-20A4-4527-AAFA-94D3A57DA6B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AListProviderPlugin", "Plugins\AListProviderPlugin\AListProviderPlugin.csproj", "{7E2D1398-D285-4D2B-BFBE-EC59A8E1B7EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,8 +34,13 @@ Global
 		{698F015B-20A4-4527-AAFA-94D3A57DA6B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{698F015B-20A4-4527-AAFA-94D3A57DA6B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{698F015B-20A4-4527-AAFA-94D3A57DA6B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E2D1398-D285-4D2B-BFBE-EC59A8E1B7EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E2D1398-D285-4D2B-BFBE-EC59A8E1B7EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E2D1398-D285-4D2B-BFBE-EC59A8E1B7EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E2D1398-D285-4D2B-BFBE-EC59A8E1B7EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{698F015B-20A4-4527-AAFA-94D3A57DA6B9} = {E3C60856-3E9D-435A-82C7-04479737C3DF}
+		{7E2D1398-D285-4D2B-BFBE-EC59A8E1B7EB} = {E3C60856-3E9D-435A-82C7-04479737C3DF}
 	EndGlobalSection
 EndGlobal

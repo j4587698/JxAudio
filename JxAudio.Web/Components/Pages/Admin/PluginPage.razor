@@ -1,0 +1,38 @@
+﻿@page "/Admin/Plugin/{Id}"
+@using System.Diagnostics.CodeAnalysis
+@using Jx.Toolbox.Extensions
+@using JxAudio.Plugin
+
+@inject NavigationManager NavigationManager
+
+@_renderFragment
+
+@code {
+    [Parameter]
+    [NotNull]
+    public string? Id { get; set; }
+    
+    private RenderFragment? _renderFragment;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        ModifyPage();
+    }
+
+    private void ModifyPage()
+    {
+        if (Id.IsNullOrEmpty())
+        {
+            NavigationManager.NavigateTo("Admin");
+            return;
+        }
+        var body = PluginUtil.GetPluginMenuModel(Id);
+        if (body == null)
+        {
+            NavigationManager.NavigateTo("Admin");
+            return;
+        }
+        _renderFragment = body.PluginBody;
+    }
+}
