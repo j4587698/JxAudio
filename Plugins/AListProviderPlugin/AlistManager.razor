@@ -1,5 +1,34 @@
-﻿<h3>AlistManager</h3>
+﻿@using BootstrapBlazor.Components
+@using JxAudio.Core.Service
+
+@inject SettingsService SettingsService 
+@inject ToastService ToastService
+
+<ValidateForm Model="_accountVo">
+    <Row ItemsPerRow="ItemsPerRow.Two">
+        <h3>Alist账号设置</h3>
+        <Button ButtonType="ButtonType.Submit" style="float: right">验证并保存</Button>
+    </Row>
+
+    <div class="row g-3 form-inline">
+        <div class="col-12">
+            <BootstrapInput @bind-Value="@_accountVo.UserName" DisplayText="用户名" ShowLabel="true"></BootstrapInput>
+        </div>
+        <div class="col-12">
+            <BootstrapInput @bind-Value="@_accountVo.Password" DisplayText="密码" ShowLabel="true"></BootstrapInput>
+        </div>
+        
+    </div>
+</ValidateForm>
 
 @code {
     
+    private AccountVo _accountVo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _accountVo = await Constants.GetAccount();
+    }
+
 }

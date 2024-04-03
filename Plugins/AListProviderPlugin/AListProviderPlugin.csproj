@@ -10,4 +10,8 @@
       <ProjectReference Include="..\..\JxAudio.Plugin\JxAudio.Plugin.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="AListSdkSharp" Version="1.1.0" />
+    </ItemGroup>
+
 </Project>
