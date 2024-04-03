@@ -1,9 +1,12 @@
 ﻿@using Microsoft.Extensions.Localization
 @using Console = System.Console
+@using JxAudio.Plugin
 @inherits LayoutComponentBase
+@implements IDisposable
 
 @inject IStringLocalizer<MainLayout> Localizer
 @inject NavigationManager NavigationManager
+@inject IDispatchService<string> DispatchService
 
 <PageTitle>@PageTitle</PageTitle>
 <BootstrapBlazorRoot>
@@ -58,6 +61,29 @@
     {
         base.OnInitialized();
         PageTitle = "JxAudio";
+        GetIconSideMenuItems();
+        var nowPath = NavigationManager.ToAbsoluteUri(NavigationManager.Uri).LocalPath;
+        var menu = MenuItems!.FirstOrDefault(x => x.Url == nowPath);
+        if (menu is not null)
+        {
+            PageTitle = menu.Text + "- JXAudio";
+        }
+        DispatchService.Subscribe(Notify);
+    }
+    
+    private Task Notify(DispatchEntry<string> payload)
+    {
+        if (payload.Name != "menu")
+        {
+            return Task.CompletedTask;
+        }
+        GetIconSideMenuItems();
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+    
+    private void GetIconSideMenuItems()
+    {
         MenuItems = new List<MenuItem>
         {
             new() { Text = Localizer["Home"], Icon = "fa fa-fw fa-home", Url = "/Admin", Match = NavLinkMatch.All} ,
@@ -72,11 +98,19 @@
             new() { Text = Localizer["Setting"], Icon = "fas fa-fw fa-cog", Url = "/Admin/SettingsManager", Match = NavLinkMatch.All } ,
             new() { Text = Localizer["Plugin"], Icon = "fas fa-fw fa-puzzle-piece", Url = "/Admin/PluginManager", Match = NavLinkMatch.All } 
         };
-        var nowPath = NavigationManager.ToAbsoluteUri(NavigationManager.Uri).LocalPath;
-        var menu = MenuItems.FirstOrDefault(x => x.Url == nowPath);
-        if (menu is not null)
+        var pluginMenus = PluginUtil.GetSystemPlugins().SelectMany(x => x.AddMenuItem() ?? new List<PluginMenuModel>()).ToList();
+        if (pluginMenus.Any())
         {
-            PageTitle = menu.Text + "- JXAudio";
+            List<MenuItem> pluginMenuItems = new();
+            foreach (var systemPlugin in pluginMenus)
+            {
+                pluginMenuItems.Add(new MenuItem(systemPlugin.DisplayName, 
+                    $"/Admin/Plugin/{systemPlugin.MenuId}", systemPlugin.Icon));
+            }
+            MenuItems.Add(new MenuItem(Localizer["Plugin"], "/Admin/Plugin", "fas fa-fw fa-puzzle-piece")
+            {
+                Items = pluginMenuItems
+            });
         }
     }
 
@@ -85,5 +119,10 @@
         PageTitle = arg.Text + " - JXAudio";
         StateHasChanged();
         return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        DispatchService.UnSubscribe(Notify);
     }
 }

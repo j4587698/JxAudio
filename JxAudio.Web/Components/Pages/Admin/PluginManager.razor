@@ -4,6 +4,7 @@
 @using Microsoft.Extensions.Localization
 
 @inject IStringLocalizer<PluginManager> PluginManagerLocalizer
+@inject IDispatchService<string> DispatchService
 
 <AdminTable TItem="PluginConfig" Items="PluginConfigs" ShowToolbar="true" ShowDefaultButtons="false" 
             ShowExtendButtons="true" ShowExtendEditButton="false" ShowExtendDeleteButton="false">
@@ -36,6 +37,11 @@
         if (PluginUtil.ChangePluginStatus(pluginConfig.Id!, out var isEnable))
         {
             pluginConfig.IsEnable = isEnable;
+            DispatchService.Dispatch(new DispatchEntry<string>()
+            {
+                Name = "menu",
+                Entry = "plugin"
+            });
         }
     }
 

@@ -243,4 +243,10 @@ public static class PluginUtil
     {
         return Plugins.Values.SelectMany(x => x.SystemPlugins ?? Array.Empty<ISystemPlugin>());
     }
+    
+    public static PluginMenuModel? GetPluginMenuModel(string id)
+    {
+        var pluginMenuModels = GetSystemPlugins().SelectMany(x => x.AddMenuItem() ?? new List<PluginMenuModel>());
+        return pluginMenuModels.FirstOrDefault(x => x.MenuId == id);
+    }
 }
