@@ -3,7 +3,7 @@
 @using JxAudio.Web.Vo
 @using System.Diagnostics.CodeAnalysis
 
-<AdminTable TItem="ScheduleVo" Items="ScheduleVos">
+<AdminTable TItem="ScheduleVo" Items="ScheduleVos" ShowExtendButtons="true" ShowExtendDeleteButton="false" ShowExtendEditButton="false">
     <TableColumns>
         <TableColumn @bind-Field="@context.Name"></TableColumn>
         <TableColumn @bind-Field="@context.Status"></TableColumn>
@@ -12,6 +12,9 @@
         <TableColumn @bind-Field="@context.LastRunResult"></TableColumn>
         <TableColumn @bind-Field="@context.CreatedTime"></TableColumn>
     </TableColumns>
+    <RowButtonTemplate>
+        <TableCellButton Text="立即运行" OnClick="() => RunNow(context)"></TableCellButton>
+    </RowButtonTemplate>
 </AdminTable>
 
 @code {
@@ -33,6 +36,11 @@
             Status = x.Status,
             Scheduler = x
         }).ToList();
+    }
+
+    private void RunNow(ScheduleVo scheduleVo)
+    {
+        scheduleVo.Scheduler?.Run();
     }
 
 }

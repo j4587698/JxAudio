@@ -1,6 +1,15 @@
 ﻿{
-  "JxAudio.Web.Components.Components.CultureChooser": {
-    "Label": "语言"
+  "Longbow.Tasks.SchedulerStatus": {
+    "Running": "任务正常",
+    "Ready": "准备就绪",
+    "Disabled": "已停止"
+  },
+  "Longbow.Tasks.TriggerResult": {
+    "Success": "成功",
+    "Cancelled": "已取消",
+    "Timeout": "超时",
+    "Error": "异常",
+    "Running": "运行中"
   },
   "JxAudio.Core.Service.ArtistService": {
     "NoArtistName": "[未知歌手]",
@@ -22,6 +31,9 @@
   },
   "System.ComponentModel.DataAnnotations.RequiredAttribute": {
     "ErrorMessage": "{0}不能为空"
+  },
+  "JxAudio.Web.Components.Components.CultureChooser": {
+    "Label": "语言"
   },
   "JxAudio.Web.Components.Layout.MainLayout": {
     "Home": "首页",
@@ -175,6 +187,13 @@
     "NewPassword.PlaceHolder": "请输入新密码",
     "RePassword": "重复新密码",
     "RePassword.PlaceHolder": "请重复输入新密码"
+  },
+  "JxAudio.Web.Vo.ScheduleVo": {
+    "Status": "任务状态",
+    "NextRuntime": "下次执行时间",
+    "LastRuntime": "上次执行时间",
+    "LastRunResult": "上次执行状态",
+    "CreatedTime": "创建时间"
   },
   "JxAudio.Web.Vo.UserInstallVo": {
     "UserName.PlaceHolder": "请输入用户名",

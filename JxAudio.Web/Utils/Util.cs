@@ -2,6 +2,10 @@
 using System.Text;
 using Jx.Toolbox.Extensions;
 using JxAudio.Core;
+using JxAudio.Web.Enums;
+using JxAudio.Web.Jobs;
+using JxAudio.Web.Vo;
+using Longbow.Tasks;
 
 namespace JxAudio.Web.Utils;
 
@@ -129,6 +133,38 @@ public static class Util
         {
             throw RestApiErrorException.RequiredParameterMissingError(name);
         }
+    }
+
+    public static void StartJob(SettingsVo settingsVo)
+    {
+        if (settingsVo.SearchType == SearchType.Interval && int.TryParse(settingsVo.ScanInterval, out var scanInterval))
+        {
+            switch (settingsVo.TimeUnit)
+            {
+                case TimeUnit.Second:
+                    break;
+                case TimeUnit.Minute:
+                    scanInterval *= 60;
+                    break;
+                case TimeUnit.Hour:
+                    scanInterval *= 60 * 60;
+                    break;
+                case TimeUnit.Day:
+                    scanInterval *= 60 * 60 * 24;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            TaskServicesManager.GetOrAdd<ScanJob>(TriggerBuilder.Default.WithInterval(scanInterval * 1000).Build());
+            return;
+        }
+        if (settingsVo.SearchType == SearchType.Cron)
+        {
+            TaskServicesManager.GetOrAdd<ScanJob>(TriggerBuilder.Build(settingsVo.CronExpress!));
+            return;
+        }
+
+        throw new Exception("Create Job Error");
     }
     
 }

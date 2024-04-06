@@ -5,6 +5,7 @@
 @using Microsoft.Extensions.Localization
 @using JxAudio.Core.Options
 @using JxAudio.Core
+@using JxAudio.Web.Enums
 
 @inject IStringLocalizer<Install> InstallLocalizer
 
@@ -25,7 +26,7 @@
 
     private DbConfigOption _dbConfigOption = new() { DbType = "Sqlite", Prefix = "jx_", DbName = $"{Application.WebHostEnvironment.ContentRootPath}/config/JxAudio.db" };
 
-    private SettingsVo _settingsVo = new();
+    private SettingsVo _settingsVo = new(){TimeUnit = TimeUnit.Day, SearchType = SearchType.Interval, ScanInterval = "1"};
 
     private UserInstallVo _userInstallVo = new() { UserName = "Admin"};
 

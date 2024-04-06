@@ -72,6 +72,8 @@
             IsAdmin = true
         };
         await userEntity.SaveAsync();
+        
+        Util.StartJob(SettingsVo);
         File.Create(Path.Combine(AppContext.BaseDirectory, "config", "install.lock"));
         Util.IsInstalled = true;
 
