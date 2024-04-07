@@ -52,13 +52,25 @@ public class ScanJob : ITask
                 }
                 if (Constants.AudioExtensions.Contains(Path.GetExtension(fsInfo.Name)))
                 {
-                    var stream = await providerPlugin.GetFileAsync(fsInfo.FullName);
+                    Stream? stream = null;
+                    try
+                    {
+                        stream = await providerPlugin.GetFileAsync(fsInfo.FullName);
+                    }
+                    catch (Exception e)
+                    {
+                       Log.Error(e, "获取数据失败");
+                       continue;
+                    }
+                    
                     if (stream == null)
                     {
                         continue;
                     }
 
-                    var track = new Track(stream);
+                    var memoryStream = new MemoryStream();
+                    await stream.CopyToAsync(memoryStream);
+                    var track = new Track(memoryStream);
                     var artists = track.Artist.Split(new []{';', '&', '、', '|'}).Select(x => x.Trim()).ToArray();
                     var artistEntities = new List<ArtistEntity>();
                     if (artists.Length > 0)

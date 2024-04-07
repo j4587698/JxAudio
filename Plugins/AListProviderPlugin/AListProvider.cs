@@ -23,19 +23,28 @@ public class AListProvider: IProviderPlugin
                 }
             }
 
-            Constants.Account ??= Constants.GetAccount().Result;
-
-            if (Constants.Account.ServerUrl != null && Constants.Account.UserName != null && Constants.Account.Password != null)
+            try
             {
-                var auth = new Auth(Constants.Account.ServerUrl);
-                var login = auth.Login(Constants.Account.UserName, Constants.Account.Password).Result;
-                if (login is { Code: 200 })
+                Constants.Account ??= Constants.GetAccount().Result;
+
+                if (Constants.Account.ServerUrl != null && Constants.Account.UserName != null && Constants.Account.Password != null)
                 {
-                    Constants.Token = login.Data.Token;
-                    return true;
+                    var auth = new Auth(Constants.Account.ServerUrl);
+                    var login = auth.Login(Constants.Account.UserName, Constants.Account.Password).Result;
+                    if (login is { Code: 200 })
+                    {
+                        Constants.Token = login.Data.Token;
+                        return true;
+                    }
                 }
+                
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "AList provider error");
             }
 
+            Constants.Account = null;
             return false;
         }
     }
@@ -43,98 +52,131 @@ public class AListProvider: IProviderPlugin
     public async Task<List<FsInfo>> ListFolderAsync(string path)
     {
         var fsInfoList = new List<FsInfo>();
-        Fs fs = new Fs(Constants.Account!.ServerUrl);
-        var list = await fs.List(Constants.Token, new ListIn()
+        try
         {
-            Path = path,
-            PrePage = int.MaxValue
-        });
-        if (list.Code != 200)
+            Fs fs = new Fs(Constants.Account!.ServerUrl);
+            var list = await fs.List(Constants.Token, new ListIn()
+            {
+                Path = path,
+                PrePage = int.MaxValue
+            });
+            if (list.Code != 200)
+            {
+                Log.Error(list.Message);
+                return fsInfoList;
+            }
+        
+            foreach (var item in list.Data.Content.Where(x => x.IsDir))
+            {
+                fsInfoList.Add(new FsInfo()
+                {
+                    Name = item.Name,
+                    IsDir = item.IsDir,
+                    Size = item.Size,
+                    ModifyTime = item.Modified,
+                    FullName = Path.Combine(path, item.Name)
+                });
+            }
+        }
+        catch (Exception e)
         {
-            Log.Error(list.Message);
-            return fsInfoList;
+            Log.Error(e, "AList provider error");
         }
         
-        foreach (var item in list.Data.Content.Where(x => x.IsDir))
-        {
-            fsInfoList.Add(new FsInfo()
-            {
-                Name = item.Name,
-                IsDir = item.IsDir,
-                Size = item.Size,
-                ModifyTime = item.Modified,
-                FullName = Path.Combine(path, item.Name)
-            });
-        }
-
         return fsInfoList;
     }
 
     public async Task<List<FsInfo>> ListFilesAsync(string path)
     {
         var fsInfoList = new List<FsInfo>();
-        Fs fs = new Fs(Constants.Account!.ServerUrl);
-        var list = await fs.List(Constants.Token, new ListIn()
+        try
         {
-            Path = path,
-            PrePage = int.MaxValue
-        });
-        if (list.Code != 200)
+            Fs fs = new Fs(Constants.Account!.ServerUrl);
+            var list = await fs.List(Constants.Token, new ListIn()
+            {
+                Path = path,
+                PrePage = int.MaxValue
+            });
+            if (list.Code != 200)
+            {
+                Log.Error(list.Message);
+                return fsInfoList;
+            }
+        
+            foreach (var item in list.Data.Content.Where(x => !x.IsDir))
+            {
+                fsInfoList.Add(new FsInfo()
+                {
+                    Name = item.Name,
+                    IsDir = item.IsDir,
+                    Size = item.Size,
+                    ModifyTime = item.Modified,
+                    FullName = Path.Combine(path, item.Name)
+                });
+            }
+        }
+        catch (Exception e)
         {
-            Log.Error(list.Message);
-            return fsInfoList;
+            Log.Error(e, "AList provider error");
         }
         
-        foreach (var item in list.Data.Content.Where(x => !x.IsDir))
-        {
-            fsInfoList.Add(new FsInfo()
-            {
-                Name = item.Name,
-                IsDir = item.IsDir,
-                Size = item.Size,
-                ModifyTime = item.Modified,
-                FullName = Path.Combine(path, item.Name)
-            });
-        }
 
         return fsInfoList;
     }
 
     public async Task<Stream?> GetThumbAsync(string name)
     {
-        Fs fs = new Fs(Constants.Account!.ServerUrl);
-        var info = await fs.Info(Constants.Token, new ListIn()
+        try
         {
-            Path = Path.Combine($"{Path.GetFileNameWithoutExtension(name)}.jpg" )
-        });
-        if (info.Code != 200)
+            Fs fs = new Fs(Constants.Account!.ServerUrl);
+            var info = await fs.Info(Constants.Token, new ListIn()
+            {
+                Path = Path.Combine($"{Path.GetFileNameWithoutExtension(name)}.jpg" )
+            });
+            if (info.Code != 200)
+            {
+                return null;
+            }
+
+            return await fs.Download(info);
+        }
+        catch (Exception e)
         {
-            return null;
+            Log.Error(e, "AList provider error");
         }
 
-        return await fs.Download(info);
+        return null;
     }
 
     public async Task<FsInfo?> GetFileInfoAsync(string name)
     {
-        Fs fs = new Fs(Constants.Account!.ServerUrl);
-        var info = await fs.Info(Constants.Token, new ListIn()
+        try
         {
-            Path = name
-        });
-        if (info.Code != 200)
+            Fs fs = new Fs(Constants.Account!.ServerUrl);
+            var info = await fs.Info(Constants.Token, new ListIn()
+            {
+                Path = name
+            });
+            if (info.Code != 200)
+            {
+                return null;
+            }
+
+            return new FsInfo()
+            {
+                FullName = name,
+                Name = info.Data.Name,
+                IsDir = info.Data.IsDir,
+                Size = info.Data.Size,
+                ModifyTime = info.Data.Modified
+            };
+        }
+        catch (Exception e)
         {
-            return null;
+            Log.Error(e, "AList provider error");
         }
 
-        return new FsInfo()
-        {
-            FullName = name,
-            Name = info.Data.Name,
-            IsDir = info.Data.IsDir,
-            Size = info.Data.Size,
-            ModifyTime = info.Data.Modified
-        };
+        return null;
     }
 
     public async Task UploadFiles(params UploadInfo[] uploadInfos)
@@ -165,32 +207,50 @@ public class AListProvider: IProviderPlugin
 
     public async Task<Stream?> GetFileAsync(string name)
     {
-        Fs fs = new Fs(Constants.Account!.ServerUrl);
-        var info = await fs.Info(Constants.Token, new ListIn()
+        try
         {
-            Path = name
-        });
-        if (info.Code != 200)
-        {
-            return null;
+            Fs fs = new Fs(Constants.Account!.ServerUrl);
+            var info = await fs.Info(Constants.Token, new ListIn()
+            {
+                Path = name
+            });
+            if (info.Code != 200)
+            {
+                return null;
+            }
+            return await fs.Download(info);
         }
-        return await fs.Download(info);
+        catch (Exception e)
+        {
+            Log.Error(e, "AList provider error");
+        }
+
+        return null;
     }
 
     public async Task<string?> GetLrcAsync(string name)
     {
-        Fs fs = new Fs(Constants.Account!.ServerUrl);
-        var info = await fs.Info(Constants.Token, new ListIn()
+        try
         {
-            Path = Path.Combine($"{Path.GetFileNameWithoutExtension(name)}.lrc" )
-        });
-        if (info.Code != 200)
-        {
-            return null;
-        }
+            Fs fs = new Fs(Constants.Account!.ServerUrl);
+            var info = await fs.Info(Constants.Token, new ListIn()
+            {
+                Path = Path.Combine($"{Path.GetFileNameWithoutExtension(name)}.lrc" )
+            });
+            if (info.Code != 200)
+            {
+                return null;
+            }
 
-        var stream = await fs.Download(info);
-        using var reader = new StreamReader(stream);
-        return await reader.ReadToEndAsync();
+            var stream = await fs.Download(info);
+            using var reader = new StreamReader(stream);
+            return await reader.ReadToEndAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
     }
 }
