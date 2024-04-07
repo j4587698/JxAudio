@@ -20,13 +20,13 @@ public class Setup
             var types = Assembly.GetAssembly(typeof(Setup))!.GetTypes().Where(x => x.Name.EndsWith("Entity"));
             BaseEntity.Orm.CodeFirst.SyncStructure(types.ToArray());
             var filePath = Path.Combine(AppContext.BaseDirectory, "config", "settings.json");
-            var jObject = File.Exists(filePath) ? JsonConvert.DeserializeObject<JObject>(File.ReadAllText(filePath)) : new JObject();
+            var jObject = File.Exists(filePath) ? JsonConvert.DeserializeObject<JObject>(File.ReadAllText(filePath))! : new JObject();
             jObject["Db"] = JObject.Parse(JsonConvert.SerializeObject(dbConfig));
             File.WriteAllText(filePath, JsonConvert.SerializeObject(jObject, Formatting.Indented));
         }
         catch (Exception e)
         {
-            Log.ForContext<Setup>().Error("create table fail");
+            Log.ForContext<Setup>().Error(e, "create table fail");
             return false;
         }
             
@@ -35,7 +35,7 @@ public class Setup
     
     public static (bool isSuccess, string msg) SetupDb(DbConfigOption dbConfig)
     {
-        var localizer = Application.GetRequiredService<IStringLocalizer<Setup>>();
+        var localizer = Application.GetRequiredService<IStringLocalizer<Setup>>()!;
         if (!dbConfig.DbType.IsNullOrEmpty() && Enum.TryParse(dbConfig.DbType, true, out DataType dataType))
         {
             var isDevelopment = Application.WebHostEnvironment?.IsDevelopment() ?? true;

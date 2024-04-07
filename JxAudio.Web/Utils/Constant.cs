@@ -11,7 +11,7 @@ public static class Constant
 {
     public static IProviderPlugin? GetProvider(Guid providerId)
     {
-        return PluginUtil.GetProviderPlugins().FirstOrDefault(x => x.Id == providerId);
+        return PluginUtil.GetProviderPlugins().FirstOrDefault(x => x.Id == providerId && x.Ready);
     }
     
     public const string SearchTypeKey = "SearchType";

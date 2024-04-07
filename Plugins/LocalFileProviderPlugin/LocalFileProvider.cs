@@ -8,7 +8,9 @@ public class LocalFileProvider : IProviderPlugin
     public Guid Id { get; } = new Guid("C6E80410-1A50-4B9D-BF73-EFAAF3E5469C");
     
     public string? Name { get; } = "本地文件提供器";
-    
+
+    public bool Ready => true;
+
     public Task<List<FsInfo>> ListFolderAsync(string path)
     {
         var fsInfos = new List<FsInfo>();

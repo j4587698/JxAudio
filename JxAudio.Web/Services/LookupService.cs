@@ -12,7 +12,8 @@ public class LookupService : ILookupService
     {
         if (key == "plugin")
         {
-            var selectedItems = PluginUtil.GetProviderPlugins().Select(x => new SelectedItem(x.Id.ToString(), x.Name!)).ToList();
+            var selectedItems = PluginUtil.GetProviderPlugins().Where(x => x.Ready)
+                .Select(x => new SelectedItem(x.Id.ToString(), x.Name!)).ToList();
             selectedItems.Insert(0, new SelectedItem("00000000-0000-0000-0000-000000000000", "请选择 ..."));
             return selectedItems;
         }

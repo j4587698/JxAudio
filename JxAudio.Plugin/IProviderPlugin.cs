@@ -16,6 +16,11 @@ public interface IProviderPlugin
     /// 插件名称
     /// </summary>
     string? Name { get; }
+    
+    /// <summary>
+    /// 是否已经准备就绪，可以使用
+    /// </summary>
+    bool Ready { get; }
 
     /// <summary>
     /// 获取所有文件夹信息

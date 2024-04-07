@@ -6,8 +6,14 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    </PropertyGroup>
+
     <ItemGroup>
-      <ProjectReference Include="..\..\JxAudio.Plugin\JxAudio.Plugin.csproj" />
+      <ProjectReference Include="..\..\JxAudio.Plugin\JxAudio.Plugin.csproj" >
+          <ExcludeAssets>runtime</ExcludeAssets>
+      </ProjectReference>
     </ItemGroup>
 
     <ItemGroup>

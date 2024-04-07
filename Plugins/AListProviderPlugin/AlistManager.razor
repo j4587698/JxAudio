@@ -1,10 +1,13 @@
-﻿@using BootstrapBlazor.Components
+﻿@using System.Diagnostics.CodeAnalysis
+@using AListSdkSharp.Api
+@using BootstrapBlazor.Components
 @using JxAudio.Core.Service
+@using Microsoft.AspNetCore.Components.Forms
 
 @inject SettingsService SettingsService 
 @inject ToastService ToastService
 
-<ValidateForm Model="_accountVo">
+<ValidateForm Model="AccountVo" OnValidSubmit="OnValidSubmit">
     <Row ItemsPerRow="ItemsPerRow.Two">
         <h3>Alist账号设置</h3>
         <Button ButtonType="ButtonType.Submit" style="float: right">验证并保存</Button>
@@ -12,23 +15,50 @@
 
     <div class="row g-3 form-inline">
         <div class="col-12">
-            <BootstrapInput @bind-Value="@_accountVo.UserName" DisplayText="用户名" ShowLabel="true"></BootstrapInput>
+            <BootstrapInput @bind-Value="@AccountVo.ServerUrl" ShowLabel="true"></BootstrapInput>
         </div>
         <div class="col-12">
-            <BootstrapInput @bind-Value="@_accountVo.Password" DisplayText="密码" ShowLabel="true"></BootstrapInput>
+            <BootstrapInput @bind-Value="@AccountVo.UserName" ShowLabel="true"></BootstrapInput>
+        </div>
+        <div class="col-12">
+            <BootstrapPassword @bind-Value="@AccountVo.Password" ShowLabel="true"></BootstrapPassword>
         </div>
         
     </div>
 </ValidateForm>
 
 @code {
-    
-    private AccountVo _accountVo;
+    [NotNull]
+    private AccountVo? AccountVo { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        _accountVo = await Constants.GetAccount();
+        AccountVo = await Constants.GetAccount();
+    }
+
+    private async Task OnValidSubmit(EditContext arg)
+    {
+        var auth = new Auth(AccountVo.ServerUrl);
+        var login = await auth.Login(AccountVo.UserName, AccountVo.Password);
+        if (login.Code != 200)
+        {
+            await ToastService.Show(new ToastOption()
+            {
+                Content = login.Message,
+                Title = "保存失败",
+                Category = ToastCategory.Error
+            });
+        }
+        SettingsService.SetValue(Constants.Key, nameof(AccountVo.UserName), AccountVo.UserName!);
+        SettingsService.SetValue(Constants.Key, nameof(AccountVo.Password), AccountVo.Password!);
+        SettingsService.SetValue(Constants.Key, nameof(AccountVo.ServerUrl), AccountVo.ServerUrl!);
+        await ToastService.Show(new ToastOption()
+        {
+            Content = "保存成功",
+            Title = "保存成功",
+            Category = ToastCategory.Success
+        });
     }
 
 }
