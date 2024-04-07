@@ -1,5 +1,6 @@
 ﻿using BootstrapBlazor.Components;
 using JxAudio.Core.Attributes;
+using JxAudio.Plugin;
 using JxAudio.Web.Utils;
 
 namespace JxAudio.Web.Services;
@@ -11,7 +12,7 @@ public class LookupService : ILookupService
     {
         if (key == "plugin")
         {
-            var selectedItems = Constant.ProviderPlugins.Select(x => new SelectedItem(x.Id.ToString(), x.Name!)).ToList();
+            var selectedItems = PluginUtil.GetProviderPlugins().Select(x => new SelectedItem(x.Id.ToString(), x.Name!)).ToList();
             selectedItems.Insert(0, new SelectedItem("00000000-0000-0000-0000-000000000000", "请选择 ..."));
             return selectedItems;
         }

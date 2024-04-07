@@ -49,7 +49,7 @@
         private async Task<IEnumerable<TreeViewItem<FsInfo>>> OnExpandNodeAsync(TreeViewItem<FsInfo> arg)
         {
             List<TreeViewItem<FsInfo>> treeViewItems = new List<TreeViewItem<FsInfo>>();
-            var provider = Constant.ProviderPlugins.FirstOrDefault(x => x.Id == ProviderId);
+            var provider = Constant.GetProvider(ProviderId);
             if (provider == null)
             {
                 return treeViewItems;

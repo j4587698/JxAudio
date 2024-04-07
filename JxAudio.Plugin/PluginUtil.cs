@@ -238,10 +238,25 @@ public static class PluginUtil
             plugin.PluginLoader?.Reload();
         }
     }
+
+    public static void LoadPluginOnStartup()
+    {
+        var pluginConfigs = GetAllPlugins().Where(x => x.IsEnable);
+        foreach (var pluginConfig in pluginConfigs)
+        {
+            LoadPlugin(pluginConfig);
+        }
+    }
+    
     
     public static IEnumerable<ISystemPlugin> GetSystemPlugins()
     {
         return Plugins.Values.SelectMany(x => x.SystemPlugins ?? Array.Empty<ISystemPlugin>());
+    }
+    
+    public static IEnumerable<IProviderPlugin> GetProviderPlugins()
+    {
+        return Plugins.Values.SelectMany(x => x.ProviderPlugins ?? Array.Empty<IProviderPlugin>());
     }
     
     public static PluginMenuModel? GetPluginMenuModel(string id)

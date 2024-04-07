@@ -23,7 +23,7 @@ public class ScanJob : ITask
         var directoryEntities = await DirectoryEntity.Select.ToListAsync(cancellationToken);
         foreach (var directoryEntity in directoryEntities)
         {
-            var providerPlugin = Constant.ProviderPlugins.FirstOrDefault(x => x.Id == directoryEntity.Provider);
+            var providerPlugin = Constant.GetProvider(directoryEntity.Provider);
             if (providerPlugin == null)
             {
                 Log.Warning("提供器{pluginId}不存在，无法继续", directoryEntity.Provider);

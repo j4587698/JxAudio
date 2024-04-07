@@ -2,7 +2,6 @@
 using JxAudio.Core.Subsonic;
 using JxAudio.Plugin;
 using JxAudio.Resolver;
-using LocalFileProviderPlugin;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -10,14 +9,9 @@ namespace JxAudio.Web.Utils;
 
 public static class Constant
 {
-    public static List<IProviderPlugin> ProviderPlugins = new List<IProviderPlugin>()
-    {
-        new LocalFileProvider()
-    };
-
     public static IProviderPlugin? GetProvider(Guid providerId)
     {
-        return ProviderPlugins.FirstOrDefault(x => x.Id == providerId);
+        return PluginUtil.GetProviderPlugins().FirstOrDefault(x => x.Id == providerId);
     }
     
     public const string SearchTypeKey = "SearchType";

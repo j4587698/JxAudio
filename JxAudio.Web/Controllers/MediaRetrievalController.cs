@@ -33,7 +33,7 @@ public class MediaRetrievalController(PictureService pictureService, TrackServic
         if (apiUserId != null)
         {
             var track = await trackService.GetSongEntityAsync(apiUserId.Value, trackId, HttpContext.RequestAborted);
-            var providerPlugin = Constant.ProviderPlugins.FirstOrDefault(x => x.Id == track.ProviderId);
+            var providerPlugin = Constant.GetProvider(track.ProviderId);
             if (providerPlugin == null)
             {
                 throw RestApiErrorException.GenericError("Provider not found");
@@ -134,7 +134,7 @@ public class MediaRetrievalController(PictureService pictureService, TrackServic
         if (apiUserId != null)
         {
             var track = await trackService.GetSongEntityAsync(apiUserId.Value, trackId, HttpContext.RequestAborted);
-            var providerPlugin = Constant.ProviderPlugins.FirstOrDefault(x => x.Id == track.ProviderId);
+            var providerPlugin = Constant.GetProvider(track.ProviderId);
             if (providerPlugin == null)
             {
                 throw RestApiErrorException.GenericError("Provider not found");
