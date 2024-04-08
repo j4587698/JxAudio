@@ -1,13 +1,13 @@
 ﻿using ATL;
 using FreeSql;
 using Jx.Toolbox.Extensions;
-using JxAudio.Core;
 using JxAudio.Core.Entity;
 using JxAudio.Plugin;
 using JxAudio.Web.Utils;
 using Longbow.Tasks;
 using Serilog;
 using SixLabors.ImageSharp;
+using Constants = JxAudio.Core.Constants;
 
 namespace JxAudio.Web.Jobs;
 
@@ -55,7 +55,7 @@ public class ScanJob : ITask
                     Stream? stream = null;
                     try
                     {
-                        stream = await providerPlugin.GetFileAsync(fsInfo.FullName);
+                        stream = await providerPlugin.GetFileAsync(fsInfo.FullName).ConfigureAwait(false);
                     }
                     catch (Exception e)
                     {
@@ -67,10 +67,8 @@ public class ScanJob : ITask
                     {
                         continue;
                     }
-
-                    var memoryStream = new MemoryStream();
-                    await stream.CopyToAsync(memoryStream);
-                    var track = new Track(memoryStream);
+                    
+                    var track = new Track(stream);
                     var artists = track.Artist.Split(new []{';', '&', '、', '|'}).Select(x => x.Trim()).ToArray();
                     var artistEntities = new List<ArtistEntity>();
                     if (artists.Length > 0)

@@ -185,9 +185,10 @@ public static class PluginUtil
             return false;
         }
 
-        var plugin = PluginLoader.CreateFromAssemblyFile(pluginConfig.Path, 
-            sharedTypes: [typeof(ISystemPlugin), typeof(BootstrapComponentBase)], 
-            isUnloadable:true);
+        var plugin = PluginLoader.CreateFromAssemblyFile(pluginConfig.Path, config =>
+        {
+            config.PreferSharedTypes = true;
+        });
         var assembly = plugin.LoadDefaultAssembly();
         var systemTypes = assembly.GetTypes()
             .Where(x => typeof(ISystemPlugin).IsAssignableFrom(x) && !x.IsAbstract)

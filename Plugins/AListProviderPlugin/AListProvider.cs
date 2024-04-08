@@ -197,7 +197,7 @@ public class AListProvider: IProviderPlugin
         Fs fs = new Fs(Constants.Account!.ServerUrl);
         foreach (var fullpath in fullpaths)
         {
-            var delete = await fs.Remove(Constants.Token, Path.GetDirectoryName(fullpath), Path.GetFileName(fullpath));
+            var delete = await fs.Remove(Constants.Token, Path.GetDirectoryName(fullpath), [Path.GetFileName(fullpath)]);
             if (delete.Code != 200)
             {
                 Log.Error(delete.Message);
@@ -218,7 +218,7 @@ public class AListProvider: IProviderPlugin
             {
                 return null;
             }
-            return await fs.Download(info);
+            return new PartialHttpStream(fs, info);
         }
         catch (Exception e)
         {
