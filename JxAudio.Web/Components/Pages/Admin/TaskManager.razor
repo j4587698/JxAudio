@@ -2,6 +2,9 @@
 @using Longbow.Tasks
 @using JxAudio.Web.Vo
 @using System.Diagnostics.CodeAnalysis
+@using Microsoft.Extensions.Localization
+
+@inject IStringLocalizer<TaskManager> TaskManagerLocalizer
 
 <AdminTable TItem="ScheduleVo" Items="ScheduleVos" ShowExtendButtons="true" ShowExtendDeleteButton="false" ShowExtendEditButton="false">
     <TableColumns>
@@ -13,7 +16,12 @@
         <TableColumn @bind-Field="@context.CreatedTime"></TableColumn>
     </TableColumns>
     <RowButtonTemplate>
-        <TableCellButton Text="立即运行" OnClick="() => RunNow(context)"></TableCellButton>
+        <TableCellButton Text="@TaskManagerLocalizer["Run"]" IsDisabled="context.LastRunResult == TriggerResult.Running" OnClick="() => RunNow(context)"></TableCellButton>
+        <TableCellButton 
+            Text="@(context.Status == SchedulerStatus.Disabled ? TaskManagerLocalizer["Start"] : TaskManagerLocalizer["Stop"])"
+            OnClick="() => ChangeStatus(context)"
+            Color="Color.Danger"
+            ></TableCellButton>
     </RowButtonTemplate>
 </AdminTable>
 
@@ -25,8 +33,12 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        var schedulers = TaskServicesManager.ToList();
-        ScheduleVos = schedulers.Select(x => new ScheduleVo()
+        Notify();
+    }
+    
+    private void Notify()
+    {
+        ScheduleVos = TaskServicesManager.ToList().Select(x => new ScheduleVo()
         {
             CreatedTime = x.CreatedTime,
             LastRunResult = x.LastRunResult,
@@ -41,6 +53,17 @@
     private void RunNow(ScheduleVo scheduleVo)
     {
         scheduleVo.Scheduler?.Run();
+    }
+
+    private void ChangeStatus(ScheduleVo scheduleVo)
+    {
+        if (scheduleVo.Scheduler != null)
+        {
+            scheduleVo.Scheduler.Status = scheduleVo.Status == SchedulerStatus.Disabled 
+                ? SchedulerStatus.Running : SchedulerStatus.Disabled;
+            Notify();
+        }
+        
     }
 
 }

@@ -178,6 +178,11 @@
     "Enable": "启用插件",
     "Disable": "禁用插件"
   },
+  "JxAudio.Web.Components.Pages.Admin.TaskManager": {
+    "Run": "触发",
+    "Start": "启动",
+    "Stop": "停止"
+  },
   "JxAudio.Web.Components.Components.Install": {
     "Fail": "失败",
     "CreateTableFail": "建表失败"
@@ -189,6 +194,7 @@
     "RePassword.PlaceHolder": "请重复输入新密码"
   },
   "JxAudio.Web.Vo.ScheduleVo": {
+    "Name": "任务名",
     "Status": "任务状态",
     "NextRuntime": "下次执行时间",
     "LastRuntime": "上次执行时间",
