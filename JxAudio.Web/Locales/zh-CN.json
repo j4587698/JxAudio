@@ -181,7 +181,14 @@
   "JxAudio.Web.Components.Pages.Admin.TaskManager": {
     "Run": "触发",
     "Start": "启动",
-    "Stop": "停止"
+    "Stop": "停止",
+    "Success": "操作成功",
+    "Fail": "操作失败",
+    "SuccessContent": "任务已触发，请等待...",
+    "FailContent": "任务触发失败"
+  },
+  "JxAudio.Web.Components.Pages.Admin.FolderSelect": {
+    "Delete": "删除目录后目录下所有的歌曲索引都会删除，是否继续？"
   },
   "JxAudio.Web.Components.Components.Install": {
     "Fail": "失败",

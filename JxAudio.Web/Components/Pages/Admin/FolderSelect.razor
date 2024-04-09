@@ -1,9 +1,16 @@
 ﻿@page "/Admin/FolderSelect"
 @using JxAudio.Core.Entity
+@using Microsoft.Extensions.Localization
+@using FreeSql
+@using Serilog
+@using Console = System.Console
 @inject DialogService DialogService
 @inject MessageService MessageService
 
-<AdminTable TItem="DirectoryEntity" ShowToolbar="true" ShowExtendButtons="true" OnSaveAsync="OnSaveAsync">
+@inject IStringLocalizer<FolderSelect> FolderSelectLocalizer
+
+<AdminTable TItem="DirectoryEntity" ShowToolbar="true" ShowExtendButtons="true" OnSaveAsync="OnSaveAsync"
+            ConfirmDeleteContentText="@FolderSelectLocalizer["Delete"]" OnDeleteAsync="OnDeleteAsync">
     <TableColumns>
         <TableColumn @bind-Field="@context.Provider" LookupServiceKey="plugin"></TableColumn>
         <TableColumn @bind-Field="@context.Name"></TableColumn>
@@ -25,7 +32,15 @@
             <EditTemplate Context="value">
                 <div class="col-12">
                     <label class="form-label is-display">选择内容</label>
-                    <SelectPathComponent ProviderId="value.Provider" @bind-Path="@value.Path"></SelectPathComponent>
+                    @if (value.Id == 0)
+                    {
+                        <SelectPathComponent ProviderId="value.Provider" @bind-Path="@value.Path"></SelectPathComponent>
+                    }
+                    else
+                    {
+                        <Display @bind-Value="@value.Path" ShowLabel="false"></Display>
+                    }
+                   
                 </div>
             </EditTemplate>
         </TableColumn>
@@ -40,6 +55,29 @@
         await arg1.SaveAsync();
         await arg1.SaveManyAsync(nameof(DirectoryEntity.UserEntities));
         return true;
+    }
+
+    private async Task<bool> OnDeleteAsync(IEnumerable<DirectoryEntity> arg)
+    {
+        using var uow = BaseEntity.Orm.CreateUnitOfWork();
+        try
+        {
+            foreach (var item in arg)
+            {
+                item.Delete(true);
+            }
+
+            var repo = BaseEntity.Orm.GetRepository<TrackEntity>();
+            await repo.DeleteCascadeByDatabaseAsync(x => arg.Any(y => y.Id == x.DirectoryId));
+            uow.Commit();
+            return true;
+        }
+        catch (Exception e)
+        {
+            Log.Error(e, "删除文件夹失败");
+            uow.Rollback();
+            return false;
+        }
     }
 
 }
