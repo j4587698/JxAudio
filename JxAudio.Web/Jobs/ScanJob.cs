@@ -18,6 +18,8 @@ public class ScanJob : ITask
     
     public async Task Execute(IServiceProvider provider, CancellationToken cancellationToken)
     {
+        Log.Information("ScanJob is running.");
+        
         _trackEntities = await TrackEntity.Select.ToListAsync(x => new TrackEntity()
             { Id = x.Id, ProviderId = x.ProviderId, FullName = x.FullName }, cancellationToken);
         var directoryEntities = await DirectoryEntity.Select.ToListAsync(cancellationToken);

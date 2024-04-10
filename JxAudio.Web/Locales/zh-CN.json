@@ -76,7 +76,7 @@
     "Path": "全路径",
     "Name.Required": "{0}不能为空",
     "Path.Required": "{0}不能为空",
-    "IsAccessControlled": "是否需要访问权限",
+    "IsAccessControlled": "需要权限",
     "UserEntities": "可访问用户",
     "UserList": "可访问用户"
   },
@@ -188,7 +188,10 @@
     "FailContent": "任务触发失败"
   },
   "JxAudio.Web.Components.Pages.Admin.FolderSelect": {
-    "Delete": "删除目录后目录下所有的歌曲索引都会删除，是否继续？"
+    "Delete": "删除目录后目录下所有的歌曲索引都会删除，是否继续？",
+    "RunScanContent": "您添加了新的文件夹，是否立即启动扫描？",
+    "RunClearContent": "您删除了文件夹，是否立即清理索引？",
+    "Content": "目录选择"
   },
   "JxAudio.Web.Components.Components.Install": {
     "Fail": "失败",

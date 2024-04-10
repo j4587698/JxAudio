@@ -74,7 +74,7 @@ public class AListProvider: IProviderPlugin
                     IsDir = item.IsDir,
                     Size = item.Size,
                     ModifyTime = item.Modified,
-                    FullName = Path.Combine(path, item.Name)
+                    FullName = Path.Combine(path, item.Name).Replace("\\", "/")
                 });
             }
         }
@@ -111,7 +111,7 @@ public class AListProvider: IProviderPlugin
                     IsDir = item.IsDir,
                     Size = item.Size,
                     ModifyTime = item.Modified,
-                    FullName = Path.Combine(path, item.Name)
+                    FullName = Path.Combine(path, item.Name).Replace("\\", "/")
                 });
             }
         }
