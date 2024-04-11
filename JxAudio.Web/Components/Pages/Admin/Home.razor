@@ -1,7 +1,168 @@
 ﻿@page "/Admin"
+@using System.Diagnostics
+@using System.Reflection
+@using System.Runtime.InteropServices
+@using Jx.Toolbox.Extensions
+@using JxAudio.Core.Entity
+@using Microsoft.Extensions.Localization
 
-<PageTitle>Home</PageTitle>
+@inject IStringLocalizer<Home> HomeLocalizer
 
-<h1>Hello, world!</h1>
+<div class="row g-3">
+    <div class="col-12">
+        <div class="d-flex align-items-center">
+            <div class="flex-fill text-dark fw-bold me-3">@HomeLocalizer["Dashboard"]</div>
+        </div>
+    </div>
 
-Welcome to your new app.
+    <div class="col-md-6 col-xl-3">
+        <a href="/Admin/MusicManager">
+            <Card IsShadow="true">
+                <BodyTemplate>
+                    <div class="row align-items-center no-gutters">
+                        <div class="col me-2">
+                            <div class=" text-primary fw-bold mb-1"><span>@HomeLocalizer["MusicCount"]</span></div>
+                            <div class="text-dark fw-bold h5">
+                                <CountUp Value="@TrackCount"></CountUp>
+                            </div>
+                        </div>
+                        <div class="col-auto"><i class="fas fa-fw fa-music fa-2x"></i></div>
+                    </div>
+                </BodyTemplate>
+            </Card>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <a href="/Admin/AlbumManager">
+            <Card IsShadow="true">
+                <BodyTemplate>
+                    <div class="row align-items-center no-gutters">
+                        <div class="col me-2">
+                            <div class=" text-primary fw-bold mb-1"><span>@HomeLocalizer["AlbumCount"]</span></div>
+                            <div class="text-dark fw-bold h5">
+                                <CountUp Value="@AlbumCount"></CountUp>
+                            </div>
+                        </div>
+                        <div class="col-auto"><i class="fas fa-fw fa-clipboard-list fa-2x"></i></div>
+                    </div>
+                </BodyTemplate>
+            </Card>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <a href="/Admin/ArtistManager">
+            <Card IsShadow="true">
+                <BodyTemplate>
+                    <div class="row align-items-center no-gutters">
+                        <div class="col me-2">
+                            <div class=" text-primary fw-bold mb-1"><span>@HomeLocalizer["ArtistCount"]</span></div>
+                            <div class="text-dark fw-bold h5">
+                                <CountUp Value="@ArtistCount"></CountUp>
+                            </div>
+                        </div>
+                        <div class="col-auto"><i class="fas fa-fw fa-microphone fa-2x"></i></div>
+                    </div>
+                </BodyTemplate>
+            </Card>
+        </a>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <a href="/Admin/PlaylistManager">
+            <Card IsShadow="true">
+                <BodyTemplate>
+                    <div class="row align-items-center no-gutters">
+                        <div class="col me-2">
+                            <div class=" text-primary fw-bold mb-1"><span>@HomeLocalizer["PlaylistCount"]</span></div>
+                            <div class="text-dark fw-bold h5">
+                                <CountUp Value="@PlaylistCount"></CountUp>
+                            </div>
+                        </div>
+                        <div class="col-auto"><i class="fa-regular fa-calendar-check fa-2x"></i></div>
+                    </div>
+                </BodyTemplate>
+            </Card>
+        </a>
+    </div>
+</div>
+
+<div class="table-shim table-wrapper" style="margin-top: 30px">
+    <table class="table table-bordered table-striped table-hover">
+        <tr>
+            <td>
+                <div class="table-cell">版本号:</div>
+            </td>
+            <td>
+                <div class="table-cell">@Assembly.GetEntryAssembly()?.GetName().Version</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="table-cell">操作系统:</div>
+            </td>
+            <td>
+                <div class="table-cell">@RuntimeInformation.OSDescription</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="table-cell">系统架构:</div>
+            </td>
+            <td>
+                <div class="table-cell">@RuntimeInformation.OSArchitecture</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="table-cell">.Net版本号:</div>
+            </td>
+            <td>
+                <div class="table-cell">@RuntimeInformation.FrameworkDescription</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="table-cell">内存占用:</div>
+            </td>
+            <td>
+                <div class="table-cell">@Environment.WorkingSet.ToSizeString()</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="table-cell">启动时间:</div>
+            </td>
+            <td>
+                <div class="table-cell">@(DateTime.Now - Process.GetCurrentProcess().StartTime)</div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+@code
+{
+    private long PlaylistCount { get; set; }
+    
+    private long AlbumCount { get; set; }
+    
+    private long ArtistCount { get; set; }
+    
+    private long TrackCount { get; set; }
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        PlaylistCount = await PlaylistEntity.Select.CountAsync();
+        AlbumCount = await AlbumEntity.Select.CountAsync();
+        ArtistCount = await ArtistEntity.Select.CountAsync();
+        TrackCount = await TrackEntity.Select.CountAsync();
+        
+        
+        var a = Environment.TickCount64;
+        Process currentProcess = Process.GetCurrentProcess();
+        DateTime startTime = currentProcess.StartTime;
+        
+        StateHasChanged();
+    }
+}

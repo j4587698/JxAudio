@@ -158,6 +158,18 @@
     "User": "创建用户",
     "UserDesc": "创建您的第一个管理员用户"
   },
+  "JxAudio.Web.Components.Pages.Admin.Home": {
+    "Dashboard": "仪表盘",
+    "MusicCount": "音乐数量",
+    "AlbumCount": "专辑数量",
+    "ArtistCount": "歌手数量",
+    "GenreCount": "流派数量",
+    "UserCount": "用户数量",
+    "PlaylistCount": "播放列表数量",
+    "TaskCount": "任务数量",
+    "PluginCount": "插件数量",
+    "FolderCount": "文件夹数量"
+  },
   "JxAudio.Web.Components.Pages.Admin.SettingsManager": {
     "Title": "系统设置",
     "Save": "保存",
