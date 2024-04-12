@@ -1,4 +1,5 @@
-﻿using JxAudio.Core.Attributes;
+﻿using Jx.Toolbox.Cryptography;
+using JxAudio.Core.Attributes;
 using JxAudio.Core.Entity;
 using JxAudio.Core.Subsonic;
 
@@ -10,6 +11,38 @@ public class UserService
     public async Task<UserEntity?> GetUserByUsernameAsync(string username, CancellationToken cancellationToken)
     {
         return await UserEntity.Where(x => x.UserName == username).FirstAsync(cancellationToken);
+    }
+    
+    public async Task<UserEntity?> ValidatePasswordAsync(string username, string password, CancellationToken cancellationToken)
+    {
+        var user = await GetUserByUsernameAsync(username, cancellationToken);
+        if (user == null)
+        {
+            return null;
+        }
+
+        if (password.Equals(user.Password, StringComparison.OrdinalIgnoreCase) || user.IsGuest)
+        {
+            return user;
+        }
+
+        return null;
+    }
+    
+    public async Task<UserEntity?> ValidatePasswordHexAsync(string username, string passwordHex, string salt, CancellationToken cancellationToken)
+    {
+        var user = await GetUserByUsernameAsync(username, cancellationToken);
+        if (user == null)
+        {
+            return null;
+        }
+
+        if (passwordHex.Equals(MD5.MD5StringWithSalt(user.Password, salt), StringComparison.OrdinalIgnoreCase) || user.IsGuest)
+        {
+            return user;
+        }
+
+        return null;
     }
 
     public async Task UpdatePassword(UserEntity userEntity, string password)

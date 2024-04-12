@@ -6,6 +6,7 @@ using JxAudio.Utils;
 using JxAudio.Web.Enums;
 using JxAudio.Web.Utils;
 using JxAudio.Core;
+using JxAudio.Core.Service;
 
 namespace JxAudio.Web.Extensions;
 
@@ -91,11 +92,8 @@ public static class HttpContextExtension
             var passwordToken = GetOptionalStringParameterValue(context, "t");
             var passwordSalt = GetOptionalStringParameterValue(context, "s");
 
-            var user = await UserEntity
-                .Where(u => u.UserName == username)
-                .FirstAsync().ConfigureAwait(false);
-
-            bool passwordIsWrong;
+            UserEntity? user = null;
+            var userService = context.RequestServices.GetService<UserService>()!;
 
             if (password != null)
             {
@@ -104,37 +102,23 @@ public static class HttpContextExtension
                 if (passwordToken != null || passwordSalt != null)
                     throw RestApiErrorException.GenericError("Specified values for both 'p' and 't' and/or 's'.");
 
-                string? userPassword = user != null ? user.Password : string.Empty;
-
-                passwordIsWrong = !ConstantTimeComparisons.ConstantTimeEquals(password, userPassword);
+                user = await userService.ValidatePasswordAsync(username!, password, context.RequestAborted);
             }
             else
             {
                 if (passwordToken == null)
                     throw RestApiErrorException.RequiredParameterMissingError("t");
 
-                if (!Util.TryParseHexBytes(passwordToken, out byte[]? passwordTokenBytes))
-                    throw RestApiErrorException.GenericError("Invalid value for 't'.");
-                if (passwordTokenBytes?.Length != 16)
-                    throw RestApiErrorException.GenericError("Invalid value for 't'.");
-
                 if (passwordSalt == null)
                     throw RestApiErrorException.RequiredParameterMissingError("s");
 
-                string? userPassword = user != null ? user.Password : string.Empty;
-
-                // This security mechanism is pretty terrible.  It is vulnerable to both
-                // timing and replay attacks.
-
-#pragma warning disable CA5351 // Do not use insecure cryptographic algorithm MD5.
-                using var md5 = System.Security.Cryptography.MD5.Create();
-                byte[] hash = md5.ComputeHash(Encoding.UTF8.GetBytes(userPassword + passwordSalt));
-                passwordIsWrong = !ConstantTimeComparisons.ConstantTimeEquals(passwordTokenBytes, hash);
+                user = await userService.ValidatePasswordHexAsync(username!, passwordToken, passwordSalt,
+                    context.RequestAborted);
             }
 
             // Check if user exists after checking password to prevent discovery of existing users
             // by timing attack.
-            if (user == null || (!user.IsGuest && passwordIsWrong))
+            if (user == null)
                 throw RestApiErrorException.WrongUsernameOrPassword();
 
             apiContext.User = user;

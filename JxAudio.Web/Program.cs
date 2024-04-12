@@ -20,6 +20,7 @@ Log.Logger = new LoggerConfiguration().WriteTo
 var builder = WebApplication.CreateBuilder(args).Inject(configOption =>
 {
     configOption.ConfigSearchFolder = ["config"];
+    configOption.DynamicPrefix = "api";
 });
 
 builder.Host.UseSerilog();

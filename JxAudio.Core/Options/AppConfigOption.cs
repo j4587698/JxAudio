@@ -23,6 +23,11 @@ public class AppConfigOption
     public bool EnableController { get; set; }
 
     /// <summary>
+    /// 动态前缀
+    /// </summary>
+    public string? DynamicPrefix { get; set; }
+
+    /// <summary>
     /// 是否自动移除动态前缀，默认为true
     /// </summary>
     public bool AutoRemoveDynamicPrefix { get; set; } = true;

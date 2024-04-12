@@ -34,7 +34,7 @@ public static class MvcExtension
             foreach (var controller in application.Controllers)
             {
                 // 检查是否是ControllerBase的派生类
-                if (controller.ControllerType.BaseType == typeof(ControllerBase))
+                if (controller.ControllerType.BaseType == typeof(DynamicControllerBase))
                 {
                     // 检查是否已经有RouteAttribute定义
                     var hasRouteAttribute = controller.Selectors.Any(selector =>
@@ -42,7 +42,8 @@ public static class MvcExtension
 
                     if (!hasRouteAttribute)
                     {
-                        var routeAttribute = new Microsoft.AspNetCore.Mvc.RouteAttribute("[controller]");
+                        var routeAttribute = new Microsoft.AspNetCore.Mvc.RouteAttribute(
+                            $"{option.DynamicPrefix}{(option.DynamicPrefix?.EndsWith('/') == false ? "/" : "")}[controller]");
                         // 没有RouteAttribute，所以添加一个
                         controller.Selectors.Add(new SelectorModel
                         {
