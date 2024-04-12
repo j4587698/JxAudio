@@ -20,7 +20,7 @@ Log.Logger = new LoggerConfiguration().WriteTo
 var builder = WebApplication.CreateBuilder(args).Inject(configOption =>
 {
     configOption.ConfigSearchFolder = ["config"];
-    configOption.DynamicPrefix = "api";
+    configOption.DynamicPrefix = "/api/";
 });
 
 builder.Host.UseSerilog();
@@ -44,6 +44,7 @@ else if (Util.IsInstalled)
 builder.Services.AddTaskServices();
 builder.Services.AddHostedService<JobHostedService>();
 builder.Services.AddServiceController();
+builder.Services.AddOpenApiDocument();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -91,6 +92,9 @@ app.UseStaticFiles();
 app.UseMiddleware<InstallMiddleware>();
 
 app.UseAntiforgery();
+
+app.UseOpenApi();
+app.UseReDoc();
 
 app.MapDefaultControllerRoute();
 app.MapRazorComponents<App>()

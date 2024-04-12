@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using RouteAttribute = Microsoft.AspNetCore.Components.RouteAttribute;
@@ -10,12 +11,12 @@ namespace JxAudio.Core.Extensions;
 
 public static class MvcExtension
 {
-    public static IMvcCoreBuilder AddServiceController(this IServiceCollection collection,
+    public static IMvcBuilder AddServiceController(this IServiceCollection collection,
         bool enableDynamicController = true)
     {
         using var serviceProvider = collection.BuildServiceProvider();
         var option = serviceProvider.GetService<IOptions<AppConfigOption>>()?.Value ?? new AppConfigOption();
-        var builder = collection.AddMvcCore(options =>
+        var builder = collection.AddMvc(options =>
         {
             if (enableDynamicController)
             {
@@ -44,6 +45,7 @@ public static class MvcExtension
                     {
                         var routeAttribute = new Microsoft.AspNetCore.Mvc.RouteAttribute(
                             $"{option.DynamicPrefix}{(option.DynamicPrefix?.EndsWith('/') == false ? "/" : "")}[controller]");
+                        controller.Selectors.Clear();
                         // 没有RouteAttribute，所以添加一个
                         controller.Selectors.Add(new SelectorModel
                         {
@@ -72,6 +74,7 @@ public static class MvcExtension
 
                                 action.Selectors.Add(new SelectorModel
                                 {
+                                    AttributeRouteModel = new AttributeRouteModel(new Microsoft.AspNetCore.Mvc.RouteAttribute("[action]")),
                                     EndpointMetadata = { new HttpGetAttribute("[action]") }
                                 });
                                 hasAttribute = true;
@@ -87,6 +90,7 @@ public static class MvcExtension
 
                                 action.Selectors.Add(new SelectorModel
                                 {
+                                    AttributeRouteModel = new AttributeRouteModel(new Microsoft.AspNetCore.Mvc.RouteAttribute("[action]")),
                                     EndpointMetadata = { new HttpPutAttribute("[action]") }
                                 });
                                 hasAttribute = true;
@@ -102,6 +106,7 @@ public static class MvcExtension
 
                                 action.Selectors.Add(new SelectorModel
                                 {
+                                    AttributeRouteModel = new AttributeRouteModel(new Microsoft.AspNetCore.Mvc.RouteAttribute("[action]")),
                                     EndpointMetadata = { new HttpDeleteAttribute("[action]") }
                                 });
                                 hasAttribute = true;
@@ -117,6 +122,7 @@ public static class MvcExtension
 
                                 action.Selectors.Add(new SelectorModel
                                 {
+                                    AttributeRouteModel = new AttributeRouteModel(new Microsoft.AspNetCore.Mvc.RouteAttribute("[action]")),
                                     EndpointMetadata = { new HttpPostAttribute("[action]") }
                                 });
                             }

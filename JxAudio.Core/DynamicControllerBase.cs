@@ -2,7 +2,7 @@
 
 namespace JxAudio.Core;
 
-public class DynamicControllerBase: ControllerBase
+public abstract class DynamicControllerBase: ControllerBase
 {
     
 }
