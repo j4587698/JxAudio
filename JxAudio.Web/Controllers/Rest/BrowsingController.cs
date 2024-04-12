@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Directory = JxAudio.Core.Subsonic.Directory;
 using Index = JxAudio.Core.Subsonic.Index;
 
-namespace JxAudio.Web.Controllers;
+namespace JxAudio.Web.Controllers.Rest;
 
 public class BrowsingController : AudioController
 {
@@ -36,7 +36,7 @@ public class BrowsingController : AudioController
     [NotNull]
     private TrackService? TrackService { get; set; }
     
-    [HttpGet("/getMusicFolders")]
+    [HttpGet("getMusicFolders")]
     public async Task GetMusicFolders()
     {
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
@@ -48,7 +48,7 @@ public class BrowsingController : AudioController
         }
     }
     
-    [HttpGet("/getIndexes")]
+    [HttpGet("getIndexes")]
     public async Task GetIndexes(int? musicFolderId, long? ifModifiedSince)
     {
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
@@ -69,7 +69,7 @@ public class BrowsingController : AudioController
         }
     }
 
-    [HttpGet("/getMusicDirectory")]
+    [HttpGet("getMusicDirectory")]
     public async Task GetMusicDirectory(string? id)
     {
         Util.CheckRequiredParameters(nameof(id), id);
@@ -115,7 +115,7 @@ public class BrowsingController : AudioController
     }
     
 
-    [HttpGet("/getGenres")]
+    [HttpGet("getGenres")]
     public async Task GetGenres()
     {
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
@@ -127,7 +127,7 @@ public class BrowsingController : AudioController
         }
     }
     
-    [HttpGet("/getArtists")]
+    [HttpGet("getArtists")]
     public async Task GetArtists(int? musicFolderId)
     {
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
@@ -139,7 +139,7 @@ public class BrowsingController : AudioController
         }
     }
 
-    [HttpGet("/getArtist")]
+    [HttpGet("getArtist")]
     public async Task GetArtist(string? id)
     {
         Util.CheckRequiredParameters(nameof(id), id);
@@ -154,7 +154,7 @@ public class BrowsingController : AudioController
         }
     }
     
-    [HttpGet("/getAlbum")]
+    [HttpGet("getAlbum")]
     public async Task GetAlbum(string? id)
     {
         Util.CheckRequiredParameters(nameof(id), id);
@@ -169,7 +169,7 @@ public class BrowsingController : AudioController
         }
     }
 
-    [HttpGet("/getSong")]
+    [HttpGet("getSong")]
     public async Task GetSong(string? id)
     {
         Util.CheckRequiredParameters(nameof(id), id);
@@ -184,19 +184,19 @@ public class BrowsingController : AudioController
         }
     }
     
-    [HttpGet("/getVideos")]
+    [HttpGet("getVideos")]
     public void GetVideos()
     {
         throw RestApiErrorException.NotImplemented();
     }
     
-    [HttpGet("/getVideoInfo")]
+    [HttpGet("getVideoInfo")]
     public void GetVideoInfo()
     {
         throw RestApiErrorException.NotImplemented();
     }
     
-    [HttpGet("/getArtistInfo")]
+    [HttpGet("getArtistInfo")]
     public Task GetArtistInfo(string? id, int? count, bool includeNotPresent)
     {
         Util.CheckRequiredParameters(nameof(id), id);
@@ -215,7 +215,7 @@ public class BrowsingController : AudioController
         return HttpContext.WriteResponseAsync(ItemChoiceType.artistInfo, artistInfo);
     }
     
-    [HttpGet("/getArtistInfo2")]
+    [HttpGet("getArtistInfo2")]
     public Task GetArtistInfo2(string? id, int? count, bool includeNotPresent)
     {
         Util.CheckRequiredParameters(nameof(id), id);
@@ -234,7 +234,7 @@ public class BrowsingController : AudioController
         return HttpContext.WriteResponseAsync(ItemChoiceType.artistInfo2, artistInfo);
     }
 
-    [HttpGet("/getAlbumInfo")]
+    [HttpGet("getAlbumInfo")]
     public Task GetAlbumInfo(string? id)
     {
         if (id.IsNullOrEmpty())
@@ -254,7 +254,7 @@ public class BrowsingController : AudioController
         return HttpContext.WriteResponseAsync(ItemChoiceType.albumInfo, albumInfo);
     }
     
-    [HttpGet("/getAlbumInfo2")]
+    [HttpGet("getAlbumInfo2")]
     public Task GetAlbumInfo2(string? id)
     {
         if (id.IsNullOrEmpty())
@@ -274,7 +274,7 @@ public class BrowsingController : AudioController
         return HttpContext.WriteResponseAsync(ItemChoiceType.albumInfo, albumInfo);
     }
 
-    [HttpGet("/getSimilarSongs")]
+    [HttpGet("getSimilarSongs")]
     public Task GetSimilarSongs(string? id, int? count)
     {
         if (id.IsNullOrEmpty())
@@ -290,7 +290,7 @@ public class BrowsingController : AudioController
         return HttpContext.WriteResponseAsync(ItemChoiceType.similarSongs, similarSongs);
     }
     
-    [HttpGet("/getSimilarSongs2")]
+    [HttpGet("getSimilarSongs2")]
     public Task GetSimilarSongs2(string? id, int? count)
     {
         if (id.IsNullOrEmpty())
@@ -306,7 +306,7 @@ public class BrowsingController : AudioController
         return HttpContext.WriteResponseAsync(ItemChoiceType.similarSongs2, similarSongs);
     }
     
-    [HttpGet("/getTopSongs")]
+    [HttpGet("getTopSongs")]
     public async Task HandleGetTopSongsRequestAsync(string? artist, int? count)
     {
         Util.CheckRequiredParameters(nameof(artist), artist);

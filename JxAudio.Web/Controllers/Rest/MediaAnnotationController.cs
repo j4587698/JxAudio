@@ -6,11 +6,11 @@ using JxAudio.Web.Extensions;
 using JxAudio.Web.Utils;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JxAudio.Web.Controllers;
+namespace JxAudio.Web.Controllers.Rest;
 
 public class MediaAnnotationController(ArtistService artistService, AlbumService albumService, TrackService trackService): AudioController
 {
-    [HttpGet("/star")]
+    [HttpGet("star")]
     public async Task Star(string[]? id, string[]? albumId, string[]? artistId)
     {
         var artistIds = new List<int>();
@@ -62,7 +62,7 @@ public class MediaAnnotationController(ArtistService artistService, AlbumService
         await HttpContext.WriteResponseAsync(0, null);
     }
 
-    [HttpGet("/unstar")]
+    [HttpGet("unstar")]
     public async Task UnStar(string[]? id, string[]? albumId, string[]? artistId)
     {
         var artistIds = new List<int>();
@@ -114,7 +114,7 @@ public class MediaAnnotationController(ArtistService artistService, AlbumService
         await HttpContext.WriteResponseAsync(0, null);
     }
 
-    [HttpGet("/setRating")]
+    [HttpGet("setRating")]
     public async Task SetRating(string? id, float? rating)
     {
         Util.CheckRequiredParameters(nameof(id), id);
@@ -151,7 +151,7 @@ public class MediaAnnotationController(ArtistService artistService, AlbumService
         }
     }
 
-    [HttpGet("/scrobble")]
+    [HttpGet("scrobble")]
     public async Task Scrobble(string? id, long? time, bool submission = true)
     {
         Util.CheckRequiredParameters(nameof(id), id);

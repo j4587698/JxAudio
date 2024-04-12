@@ -6,11 +6,11 @@ using JxAudio.Web.Jobs;
 using Longbow.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JxAudio.Web.Controllers;
+namespace JxAudio.Web.Controllers.Rest;
 
 public class MediaLibraryScanningController: AudioController
 {
-    [HttpGet("/getScanStatus")]
+    [HttpGet("getScanStatus")]
     public async Task GetScanStatus()
     {
         var count = await TrackEntity.Select.CountAsync(HttpContext.RequestAborted);
@@ -23,7 +23,7 @@ public class MediaLibraryScanningController: AudioController
         await HttpContext.WriteResponseAsync(ItemChoiceType.scanStatus, scanStatus);
     }
 
-    [HttpGet("/startScan")]
+    [HttpGet("startScan")]
     public void StartScan()
     {
         throw RestApiErrorException.UserNotAuthorizedError();

@@ -1,47 +1,47 @@
 ﻿using JxAudio.Core;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JxAudio.Web.Controllers;
+namespace JxAudio.Web.Controllers.Rest;
 
 public class PodcastController: AudioController
 {
-    [HttpGet("/getPodcasts")]
+    [HttpGet("getPodcasts")]
     public void GetPodcasts()
     {
         throw RestApiErrorException.NotImplemented();
     }
     
-    [HttpGet("/getNewestPodcasts")]
+    [HttpGet("getNewestPodcasts")]
     public void GetNewestPodcasts()
     {
         throw RestApiErrorException.NotImplemented();
     }
     
-    [HttpGet("/refreshPodcasts")]
+    [HttpGet("refreshPodcasts")]
     public void RefreshPodcasts()
     {
         throw RestApiErrorException.NotImplemented();
     }
     
-    [HttpGet("/createPodcastChannel")]
+    [HttpGet("createPodcastChannel")]
     public void CreatePodcastChannel()
     {
         throw RestApiErrorException.NotImplemented();
     }
     
-    [HttpGet("/deletePodcastChannel")]
+    [HttpGet("deletePodcastChannel")]
     public void DeletePodcastChannel()
     {
         throw RestApiErrorException.NotImplemented();
     }
     
-    [HttpGet("/deletePodcastEpisode")]
+    [HttpGet("deletePodcastEpisode")]
     public void DeletePodcastEpisode()
     {
         throw RestApiErrorException.NotImplemented();
     }
     
-    [HttpGet("/downloadPodcastEpisode")]
+    [HttpGet("downloadPodcastEpisode")]
     public void DownloadPodcastEpisode()
     {
         throw RestApiErrorException.NotImplemented();

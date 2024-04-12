@@ -1,29 +1,29 @@
 ﻿using JxAudio.Core;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JxAudio.Web.Controllers;
+namespace JxAudio.Web.Controllers.Rest;
 
 public class SharingController: AudioController
 {
-    [HttpGet("/getShares")]
+    [HttpGet("getShares")]
     public void GetShares()
     {
         throw RestApiErrorException.NotImplemented();
     }
 
-    [HttpGet("/createShare")]
+    [HttpGet("createShare")]
     public void CreateShare()
     {
         throw RestApiErrorException.NotImplemented();
     }
 
-    [HttpGet("/updateShare")]
+    [HttpGet("updateShare")]
     public void UpdateShare()
     {
         throw RestApiErrorException.NotImplemented();
     }
 
-    [HttpGet("/deleteShare")]
+    [HttpGet("deleteShare")]
     public void DeleteShare()
     {
         throw RestApiErrorException.NotImplemented();

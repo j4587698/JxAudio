@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.Encodings.Web;
-using FFMpegCore;
+﻿using FFMpegCore;
 using FFMpegCore.Enums;
 using FFMpegCore.Pipes;
 using Jx.Toolbox.Extensions;
@@ -13,15 +11,14 @@ using JxAudio.Extensions;
 using JxAudio.Utils;
 using JxAudio.Web.Extensions;
 using JxAudio.Web.Utils;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JxAudio.Web.Controllers;
+namespace JxAudio.Web.Controllers.Rest;
 
 public class MediaRetrievalController(PictureService pictureService, TrackService trackService,
     LrcService lrcService, UserService userService): AudioController
 {
-    [HttpGet("/stream")]
+    [HttpGet("stream")]
     public async Task Stream(string? id, int? maxBitRate, string? format, string? timeOffset, string? timeEnd, string? size)
     {
         maxBitRate ??= 0;
@@ -124,7 +121,7 @@ public class MediaRetrievalController(PictureService pictureService, TrackServic
         }
     }
 
-    [HttpGet("/download")]
+    [HttpGet("download")]
     public async Task Download(string? id)
     {
         var trackId = id.ParseTrackId();
@@ -170,19 +167,19 @@ public class MediaRetrievalController(PictureService pictureService, TrackServic
         }
     }
 
-    [HttpGet("/hls")]
+    [HttpGet("hls")]
     public void Hls()
     {
         throw RestApiErrorException.NotImplemented();
     }
 
-    [HttpGet("/getCaptions")]
+    [HttpGet("getCaptions")]
     public void GetCaptions()
     {
         throw RestApiErrorException.NotImplemented();
     }
 
-    [HttpGet("/getCoverArt")]
+    [HttpGet("getCoverArt")]
     public async Task GetCoverArt(string? id, int? size)
     {
         Util.CheckRequiredParameters(nameof(id), id);
@@ -198,7 +195,7 @@ public class MediaRetrievalController(PictureService pictureService, TrackServic
         await stream.CopyToAsync(HttpContext.Response.Body, HttpContext.RequestAborted);
     }
 
-    [HttpGet("/getLyrics")]
+    [HttpGet("getLyrics")]
     public async Task GetLyrics(string? artist, string? title)
     {
         var text = await lrcService.GetLrcAsync(artist, title);
@@ -210,7 +207,7 @@ public class MediaRetrievalController(PictureService pictureService, TrackServic
         });
     }
 
-    [HttpGet("/getAvatar")]
+    [HttpGet("getAvatar")]
     public async Task GetAvatar(string? username)
     {
         Util.CheckRequiredParameters(nameof(username), username);

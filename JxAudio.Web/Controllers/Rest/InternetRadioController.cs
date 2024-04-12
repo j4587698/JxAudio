@@ -1,29 +1,29 @@
 ﻿using JxAudio.Core;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JxAudio.Web.Controllers;
+namespace JxAudio.Web.Controllers.Rest;
 
 public class InternetRadioController: AudioController
 {
-    [HttpGet("/getInternetRadioStations")]
+    [HttpGet("getInternetRadioStations")]
     public void GetInternetRadioStations()
     {
         throw RestApiErrorException.NotImplemented();
     }
     
-    [HttpGet("/createInternetRadioStation")]
+    [HttpGet("createInternetRadioStation")]
     public void CreateInternetRadioStation()
     {
         throw RestApiErrorException.NotImplemented();
     }
     
-    [HttpGet("/updateInternetRadioStation")]
+    [HttpGet("updateInternetRadioStation")]
     public void UpdateInternetRadioStation()
     {
         throw RestApiErrorException.NotImplemented();
     }
     
-    [HttpGet("/deleteInternetRadioStation")]
+    [HttpGet("deleteInternetRadioStation")]
     public void DeleteInternetRadioStation()
     {
         throw RestApiErrorException.NotImplemented();

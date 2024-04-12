@@ -85,7 +85,6 @@ if (!app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 app.UseStatusCodePages();
 
-app.UsePathBase("/rest");
 app.UseStaticFiles();
 
 app.UseMiddleware<InstallMiddleware>();

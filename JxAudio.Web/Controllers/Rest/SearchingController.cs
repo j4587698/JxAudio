@@ -9,7 +9,7 @@ using JxAudio.Web.Utils;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JxAudio.Web.Controllers;
+namespace JxAudio.Web.Controllers.Rest;
 
 public class SearchingController: AudioController
 {
@@ -25,13 +25,13 @@ public class SearchingController: AudioController
     [NotNull]
     private TrackService? TrackService { get; set; }
     
-    [HttpGet("/search")]
+    [HttpGet("search")]
     public void Search()
     {
         throw RestApiErrorException.NotImplemented();
     }
 
-    [HttpGet("/search2")]
+    [HttpGet("search2")]
     public async Task Search2(string? query, int? artistCount, int? artistOffset, int? albumCount, int? albumOffset, int? songCount, int? songOffset, int? musicFolderId)
     {
         Util.CheckRequiredParameters(nameof(query), query);
@@ -96,7 +96,7 @@ public class SearchingController: AudioController
         }
     }
     
-    [HttpGet("/search3")]
+    [HttpGet("search3")]
     public async Task Search3(string? query, int? artistCount, int? artistOffset, int? albumCount, int? albumOffset, int? songCount, int? songOffset, int? musicFolderId)
     {
         Util.CheckRequiredParameters(nameof(query), query);

@@ -9,7 +9,7 @@ using JxAudio.Web.Utils;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JxAudio.Web.Controllers;
+namespace JxAudio.Web.Controllers.Rest;
 
 public class AlbumSongListController : AudioController
 {
@@ -25,7 +25,7 @@ public class AlbumSongListController : AudioController
     [NotNull]
     private TrackService? TrackService { get; set; }
     
-    [HttpGet("/getAlbumList")]
+    [HttpGet("getAlbumList")]
     public async Task GetAlbumList(int? musicFolderId, string? type, int? size, int? offset, int? fromYear, int? toYear, string? genre)
     {
         Util.CheckRequiredParameters(nameof(type), type);
@@ -93,7 +93,7 @@ public class AlbumSongListController : AudioController
         }
     }
 
-    [HttpGet("/getAlbumList2")]
+    [HttpGet("getAlbumList2")]
     public async Task GetAlbumList2(int? musicFolderId, string? type, int? size, int? offset, int? fromYear, int? toYear, string? genre)
     {
         Util.CheckRequiredParameters(nameof(type), type);
@@ -156,7 +156,7 @@ public class AlbumSongListController : AudioController
         }
     }
 
-    [HttpGet("/getRandomSongs")]
+    [HttpGet("getRandomSongs")]
     public async Task GetRandomSongs(int? musicFolderId, string? type, int? size, int? fromYear, int? toYear, string? genre)
     {
         size ??= 10;
@@ -176,7 +176,7 @@ public class AlbumSongListController : AudioController
         }
     }
 
-    [HttpGet("/getSongsByGenre")]
+    [HttpGet("getSongsByGenre")]
     public async Task GetSongsByGenre(int? musicFolderId, int? count, int? offset, string? genre)
     {
         Util.CheckRequiredParameters(nameof(genre), genre);
@@ -193,13 +193,13 @@ public class AlbumSongListController : AudioController
         }
     }
 
-    [HttpGet("/getNowPlaying")]
+    [HttpGet("getNowPlaying")]
     public void GetNowPlaying()
     {
         throw RestApiErrorException.NotImplemented();
     }
 
-    [HttpGet("/getStarred")]
+    [HttpGet("getStarred")]
     public async Task GetStarred(int? musicFolderId)
     {
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
@@ -221,7 +221,7 @@ public class AlbumSongListController : AudioController
         }
     }
     
-    [HttpGet("/getStarred2")]
+    [HttpGet("getStarred2")]
     public async Task GetStarred2(int? musicFolderId)
     {
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;

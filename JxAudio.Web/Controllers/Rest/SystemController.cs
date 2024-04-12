@@ -1,19 +1,18 @@
 ﻿using JxAudio.Core.Subsonic;
-using JxAudio.Extensions;
 using JxAudio.Web.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JxAudio.Web.Controllers;
+namespace JxAudio.Web.Controllers.Rest;
 
 public class SystemController : AudioController
 {
-    [HttpGet("/ping")]
+    [HttpGet("ping")]
     public Task Ping()
     {
         return HttpContext.WriteResponseAsync(0, null);
     }
 
-    [HttpGet("/getLicense")]
+    [HttpGet("getLicense")]
     public Task GetLicense()
     {
         var license = new License()

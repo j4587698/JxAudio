@@ -9,7 +9,7 @@ using JxAudio.Web.Utils;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JxAudio.Web.Controllers;
+namespace JxAudio.Web.Controllers.Rest;
 
 public class PlaylistsController: AudioController
 {
@@ -17,7 +17,7 @@ public class PlaylistsController: AudioController
     [NotNull]
     private PlaylistService? PlaylistService { get; set; }
     
-    [HttpGet("/getPlaylists")]
+    [HttpGet("getPlaylists")]
     public async Task GetPlaylists(string? username)
     {
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
@@ -30,7 +30,7 @@ public class PlaylistsController: AudioController
         }
     }
 
-    [HttpGet("/getPlaylist")]
+    [HttpGet("getPlaylist")]
     public async Task GetPlaylist(string? id)
     {
         Util.CheckRequiredParameters(nameof(id), id);
@@ -46,7 +46,7 @@ public class PlaylistsController: AudioController
         }
     }
 
-    [HttpGet("/createPlaylist")]
+    [HttpGet("createPlaylist")]
     public async Task CreatePlaylist(string? playlistId, string? name, string[]? songId)
     {
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
@@ -72,7 +72,7 @@ public class PlaylistsController: AudioController
         }
     }
 
-    [HttpGet("/updatePlaylist")]
+    [HttpGet("updatePlaylist")]
     public async Task UpdatePlaylist(string? playlistId, string? name, string? comment, bool? @public, string[]? songIdToAdd, int[]? songIndexToRemove)
     {
         var apiContext = HttpContext.Items[Constant.ApiContextKey] as ApiContext;
@@ -90,7 +90,7 @@ public class PlaylistsController: AudioController
         }
     }
 
-    [HttpGet("/deletePlaylist")]
+    [HttpGet("deletePlaylist")]
     public async Task DeletePlaylist(string? id)
     {
         Util.CheckRequiredParameters(nameof(id), id);

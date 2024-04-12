@@ -1,19 +1,19 @@
 ﻿using JxAudio.Core;
-using JxAudio.Extensions;
-using JxAudio.Utils;
 using JxAudio.Web.Extensions;
 using JxAudio.Web.Utils;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace JxAudio.Web.Controllers;
+namespace JxAudio.Web.Controllers.Rest;
 
-public class AudioController : Microsoft.AspNetCore.Mvc.Controller
+[Route("/rest")]
+public class AudioController : Controller
 {
 
     public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         if (context.HttpContext.Request.Path.Value?.Length >= 1 &&
-            context.HttpContext.Request.Path.Value.IndexOf('/', 1) > 0)
+            context.HttpContext.Request.Path.Value.IndexOf('/', 6) > 0)
         {
             context.HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
             return;
