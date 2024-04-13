@@ -103,7 +103,7 @@ public class AListProvider: IProviderPlugin
                 return fsInfoList;
             }
         
-            foreach (var item in list.Data.Content.Where(x => !x.IsDir))
+            foreach (var item in list.Data.Content)
             {
                 fsInfoList.Add(new FsInfo()
                 {

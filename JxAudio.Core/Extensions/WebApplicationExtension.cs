@@ -74,10 +74,15 @@ public static class WebApplicationExtension
                 {
                     if (!folder.IsNullOrWhiteSpace())
                     {
-                        LoadConfig(builder, Path.Combine(AppContext.BaseDirectory, folder), "*.json", jsonPattern, webApplicationBuilder.Environment);
+                        var path = Path.Combine(AppContext.BaseDirectory, folder);
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+                        LoadConfig(builder,  path, "*.json", jsonPattern, webApplicationBuilder.Environment);
                         if (option.EnableXmlSearcher)
                         {
-                            LoadConfig(builder, Path.Combine(AppContext.BaseDirectory, folder), "*.xml", xmlPattern, webApplicationBuilder.Environment);
+                            LoadConfig(builder, path, "*.xml", xmlPattern, webApplicationBuilder.Environment);
                         }
                     }
                 }
