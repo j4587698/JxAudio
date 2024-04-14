@@ -1,14 +1,12 @@
-﻿using Jx.Toolbox.Utils;
-using JxAudio.Core;
+﻿using JxAudio.Core;
 using JxAudio.Core.Entity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JxAudio.Web.Controllers.Admin;
+namespace JxAudio.Web.Controllers.Api;
 
-public class CoverController: ControllerBase
+public class CoverController: DynamicControllerBase
 {
-    
-    public IActionResult GetCover(int? coverId)
+    public IActionResult Get(int? coverId)
     {
         if (coverId is null or 0)
         {

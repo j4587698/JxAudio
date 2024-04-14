@@ -7,7 +7,7 @@
     <TableColumns>
         <TableColumn @bind-Field="@context.PictureId" Width="50">
             <Template Context="value">
-                <Avatar Url="@($"Cover?coverId={value.Value}")"></Avatar>
+                <Avatar Url="@($"/api/Cover?coverId={value.Value}")"></Avatar>
             </Template>
         </TableColumn>
         <TableColumn @bind-Field="@context.Title"></TableColumn>
