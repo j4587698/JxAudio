@@ -1,4 +1,4 @@
-﻿using Jx.Toolbox.Cryptography;
+﻿using Jx.Toolbox.Hash;
 using JxAudio.Core.Attributes;
 using JxAudio.Core.Entity;
 using JxAudio.Core.Subsonic;
