@@ -17,11 +17,26 @@ public static class Application
 
     public static T? GetService<T>() where T: class
     {
+        var service = GetRequiredService<T>();
+        if (service != null)
+        {
+            return service;
+        }
         return ServiceProvider?.GetService<T>();
     }
 
     public static T? GetRequiredService<T>() where T : class
     {
         return ServiceProvider?.GetRequiredService<T>();
+    }
+
+    public static string? GetValue(string key)
+    {
+        return Configuration[key];
+    }
+
+    public static T? GetValue<T>(string key) where T: class
+    {
+        return Configuration.GetSection(key).Get<T>();
     }
 }
