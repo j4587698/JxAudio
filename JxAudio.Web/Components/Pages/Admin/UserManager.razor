@@ -2,14 +2,16 @@
 @using JxAudio.Core.Entity
 @using Microsoft.Extensions.Localization
 @using System.Diagnostics.CodeAnalysis
+@using JxAudio.Core.Service
 @using JxAudio.Web.Validators
 @using JxAudio.Web.Vo
 
 @inject IStringLocalizer<UserManager> StringLocalizer
 @inject IIconTheme IconTheme
 @inject MessageService MessageService
+@inject UserService UserService
 
-<AdminTable TItem="UserEntity" ShowToolbar="true" ShowExtendButtons="true">
+<AdminTable TItem="UserEntity" ShowToolbar="true" ShowExtendButtons="true" OnSaveAsync="OnSaveAsync">
     <TableColumns>
         <TableColumn @bind-Field="@context.UserName"></TableColumn>
         <TableColumn @bind-Field="@context.Password" Visible="false" IsVisibleWhenEdit="false" IsVisibleWhenAdd="true" ComponentType="typeof(BootstrapPassword)"></TableColumn>
@@ -69,12 +71,24 @@
     {
         var userEntity = _reSetPassword!.UserEntity!;
         userEntity.Password = _reSetPassword.NewPassword;
+        UserService.EncryptPassword(userEntity);
         await userEntity.SaveAsync();
         await Modal.Toggle();
         await MessageService.Show(new MessageOption()
         {
             Content = StringLocalizer["Success"]
         });
+    }
+
+    private async Task<bool> OnSaveAsync(UserEntity userEntity, ItemChangedType itemChangedType)
+    {
+        if (itemChangedType == ItemChangedType.Add)
+        {
+            UserService.EncryptPassword(userEntity);
+        }
+
+        await userEntity.SaveAsync();
+        return true;
     }
 
 }

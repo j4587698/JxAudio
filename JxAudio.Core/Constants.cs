@@ -34,6 +34,8 @@ public static class Constants
     public const string CoverCachePath = "config/cache/";
 
     public static readonly string PluginPath = Path.Combine(Directory.GetCurrentDirectory(), "config/plugins/");
+
+    public static string? AesKey { get; set; }
     
     public static Stream GetDefaultCover()
     {

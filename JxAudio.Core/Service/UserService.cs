@@ -1,4 +1,6 @@
-﻿using Jx.Toolbox.Hash;
+﻿using Jx.Toolbox.Cryptography;
+using Jx.Toolbox.Extensions;
+using Jx.Toolbox.Hash;
 using JxAudio.Core.Attributes;
 using JxAudio.Core.Entity;
 using JxAudio.Core.Subsonic;
@@ -8,6 +10,20 @@ namespace JxAudio.Core.Service;
 [Transient]
 public class UserService
 {
+    public void EncryptPassword(UserEntity userEntity)
+    {
+        if (userEntity.Iv.IsNullOrEmpty())
+        {
+            userEntity.Iv = AesEncryption.CreateIv();
+        }
+        userEntity.Password = AesEncryption.Encrypt(userEntity.Password, Constants.AesKey, userEntity.Iv);
+    }
+    
+    public string DecryptPassword(UserEntity userEntity)
+    {
+        return AesEncryption.Decrypt(userEntity.Password, Constants.AesKey, userEntity.Iv);
+    }
+    
     public async Task<UserEntity?> GetUserByUsernameAsync(string username, CancellationToken cancellationToken)
     {
         return await UserEntity.Where(x => x.UserName == username).FirstAsync(cancellationToken);
@@ -21,7 +37,7 @@ public class UserService
             return null;
         }
 
-        if (password.Equals(user.Password, StringComparison.OrdinalIgnoreCase) || user.IsGuest)
+        if (password.Equals(DecryptPassword(user), StringComparison.OrdinalIgnoreCase) || user.IsGuest)
         {
             return user;
         }
@@ -37,7 +53,7 @@ public class UserService
             return null;
         }
 
-        if (passwordHex.Equals(MD5.MD5StringWithSalt(user.Password, salt), StringComparison.OrdinalIgnoreCase) || user.IsGuest)
+        if (passwordHex.Equals(MD5.MD5StringWithSalt(DecryptPassword(user), salt), StringComparison.OrdinalIgnoreCase) || user.IsGuest)
         {
             return user;
         }

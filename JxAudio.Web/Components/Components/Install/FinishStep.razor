@@ -1,14 +1,20 @@
 ﻿@using JxAudio.Core.Options
 @using System.Diagnostics.CodeAnalysis
+@using Jx.Toolbox.Cryptography
 @using JxAudio.Core
 @using JxAudio.Core.Entity
 @using JxAudio.Core.Service
 @using JxAudio.Web.Utils
 @using JxAudio.Web.Vo
 @using Microsoft.Extensions.Localization
+@using Newtonsoft.Json.Linq
+@using Constants = JxAudio.Core.Constants
+
+@using Newtonsoft.Json
 @inject NavigationManager NavigationManager
 @inject SwalService SwalService
 @inject SettingsService SettingsService
+@inject UserService UserService
 
 <GroupBox class="install_content">
     <div class="text-center">
@@ -61,6 +67,12 @@
 
         Content = FinishLocalizer["SetupSettings"];
         SettingsVo.SetSettings(SettingsService);
+        var aesKey = AesEncryption.CreateKey();
+        var filePath = Path.Combine(AppContext.BaseDirectory, "config", "settings.json");
+        var jObject = File.Exists(filePath) ? JsonConvert.DeserializeObject<JObject>(await File.ReadAllTextAsync(filePath))! : new JObject();
+        jObject["JxAudio"] = JObject.FromObject(new { AesKey = aesKey });
+        await File.WriteAllTextAsync(filePath, JsonConvert.SerializeObject(jObject, Formatting.Indented));
+        Constants.AesKey = aesKey;
 
         Content = FinishLocalizer["SetupUser"];
         var userEntity = new UserEntity()
@@ -71,6 +83,7 @@
             Email = UserInstallVo.Email,
             IsAdmin = true
         };
+        UserService.EncryptPassword(userEntity);
         await userEntity.SaveAsync();
         
         Util.StartJob(SettingsVo);

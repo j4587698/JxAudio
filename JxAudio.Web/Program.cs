@@ -11,6 +11,7 @@ using JxAudio.Web.Utils;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Console = System.Console;
+using Constants = JxAudio.Core.Constants;
 using SearchOption = System.IO.SearchOption;
 
 Log.Logger = new LoggerConfiguration().WriteTo
@@ -25,7 +26,7 @@ var builder = WebApplication.CreateBuilder(args).Inject(configOption =>
 
 builder.Host.UseSerilog();
 
-var dbConfigOption = builder.Configuration.GetSection("Db").Get<DbConfigOption>();
+var dbConfigOption = Application.GetValue<DbConfigOption>("Db");
 if (dbConfigOption != null)
 {
     var ret = Setup.SetupDb(dbConfigOption);
@@ -40,6 +41,8 @@ else if (Util.IsInstalled)
 {
     throw new Exception("Init Db fail");
 }
+
+Constants.AesKey = Application.GetValue("JxAudio:AesKey");
 
 builder.Services.AddTaskServices();
 builder.Services.AddHostedService<JobHostedService>();
