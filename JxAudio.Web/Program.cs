@@ -8,6 +8,7 @@ using JxAudio.Web.Components;
 using JxAudio.Web.Middlewares;
 using JxAudio.Web.Services;
 using JxAudio.Web.Utils;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Console = System.Console;
@@ -56,6 +57,14 @@ builder.Services.AddBootstrapBlazor(null, option =>
     option.AdditionalJsonFiles = Directory.GetFiles("./Locales", "*.json", SearchOption.AllDirectories);
 });
 
+builder.Services.Configure<CookiePolicyOptions>(op =>
+{
+    op.CheckConsentNeeded = _ => true;
+    op.MinimumSameSitePolicy = SameSiteMode.None;
+});
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+
 // 增加多语言支持配置信息
 builder.Services.AddRequestLocalization<IOptionsMonitor<BootstrapBlazorOptions>>((localizerOption, blazorOption)=>
 {
@@ -97,7 +106,10 @@ app.UseMiddleware<InstallMiddleware>();
 app.UseAntiforgery();
 
 app.UseOpenApi();
-app.UseReDoc();
+app.UseSwaggerUi();
+app.UseCookiePolicy();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapDefaultControllerRoute();
 app.MapRazorComponents<App>()

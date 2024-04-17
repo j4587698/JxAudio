@@ -242,5 +242,9 @@
     "Finish": "恭喜你，所有设置已完成，3秒后自动跳转",
     "Fail": "失败",
     "CreateTableFail": "建表失败，请确认数据库有建表权限后重新运行Install"
+  },
+  "JxAudio.Web.Controllers.Api.UserController": {
+    "NotEmpty": "用户名和密码不能为空",
+    "Invalid": "用户名或密码错误"
   }
 }
