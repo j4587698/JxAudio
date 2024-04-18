@@ -2,4 +2,6 @@
 /*/obj/
 /Plugins/*/bin/
 /Plugins/*/obj/
+/Front/*/bin/
+/Front/*/obj/
 /.idea

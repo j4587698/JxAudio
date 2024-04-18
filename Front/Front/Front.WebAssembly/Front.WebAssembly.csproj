@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Remove="Locales\en.json"/>
+        <Content Remove="Locales\zh.json"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Locales\en.json"/>
+        <EmbeddedResource Include="Locales\zh.json"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BootstrapBlazor" Version="8.4.7" />
+        <PackageReference Include="BootstrapBlazor.FontAwesome" Version="8.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0" PrivateAssets="all"/>
+    </ItemGroup>
+
+</Project>
