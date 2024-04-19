@@ -195,30 +195,3 @@
     }
 }
 
-.progress-slider::-webkit-slider-thumb {
-    appearance: none;
-    width: 2px;
-    height: 2px;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-.progress-slider::-moz-range-thumb {
-    appearance: none; /* Firefox */
-}
-
-.progress-slider::-ms-thumb {
-    appearance: none; /* IE and older versions of Edge */
-}
-
-/* 其他滑块样式 */
-.progress-slider {
-    -webkit-appearance: none; /* Chrome, Safari, newer versions of Edge */
-    width: 100%;
-    height: 4px;
-    background: transparent; /* 设置为透明以显示 ::before 伪元素的颜色 */
-    border: none; /* 可以移除边框 */
-    padding: 0; /* 可以移除内边距 */
-    cursor: pointer;
-}
-

@@ -1,7 +1,87 @@
-﻿<div class="d-flex flex-column align-items-stretch w-100" style="height: 5rem">
-    <input type="range"  class="progress-slider" style="background: linear-gradient(to right, #4CAF50 0%, #4CAF50 50%, #ddd 50%, #ddd 100%)">
+﻿@using IconPark
+@using Jx.Toolbox.Extensions
+@using Console = System.Console
+<div class="d-flex flex-column align-items-stretch w-100" style="height: 5rem">
+        <input type="range" class="progress-slider" @bind-value="CurrentTimeString" min="0" max="@Duration" step="1" @bind-value:event="oninput"
+               style="background: linear-gradient(to right, var(--bb-header-bg) 0%, var(--bb-header-bg) @(Percent)%, #ddd @(Percent)%, #ddd 100%)">
+    
+    <div class="d-flex flex-grow-1 px-5 align-items-center">
+        <div class="flex-1">
+            <div class="d-flex">
+                <img alt="" src="favicon.png" class="w-11 h-11 rounded">
+                <div class="ms-2 text-xs d-flex flex-column justify-content-between">
+                    <div class="w-52 cursor-pointer text-truncate">
+                        <div class="d-flex">
+                            <span>JxAudio</span>
+                            <div class="ms-2 text-secondary">Test</div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-x-3">
+                        <Like Size="18" StrokeWidth="3" Theme="ThemeType.Filled"></Like>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex-1">
+            <div class="d-flex align-items-center justify-content-center gap-x-3">
+                <Button Color="Color.None" style="color: red">
+                    <ShuffleOne Size="20" StrokeWidth="3"></ShuffleOne>
+                </Button>
+                <GoStart Size="28"></GoStart>
+                <Button Color="Color.None" style="color: var(--bb-header-bg)">
+                    <PauseOne Size="45" Theme="ThemeType.Filled"></PauseOne>
+                </Button>
+                <GoEnd Size="28"></GoEnd>
+                <VolumeSmall Size="20"></VolumeSmall>
+            </div>
+        </div>
+        <div class="flex-1">
+            <div class="d-flex justify-content-end align-items-center gap-x-2-5">
+                <span class="text-xs">
+                    @CurrentTime.ToTimeString()[3..] / @Duration.ToTimeString()[3..]
+                </span>
+                <TextMessage Size="18"></TextMessage>
+                <div class="d-flex align-items-center">
+                    <MusicList Size="18" StrokeWidth="3"></MusicList>
+                    <span class="text-xs">1</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @code {
-    
+
+    [Parameter]
+    public int CurrentTime { get; set; }
+
+    [Parameter] public int Duration { get; set; } = 100;
+
+    [Parameter]
+    public EventCallback<int> CurrentTimeChanged { get; set; }
+
+    private int Percent { get; set; }
+
+    private string CurrentTimeString
+    {
+        get => CurrentTime.ToString();
+        set
+        {
+            Console.WriteLine(value);
+            Console.WriteLine(CurrentTimeString);
+            if (value != CurrentTimeString)
+            {
+                Console.WriteLine(CurrentTimeString);
+                CurrentTime = int.Parse(value); 
+                Percent = CurrentTime * 100 / Duration;
+            }
+            
+        }
+    }
+
+    private void Changed()
+    {
+        
+    }
+
 }
