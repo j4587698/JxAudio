@@ -54,3 +54,24 @@
 .gap-x-3 {
     gap: 0.75rem;
 }
+
+.vertical-slider {
+    -webkit-transform: rotate(90deg);
+    transform: rotate(90deg);
+    width: 50px;
+    height: 10px;
+}
+
+::deep .show-on-mobile {
+    display: none;
+}
+
+@media (max-width: 1000px) {
+    .hide-on-mobile {
+        display: none;
+    }
+
+    ::deep .show-on-mobile {
+        display: block;
+    }
+}

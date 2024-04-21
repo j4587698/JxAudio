@@ -5,8 +5,8 @@
         <input type="range" class="progress-slider" @bind-value="CurrentTimeString" min="0" max="@Duration" step="1" @bind-value:event="oninput"
                style="background: linear-gradient(to right, var(--bb-header-bg) 0%, var(--bb-header-bg) @(Percent)%, #ddd @(Percent)%, #ddd 100%)">
     
-    <div class="d-flex flex-grow-1 px-5 align-items-center">
-        <div class="flex-1">
+    <div class="d-flex flex-grow-1 align-items-center">
+        <div class="flex-1 hide-on-mobile">
             <div class="d-flex">
                 <img alt="" src="favicon.png" class="w-11 h-11 rounded">
                 <div class="ms-2 text-xs d-flex flex-column justify-content-between">
@@ -24,18 +24,34 @@
         </div>
         <div class="flex-1">
             <div class="d-flex align-items-center justify-content-center gap-x-3">
-                <Button Color="Color.None" style="color: red">
-                    <ShuffleOne Size="20" StrokeWidth="3"></ShuffleOne>
+                <Button Color="Color.None" style="color: red; font-size: 15px" Icon="fa-solid fa-shuffle">
+                    
                 </Button>
-                <GoStart Size="28"></GoStart>
+                <Button Icon="fa-solid fa-backward-step "></Button>
                 <Button Color="Color.None" style="color: var(--bb-header-bg)">
                     <PauseOne Size="45" Theme="ThemeType.Filled"></PauseOne>
                 </Button>
                 <GoEnd Size="28"></GoEnd>
-                <VolumeSmall Size="20"></VolumeSmall>
+                <PopConfirmButton CustomClass="custom-popup" Placement="Placement.Top">
+                    <BodyTemplate>
+                        <div style="height: 50px;width: 10px">
+                            <input type="range" class="vertical-slider">
+                        </div>
+                        
+                    </BodyTemplate>
+                    <ChildContent>
+                        <VolumeSmall Size="20"></VolumeSmall>
+                    </ChildContent>
+                    
+                </PopConfirmButton>
+                
+                <Button Color="Color.None" class="show-on-mobile">
+                    <MoreOne Size="20" StrokeWidth="3"></MoreOne>
+                </Button>
+                
             </div>
         </div>
-        <div class="flex-1">
+        <div class="flex-1 hide-on-mobile">
             <div class="d-flex justify-content-end align-items-center gap-x-2-5">
                 <span class="text-xs">
                     @CurrentTime.ToTimeString()[3..] / @Duration.ToTimeString()[3..]
