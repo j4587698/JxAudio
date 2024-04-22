@@ -122,13 +122,19 @@
     [JSInvokable]
     public void OnError(string error)
     {
-        
+        Console.WriteLine(error);
+    }
+
+    [JSInvokable]
+    public void OnLoaded(double duration)
+    {
+        Console.WriteLine(duration);
     }
     
 
     private async Task Play()
     {
-        await InvokeVoidAsync("play");
+        await InvokeVoidAsync("play", "http://home.jvxiang.com:4533/rest/stream?u=j4587698&t=9da3c9c2714f7cac8688bcc28bc11d47&s=68ef00&f=json&v=1.8.0&c=NavidromeUI&id=f72fb644e228401b83a395a8d043b709&_=1713774716561");
     }
 
 }

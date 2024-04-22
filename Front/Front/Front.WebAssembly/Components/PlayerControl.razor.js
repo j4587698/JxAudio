@@ -10,11 +10,19 @@ export function init(interop) {
     audio.ontimeupdate = function() {
         player._interop.invokeMethodAsync("OnTimeUpdate", audio.currentTime)
     }
-    audio.ended = function() {
+    audio.onended = function() {
         player._interop.invokeMethodAsync("OnEnded")
     }
-    audio.error = function() {
+    audio.onerror = function() {
         player._interop.invokeMethodAsync("OnError", audio.error.message)
+    }
+
+    audio.onloadedmetadata = function() {
+        console.log('音频的时长为：' + audio.duration + '秒');
+    }
+    
+    audio.onplaying = function (){
+        console.log('开始播放')
     }
 }
 
@@ -22,11 +30,9 @@ export function dispose() {
     Data.remove("player")
 }
 
-export function play() {
+export function play(url) {
     const player = Data.get("player")
-    player._audio.src = "http://home.jvxiang.com:4533/rest/stream?u=j4587698&t=9da3c9c2714f7cac8688bcc28bc11d47&s=68ef00&f=json&v=1.8.0&c=NavidromeUI&id=f72fb644e228401b83a395a8d043b709&_=1713774716561"
-    player._audio.load()
-    
+    player._audio.src = url
     console.log("audio loaded")
     player._audio.play().catch(function(error) {
         console.log("audio play error", error)
