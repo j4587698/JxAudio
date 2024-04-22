@@ -203,6 +203,11 @@
     padding: 0 0;
 }
 
+.custom-popup .popover-confirm-body{
+    padding: 0 0;
+    margin: 5px;
+}
+
 .custom-popup .popover-confirm-buttons{
     display: none;
 }

@@ -1,9 +1,13 @@
 ﻿@using IconPark
 @using Jx.Toolbox.Extensions
 @using Console = System.Console
+@inherits BootstrapModuleComponentBase
+
+@attribute [JSModuleAutoLoader("./Components/PlayerControl.razor.js", JSObjectReference = true)]
+
 <div class="d-flex flex-column align-items-stretch w-100" style="height: 5rem">
-        <input type="range" class="progress-slider" @bind-value="CurrentTimeString" min="0" max="@Duration" step="1" @bind-value:event="oninput"
-               style="background: linear-gradient(to right, var(--bb-header-bg) 0%, var(--bb-header-bg) @(Percent)%, #ddd @(Percent)%, #ddd 100%)">
+    <input type="range" class="progress-slider" @bind-value="CurrentTimeString" 
+           min="0" max="@Duration" step="1" @bind-value:event="oninput" style="background: linear-gradient(to right, var(--bb-header-bg) 0%, var(--bb-header-bg) @(Percent)%, #ddd @(Percent)%, #ddd 100%)">
     
     <div class="d-flex flex-grow-1 align-items-center">
         <div class="flex-1 hide-on-mobile">
@@ -28,21 +32,21 @@
                     
                 </Button>
                 <Button Icon="fa-solid fa-backward-step "></Button>
-                <Button Color="Color.None" style="color: var(--bb-header-bg)">
+                <Button Color="Color.None" style="color: var(--bb-header-bg)" OnClick="Play">
                     <PauseOne Size="45" Theme="ThemeType.Filled"></PauseOne>
                 </Button>
                 <GoEnd Size="28"></GoEnd>
                 <PopConfirmButton CustomClass="custom-popup" Placement="Placement.Top">
                     <BodyTemplate>
-                        <div style="height: 50px;width: 10px">
-                            <input type="range" class="vertical-slider">
+                        <div class="d-flex align-items-center">
+                            <input type="range" @bind-value="Volume" @bind-value:event="oninput"
+                                   min="0" max="100" class="flex-grow-1" style="width: 100px;height: 10px">
+                            <span class="ms-2">@Volume</span>
                         </div>
-                        
                     </BodyTemplate>
                     <ChildContent>
                         <VolumeSmall Size="20"></VolumeSmall>
                     </ChildContent>
-                    
                 </PopConfirmButton>
                 
                 <Button Color="Color.None" class="show-on-mobile">
@@ -78,6 +82,8 @@
 
     private int Percent { get; set; }
 
+    private int Volume { get; set; } = 100;
+
     private string CurrentTimeString
     {
         get => CurrentTime.ToString();
@@ -95,9 +101,34 @@
         }
     }
 
-    private void Changed()
+    protected override Task InvokeInitAsync() => InvokeVoidAsync("init", Interop);
+
+    [JSInvokable]
+    public void OnTimeUpdate(double currentTime)
+    {
+        Console.WriteLine(currentTime);
+        var time = (int) currentTime;
+        if (CurrentTime != time)
+        {
+            CurrentTime = time;
+            Percent = CurrentTime * 100 / Duration;
+            StateHasChanged();
+        }
+    }
+    
+    [JSInvokable]
+    public void OnEnded(){}
+
+    [JSInvokable]
+    public void OnError(string error)
     {
         
+    }
+    
+
+    private async Task Play()
+    {
+        await InvokeVoidAsync("play");
     }
 
 }
