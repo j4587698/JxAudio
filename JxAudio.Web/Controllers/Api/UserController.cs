@@ -14,12 +14,12 @@ public class UserController(IStringLocalizer<UserController> userLocalizer, User
 {
     public async Task<object> PostLogin([FromBody]LoginVo loginVo)
     {
-        if (loginVo.UserName.IsNullOrEmpty() || loginVo.PasswordHex.IsNullOrEmpty() || loginVo.Salt.IsNullOrEmpty())
+        if (loginVo.UserName.IsNullOrEmpty() || loginVo.Password.IsNullOrEmpty())
         {
             return ResultVo.Fail(500, userLocalizer["NotEmpty"]);
         }
 
-        var user = await userService.ValidatePasswordHexAsync(loginVo.UserName!, loginVo.PasswordHex!, loginVo.Salt!, HttpContext.RequestAborted);
+        var user = await userService.ValidatePasswordAsync(loginVo.UserName!, loginVo.Password!, HttpContext.RequestAborted);
         if (user == null)
         {
             return ResultVo.Fail(500, userLocalizer["Invalid"]);
