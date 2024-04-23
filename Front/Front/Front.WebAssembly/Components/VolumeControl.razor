@@ -1,0 +1,25 @@
+﻿<input type="range" @bind-value="VolumePrivate" @bind-value:event="oninput"
+       min="0" max="100" class="flex-grow-1" style="width: 100px;height: 10px">
+<span class="ms-2">@Volume</span>
+
+@code {
+    [Parameter]
+    public int Volume { get; set; }
+    
+    [Parameter]
+    public EventCallback<int> VolumeChanged { get; set; }
+
+    private int VolumePrivate
+    {
+        get => Volume;
+        set
+        {
+            if (Volume != value)
+            {
+                Volume = value;
+                VolumeChanged.InvokeAsync(value);
+            }
+        }
+    }
+
+}

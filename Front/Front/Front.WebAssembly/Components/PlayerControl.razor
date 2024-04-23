@@ -1,4 +1,5 @@
-﻿@using IconPark
+﻿@using Front.WebAssembly.Enums
+@using IconPark
 @using Jx.Toolbox.Extensions
 @using Console = System.Console
 @inherits BootstrapModuleComponentBase
@@ -31,17 +32,30 @@
                 <Button Color="Color.None" style="color: red; font-size: 15px" Icon="fa-solid fa-shuffle">
                     
                 </Button>
-                <Button Icon="fa-solid fa-backward-step "></Button>
-                <Button Color="Color.None" style="color: var(--bb-header-bg)" OnClick="Play">
-                    <PauseOne Size="45" Theme="ThemeType.Filled"></PauseOne>
+                <Button Color="Color.None">
+                    <GoStart Size="28"></GoStart>
+                </Button>
+                <Button Color="Color.None" style="color: var(--bb-header-bg)" OnClick="Play" 
+                        class="@(_playStatus == PlayStatus.Loading ? "rotating" : "")">
+                    @switch (_playStatus)
+                    {
+                        case PlayStatus.Stop:
+                        case PlayStatus.Pause:
+                            <Play Size="45" Theme="ThemeType.Filled"></Play>
+                            break;
+                        case PlayStatus.Play:
+                            <PauseOne Size="45" Theme="ThemeType.Filled"></PauseOne>
+                            break;
+                        case PlayStatus.Loading:
+                            <LoadingFour Size="45" Theme="ThemeType.Filled"></LoadingFour>
+                            break;
+                    }
                 </Button>
                 <GoEnd Size="28"></GoEnd>
                 <PopConfirmButton CustomClass="custom-popup" Placement="Placement.Top">
                     <BodyTemplate>
                         <div class="d-flex align-items-center">
-                            <input type="range" @bind-value="Volume" @bind-value:event="oninput"
-                                   min="0" max="100" class="flex-grow-1" style="width: 100px;height: 10px">
-                            <span class="ms-2">@Volume</span>
+                            <VolumeControl @bind-Volume="@Volume"></VolumeControl>
                         </div>
                     </BodyTemplate>
                     <ChildContent>
@@ -82,20 +96,35 @@
 
     private int Percent { get; set; }
 
-    private int Volume { get; set; } = 100;
+    private int _volume = 100;
+
+    private int Volume
+    {
+        get => _volume;
+        set
+        {
+            if(_volume != value)
+            {
+                _volume = value;
+                InvokeVoidAsync("setVolume", value / 100.0);
+            }
+        } 
+    }
+
+    private PlayStatus _playStatus = PlayStatus.Stop;
 
     private string CurrentTimeString
     {
         get => CurrentTime.ToString();
         set
         {
-            Console.WriteLine(value);
-            Console.WriteLine(CurrentTimeString);
             if (value != CurrentTimeString)
             {
                 Console.WriteLine(CurrentTimeString);
                 CurrentTime = int.Parse(value); 
                 Percent = CurrentTime * 100 / Duration;
+                CurrentTimeChanged.InvokeAsync(CurrentTime);
+                InvokeVoidAsync("setCurrentTime", CurrentTime);
             }
             
         }
@@ -106,11 +135,11 @@
     [JSInvokable]
     public void OnTimeUpdate(double currentTime)
     {
-        Console.WriteLine(currentTime);
         var time = (int) currentTime;
         if (CurrentTime != time)
         {
             CurrentTime = time;
+            CurrentTimeChanged.InvokeAsync(time);
             Percent = CurrentTime * 100 / Duration;
             StateHasChanged();
         }
@@ -129,12 +158,36 @@
     public void OnLoaded(double duration)
     {
         Console.WriteLine(duration);
+        _playStatus = PlayStatus.Play;
+        StateHasChanged();
     }
     
 
     private async Task Play()
     {
-        await InvokeVoidAsync("play", "http://home.jvxiang.com:4533/rest/stream?u=j4587698&t=9da3c9c2714f7cac8688bcc28bc11d47&s=68ef00&f=json&v=1.8.0&c=NavidromeUI&id=f72fb644e228401b83a395a8d043b709&_=1713774716561");
+        if (_playStatus == PlayStatus.Loading)
+        {
+            return;
+        }
+
+        if (_playStatus == PlayStatus.Play)
+        {
+            _playStatus = PlayStatus.Pause;
+            await InvokeVoidAsync("playOrPause");
+        }
+        else if (_playStatus == PlayStatus.Pause)
+        {
+            _playStatus = PlayStatus.Play;
+            await InvokeVoidAsync("playOrPause");
+        }
+        else if (_playStatus == PlayStatus.Stop)
+        {
+            _playStatus = PlayStatus.Loading;
+            await InvokeAsync(StateHasChanged);
+            await InvokeVoidAsync("play", "http://home.jvxiang.com:4533/rest/stream?u=j4587698&t=9da3c9c2714f7cac8688bcc28bc11d47&s=68ef00&f=json&v=1.8.0&c=NavidromeUI&id=f72fb644e228401b83a395a8d043b709&_=1713774716561");
+        }
+
+       
     }
 
 }

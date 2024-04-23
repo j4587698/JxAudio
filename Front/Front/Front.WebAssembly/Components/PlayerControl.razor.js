@@ -18,7 +18,7 @@ export function init(interop) {
     }
 
     audio.onloadedmetadata = function() {
-        console.log('音频的时长为：' + audio.duration + '秒');
+        player._interop.invokeMethodAsync("OnLoaded", audio.duration)
     }
     
     audio.onplaying = function (){
@@ -37,4 +37,47 @@ export function play(url) {
     player._audio.play().catch(function(error) {
         console.log("audio play error", error)
     })
+}
+
+export function playOrPause() {
+    const player = Data.get("player")
+    if (player._audio.paused) {
+        player._audio.play().catch(function(error) {
+            console.log("audio play error", error)
+        })
+    } else {
+        player._audio.pause()
+    }
+
+}
+
+export function stop() {
+    const player = Data.get("player")
+    player._audio.pause()
+    player._audio.currentTime = 0
+}
+
+export function setVolume(volume) {
+    const player = Data.get("player")
+    player._audio.volume = volume
+}
+
+export function getVolume() {
+    const player = Data.get("player")
+    return player._audio.volume
+}
+
+export function setMuted(muted) {
+    const player = Data.get("player")
+    player._audio.muted = muted
+}
+
+export function getMuted() {
+    const player = Data.get("player")
+    return player._audio.muted
+}
+
+export function setCurrentTime(time) {
+    const player = Data.get("player")
+    player._audio.currentTime = time
 }

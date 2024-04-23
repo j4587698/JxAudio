@@ -55,15 +55,26 @@
     gap: 0.75rem;
 }
 
-.vertical-slider {
-    -webkit-transform: rotate(90deg);
-    transform: rotate(90deg);
-    width: 50px;
-    height: 10px;
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+::deep .rotating {
+    animation: rotate 1s linear infinite;
 }
 
 ::deep .show-on-mobile {
     display: none;
+}
+
+::deep .btn {
+    --bs-btn-padding-x: 0;
+    --bs-btn-padding-y: 0;
 }
 
 @media (max-width: 1000px) {
