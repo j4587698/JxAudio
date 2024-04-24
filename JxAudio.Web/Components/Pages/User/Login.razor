@@ -41,7 +41,7 @@
             Data = LoginVo
         });
         
-        if (document?.RootElement.GetProperty("code").GetInt32() == 20000)
+        if (document?.RootElement.GetProperty("code").GetInt32() == 200)
         {
             await AjaxService.Goto("/");
         }

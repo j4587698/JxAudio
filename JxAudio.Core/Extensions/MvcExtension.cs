@@ -1,4 +1,5 @@
-﻿using JxAudio.Core.Options;
+﻿using System.Runtime.CompilerServices;
+using JxAudio.Core.Options;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -62,7 +63,14 @@ public static class MvcExtension
                         // 如果没有HTTP方法特性，则添加一个默认的HttpGet特性
                         if (!hasHttpMethodAttribute)
                         {
-                            action.Selectors.Clear();
+                            var selectors = action.Selectors.First();
+                            var nullableContext = selectors.EndpointMetadata
+                                .FirstOrDefault(x => x is NullableContextAttribute);
+                            if (nullableContext != null)
+                            {
+                                selectors.EndpointMetadata.Remove(nullableContext);
+                            }
+                            
                             var hasAttribute = false;
                             var prefix = option.GetPrefix.FirstOrDefault(x => action.ActionName.StartsWith(x));
                             if (prefix != null)
@@ -72,11 +80,9 @@ public static class MvcExtension
                                     action.ActionName = action.ActionName[prefix.Length..];
                                 }
 
-                                action.Selectors.Add(new SelectorModel
-                                {
-                                    AttributeRouteModel = new AttributeRouteModel(new Microsoft.AspNetCore.Mvc.RouteAttribute("[action]")),
-                                    EndpointMetadata = { new HttpGetAttribute("[action]") }
-                                });
+                                selectors.AttributeRouteModel =
+                                    new AttributeRouteModel(new Microsoft.AspNetCore.Mvc.RouteAttribute("[action]"));
+                                selectors.EndpointMetadata.Add(new HttpGetAttribute("[action]"));
                                 hasAttribute = true;
                             }
 
@@ -88,11 +94,9 @@ public static class MvcExtension
                                     action.ActionName = action.ActionName[prefix.Length..];
                                 }
 
-                                action.Selectors.Add(new SelectorModel
-                                {
-                                    AttributeRouteModel = new AttributeRouteModel(new Microsoft.AspNetCore.Mvc.RouteAttribute("[action]")),
-                                    EndpointMetadata = { new HttpPutAttribute("[action]") }
-                                });
+                                selectors.AttributeRouteModel =
+                                    new AttributeRouteModel(new Microsoft.AspNetCore.Mvc.RouteAttribute("[action]"));
+                                selectors.EndpointMetadata.Add(new HttpPutAttribute("[action]"));
                                 hasAttribute = true;
                             }
 
@@ -104,11 +108,9 @@ public static class MvcExtension
                                     action.ActionName = action.ActionName[prefix.Length..];
                                 }
 
-                                action.Selectors.Add(new SelectorModel
-                                {
-                                    AttributeRouteModel = new AttributeRouteModel(new Microsoft.AspNetCore.Mvc.RouteAttribute("[action]")),
-                                    EndpointMetadata = { new HttpDeleteAttribute("[action]") }
-                                });
+                                selectors.AttributeRouteModel =
+                                    new AttributeRouteModel(new Microsoft.AspNetCore.Mvc.RouteAttribute("[action]"));
+                                selectors.EndpointMetadata.Add(new HttpDeleteAttribute("[action]"));
                                 hasAttribute = true;
                             }
 
@@ -120,11 +122,9 @@ public static class MvcExtension
                                     action.ActionName = action.ActionName[prefix.Length..];
                                 }
 
-                                action.Selectors.Add(new SelectorModel
-                                {
-                                    AttributeRouteModel = new AttributeRouteModel(new Microsoft.AspNetCore.Mvc.RouteAttribute("[action]")),
-                                    EndpointMetadata = { new HttpPostAttribute("[action]") }
-                                });
+                                selectors.AttributeRouteModel =
+                                    new AttributeRouteModel(new Microsoft.AspNetCore.Mvc.RouteAttribute("[action]"));
+                                selectors.EndpointMetadata.Add(new HttpPostAttribute("[action]"));
                             }
                         }
                     }

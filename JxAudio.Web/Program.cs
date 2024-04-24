@@ -61,9 +61,31 @@ builder.Services.Configure<CookiePolicyOptions>(op =>
 {
     op.CheckConsentNeeded = _ => true;
     op.MinimumSameSitePolicy = SameSiteMode.None;
+    op.Secure = CookieSecurePolicy.None;
 });
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+{
+    options.LoginPath = "/login";
+    options.LogoutPath = "/logout";
+    options.AccessDeniedPath = "/denied";
+    options.Cookie.Name = "JxAudio";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.Path = "/";
+    options.ExpireTimeSpan = TimeSpan.FromDays(7);
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        context.Response.StatusCode = 403;
+        return Task.CompletedTask;
+    };
+});
 
 // 增加多语言支持配置信息
 builder.Services.AddRequestLocalization<IOptionsMonitor<BootstrapBlazorOptions>>((localizerOption, blazorOption)=>
@@ -77,6 +99,18 @@ builder.Services.AddRequestLocalization<IOptionsMonitor<BootstrapBlazorOptions>>
         localizerOption.SupportedCultures = supportedCultures;
         localizerOption.SupportedUICultures = supportedCultures;
     }
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder
+            .WithOrigins("http://localhost:5077") // 允许任何来源
+            .AllowAnyMethod() // 允许任何 HTTP 方法
+            .AllowAnyHeader() // 允许任何头
+            .AllowCredentials();
+    });
 });
 
 var app = builder.Build().Use();
@@ -96,10 +130,13 @@ if (!app.Environment.IsDevelopment())
     //app.UseHsts();
 }
 
+app.UseCors("AllowAll");
+
 //app.UseHttpsRedirection();
 app.UseStatusCodePages();
 
 app.UseStaticFiles();
+
 
 app.UseMiddleware<InstallMiddleware>();
 

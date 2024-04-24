@@ -5,6 +5,7 @@ using JxAudio.Core.Service;
 using JxAudio.Web.Vo;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
@@ -31,7 +32,15 @@ public class UserController(IStringLocalizer<UserController> userLocalizer, User
         {
             identity.AddClaim(new Claim(ClaimTypes.Role, "Admin"));
         }
-        await HttpContext.SignInAsync(new ClaimsPrincipal(identity), new AuthenticationProperties(){IsPersistent = true});
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, 
+            new ClaimsPrincipal(identity), 
+            new AuthenticationProperties(){IsPersistent = true, ExpiresUtc = DateTimeOffset.Now.AddDays(1)});
+        return ResultVo.Success();
+    }
+
+    [Authorize]
+    public object GetUserInfo()
+    {
         return ResultVo.Success();
     }
 }
