@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Jx.Toolbox.Extensions;
+using Jx.Toolbox.Utils;
 using JxAudio.Core;
 using JxAudio.Core.Service;
 using JxAudio.Web.Vo;
@@ -39,8 +40,17 @@ public class UserController(IStringLocalizer<UserController> userLocalizer, User
     }
 
     [Authorize]
-    public object GetUserInfo()
+    public async Task<object> GetUserInfo()
     {
-        return ResultVo.Success();
+        var username = HttpContext.User.FindFirst(ClaimTypes.Name)!.Value;
+        var user = await userService.GetUserByUsernameAsync(username);
+        return ResultVo.Success(data: new
+        {
+            user.UserName,
+            Avatar = Avatar.GetAvatarUrl(user.Email),
+            user.IsAdmin,
+            user.IsGuest,
+            user.MaxBitRate
+        });
     }
 }

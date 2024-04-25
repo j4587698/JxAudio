@@ -211,3 +211,7 @@
 .custom-popup .popover-confirm-buttons{
     display: none;
 }
+
+.layout {
+    --bb-layout-footer-height: 5rem;
+}

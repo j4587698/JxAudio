@@ -66,6 +66,12 @@ public class UserService
         userEntity.Password = password;
         await userEntity.SaveAsync();
     }
+
+    public async Task<UserEntity> GetUserByUsernameAsync(string username)
+    {
+        return await UserEntity.Where(x => x.UserName == username).FirstAsync();
+    }
+    
     
     public async Task<User> GetUserAsync(UserEntity userEntity, CancellationToken cancellationToken)
     {

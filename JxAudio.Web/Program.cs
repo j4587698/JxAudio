@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using System.DirectoryServices.Protocols;
+using System.Net;
 using BootstrapBlazor.Components;
 using FreeSql;
 using JxAudio.Core;
@@ -11,6 +13,7 @@ using JxAudio.Web.Utils;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
 using Serilog;
+using Yarp.ReverseProxy.Forwarder;
 using Console = System.Console;
 using Constants = JxAudio.Core.Constants;
 using SearchOption = System.IO.SearchOption;
@@ -24,7 +27,9 @@ var builder = WebApplication.CreateBuilder(args).Inject(configOption =>
     configOption.ConfigSearchFolder = ["config"];
     configOption.DynamicPrefix = "/api/";
 });
-
+#if DEBUG
+builder.Services.AddHttpForwarder();
+#endif
 builder.Host.UseSerilog();
 
 var dbConfigOption = Application.GetValue<DbConfigOption>("Db");
@@ -71,7 +76,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.AccessDeniedPath = "/denied";
     options.Cookie.Name = "JxAudio";
     options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.Path = "/";
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
@@ -106,7 +111,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll", builder =>
     {
         builder
-            .WithOrigins("http://localhost:5077") // 允许任何来源
+            .WithOrigins("https://localhost:7077") // 允许任何来源
             .AllowAnyMethod() // 允许任何 HTTP 方法
             .AllowAnyHeader() // 允许任何头
             .AllowCredentials();
@@ -159,4 +164,20 @@ app.UseExceptionHandler(applicationBuilder =>
         return Task.CompletedTask;
     });
 });
+#if DEBUG
+var httpClient = new HttpMessageInvoker(new SocketsHttpHandler
+{
+    UseProxy = false,
+    AllowAutoRedirect = false,
+    AutomaticDecompression = DecompressionMethods.None,
+    UseCookies = false,
+    EnableMultipleHttp2Connections = true,
+    ActivityHeadersPropagator = new ReverseProxyPropagator(DistributedContextPropagator.Current),
+    ConnectTimeout = TimeSpan.FromSeconds(15),
+});
+
+// Setup our own request transform class
+var requestOptions = new ForwarderRequestConfig { ActivityTimeout = TimeSpan.FromSeconds(100) };
+app.MapForwarder("{**catch-all}", "http://localhost:5077", requestOptions,HttpTransformer.Default,  httpClient);
+#endif
 app.Run();
