@@ -1,16 +1,57 @@
 ﻿@page "/Album"
 
+@inject HttpClient Http
+
 <PageTitle>专辑</PageTitle>
 
 <div class="row g-3 form-inline" style="--bb-row-label-width: 80px">
-    <div class="col-4">
-        <BootstrapInput TValue="string" PlaceHolder="搜索" ShowLabel="true" DisplayText="搜索"></BootstrapInput>
+    <div class="col-6">
+        <BootstrapInput @bind-Value="_searchText" PlaceHolder="搜索" ShowLabel="true" DisplayText="搜索"></BootstrapInput>
+    </div>
+    <div class="col-6">
+        <Select TValue="string" Items="@_sortItems" ShowLabel="true" DisplayText="排序方式"></Select>
     </div>
 </div>
-
-<ListView TItem="Album"></ListView>
-
+<div style="margin-top: 0.5rem">
+<ListView TItem="Album" Items="_albums">
+    <BodyTemplate>
+        aaa
+    </BodyTemplate>
+    <FooterTemplate>
+        <Pagination PageCount="100" ShowPageInfo="true" ShowGotoNavigator="true">
+            <PageInfoTemplate>
+                <div class="page-info me-2">@_pageInfo</div>
+                <Select TValue="string" Items="_selectedItems" OnValueChanged="OnPageChanged"></Select>
+            </PageInfoTemplate>
+        </Pagination>
+    </FooterTemplate>
+</ListView>
+</div>
 
 @code {
+
+    private string? _searchText;
+    private readonly List<SelectedItem> _sortItems = [
+        new SelectedItem("newest", "最新"), 
+        new SelectedItem("random", "随机"),
+        new SelectedItem("recent", "最多播放"),
+        new SelectedItem("alphabeticalByName", "名称"),
+        new SelectedItem("alphabeticalByArtist", "歌手"),
+        new SelectedItem("starred", "星标")
+    ];
     
+    private List<Album> _albums = new List<Album>();
+    private string _pageInfo = "每页0条 共0条";
+    private readonly List<SelectedItem> _selectedItems = [new SelectedItem("10", "10 条/页"), new SelectedItem("20", "20 条/页"), new SelectedItem("50", "50 条/页"), new SelectedItem("100", "100 条/页")];
+
+    private Task OnPageChanged(string page)
+    {
+        return Task.CompletedTask;
+    }
+    
+    private void GetAlbums()
+    {
+        
+    }
+
 }

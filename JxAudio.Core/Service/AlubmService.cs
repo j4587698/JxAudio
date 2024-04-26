@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using BootstrapBlazor.Components;
 using FreeSql;
 using JxAudio.Core.Attributes;
 using JxAudio.Core.Entity;
@@ -81,177 +82,153 @@ public class AlbumService
         return albumId3;
     }
 
-    public async Task<AlbumList2> GetAlbumList2RandomAsync(Guid userId, int? musicFolderId, int count, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> GetAlbumList2RandomAsync(Guid userId, int? musicFolderId, int count, CancellationToken cancellationToken)
     {
         var albums = await GetAlbumBase(userId, musicFolderId)
             .OrderByRandom()
             .Take(count)
             .ToListAsync(cancellationToken);
-
-        if (albums is {Count: 0})
-        {
-            throw RestApiErrorException.DataNotFoundError();
-        }
         
-        return new AlbumList2()
+        return new QueryData<AlbumEntity>()
         {
-            album = albums.Select(x => x.CreateAlbumId3()).ToArray()
+            Items = albums,
+            TotalCount = albums.Count
         };
     }
 
-    public async Task<AlbumList2> GetAlbumList2NewestAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> GetAlbumList2NewestAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
     {
         var albums = await GetAlbumBase(userId, musicFolderId)
             .OrderByDescending(x => x.CreateTime)
+            .Count(out var totalCount)
             .OrderBy(x => x.Id)
             .Skip(offset)
             .Take(count)
             .ToListAsync(cancellationToken);
         
-        return new AlbumList2()
+        return new QueryData<AlbumEntity>()
         {
-            album = albums.Select(x => x.CreateAlbumId3()).ToArray()
+            Items = albums,
+            TotalCount = (int)totalCount
         };
     }
 
-    public async Task<AlbumList2> GetAlbumList2FrequentAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> GetAlbumList2FrequentAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
     {
         var albums = await GetAlbumBase(userId, musicFolderId)
             .OrderByDescending(x => x.PlayCount)
             .OrderBy(x => x.Id)
+            .Count(out var totalCount)
             .Skip(offset)
             .Take(count)
             .ToListAsync(cancellationToken);
 
-        if (albums is {Count: 0})
+        return new QueryData<AlbumEntity>()
         {
-            throw RestApiErrorException.DataNotFoundError();
-        }
-        
-        return new AlbumList2()
-        {
-            album = albums.Select(x => x.CreateAlbumId3()).ToArray()
+            Items = albums,
+            TotalCount = (int)totalCount
         };
     }
     
-    public async Task<AlbumList2> GetAlbumList2RecentAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> GetAlbumList2RecentAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
     {
         var albums = await GetAlbumBase(userId, musicFolderId)
             .OrderByDescending(x => x.LatestPlayTime)
             .OrderBy(x => x.Id)
+            .Count(out var totalCount)
             .Skip(offset)
             .Take(count)
             .ToListAsync(cancellationToken);
 
-        if (albums is {Count: 0})
+        return new QueryData<AlbumEntity>()
         {
-            throw RestApiErrorException.DataNotFoundError();
-        }
-        
-        return new AlbumList2()
-        {
-            album = albums.Select(x => x.CreateAlbumId3()).ToArray()
+            Items = albums,
+            TotalCount = (int)totalCount
         };
     }
     
-    public async Task<AlbumList2> GetAlbumList2OrderedByAlbumTitleAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> GetAlbumList2OrderedByAlbumTitleAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
     {
         var albums = await GetAlbumBase(userId, musicFolderId)
             .OrderBy(x => x.Title)
             .OrderBy(x => x.Id)
+            .Count(out var totalCount)
             .Skip(offset)
             .Take(count)
             .ToListAsync(cancellationToken);
 
-        if (albums is {Count: 0})
+        return new QueryData<AlbumEntity>()
         {
-            throw RestApiErrorException.DataNotFoundError();
-        }
-        
-        return new AlbumList2()
-        {
-            album = albums.Select(x => x.CreateAlbumId3()).ToArray()
+            Items = albums,
+            TotalCount = (int)totalCount
         };
     }
     
-    public async Task<AlbumList2> GetAlbumList2OrderedByArtistNameAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> GetAlbumList2OrderedByArtistNameAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
     {
         var albums = await GetAlbumBase(userId, musicFolderId)
             .Where(x => x.ArtistEntity != null)
             .OrderBy(x => x.ArtistEntity!.Name)
             .OrderBy(x => x.Id)
+            .Count(out var totalCount)
             .Skip(offset)
             .Take(count)
             .ToListAsync(cancellationToken);
 
-        if (albums is {Count: 0})
+        return new QueryData<AlbumEntity>()
         {
-            throw RestApiErrorException.DataNotFoundError();
-        }
-        
-        return new AlbumList2()
-        {
-            album = albums.Select(x => x.CreateAlbumId3()).ToArray()
+            Items = albums,
+            TotalCount = (int)totalCount
         };
     }
     
-    public async Task<AlbumList2> GetAlbumList2StarredAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> GetAlbumList2StarredAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
     {
         var albums = await GetAlbumBase(userId, musicFolderId)
             .OrderBy(x => x.Id)
+            .Count(out var totalCount)
             .Skip(offset)
             .Take(count)
             .ToListAsync(cancellationToken);
 
-        if (albums is {Count: 0})
+        return new QueryData<AlbumEntity>()
         {
-            throw RestApiErrorException.DataNotFoundError();
-        }
-        
-        return new AlbumList2()
-        {
-            album = albums.Where(x => x.AlbumStarEntities is { Count: > 0 })
-                .Select(x => x.CreateAlbumId3()).ToArray()
+            Items = albums,
+            TotalCount = (int)totalCount
         };
     }
     
-    public async Task<AlbumList2> GetAlbumList2ByYearAsync(Guid userId, int? musicFolderId, int offset, int count, int fromYear, int toYear, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> GetAlbumList2ByYearAsync(Guid userId, int? musicFolderId, int offset, int count, int fromYear, int toYear, CancellationToken cancellationToken)
     {
         var albums = await GetAlbumBase(userId, musicFolderId)
             .Where(x => x.Year >= fromYear && x.Year <= toYear)
             .OrderBy(x => x.Id)
+            .Count(out var totalCount)
             .Skip(offset)
             .Take(count)
             .ToListAsync(cancellationToken);
 
-        if (albums is {Count: 0})
+        return new QueryData<AlbumEntity>()
         {
-            throw RestApiErrorException.DataNotFoundError();
-        }
-        
-        return new AlbumList2()
-        {
-            album = albums.Select(x => x.CreateAlbumId3()).ToArray()
+            Items = albums,
+            TotalCount = (int)totalCount
         };
     }
     
-    public async Task<AlbumList2> GetAlbumList2ByGenreAsync(Guid userId, int? musicFolderId, int offset, int count, string genre, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> GetAlbumList2ByGenreAsync(Guid userId, int? musicFolderId, int offset, int count, string genre, CancellationToken cancellationToken)
     {
         var albums = await GetAlbumBase(userId, musicFolderId)
             .Where(x => x.GenreEntity!.Name == genre)
             .OrderBy(x => x.Id)
+            .Count(out var totalCount)
             .Skip(offset)
             .Take(count)
             .ToListAsync(cancellationToken);
 
-        if (albums is {Count: 0})
+        return new QueryData<AlbumEntity>()
         {
-            throw RestApiErrorException.DataNotFoundError();
-        }
-
-        return new AlbumList2()
-        {
-            album = albums.Select(x => x.CreateAlbumId3()).ToArray()
+            Items = albums,
+            TotalCount = (int)totalCount
         };
     }
     
@@ -268,7 +245,7 @@ public class AlbumService
     {
         if (albumCount == 0)
         {
-            return Array.Empty<AlbumID3>();
+            return [];
         }
 
         var albums = await GetAlbumBase(userId, musicFolderId)
