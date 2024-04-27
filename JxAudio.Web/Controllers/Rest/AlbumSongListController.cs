@@ -52,35 +52,35 @@ public class AlbumSongListController : AudioController
             switch (type)
             {
                 case "random":
-                    albumQuery = await AlbumService.GetAlbumList2RandomAsync(apiUserId.Value, musicFolderId, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumRandomAsync(apiUserId.Value, musicFolderId, size.Value, null, HttpContext.RequestAborted);
                     break;
                 case "newest":
-                    albumQuery = await AlbumService.GetAlbumList2NewestAsync(apiUserId.Value, musicFolderId,  offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumNewestAsync(apiUserId.Value, musicFolderId,  offset.Value, size.Value, null, HttpContext.RequestAborted);
                     break;
                 case "highest": // 与最高播放一致
                 case "frequent":
-                    albumQuery = await AlbumService.GetAlbumList2FrequentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumFrequentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, null, HttpContext.RequestAborted);
                     break;
                 case "recent":
-                    albumQuery = await AlbumService.GetAlbumList2RecentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumRecentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, null, HttpContext.RequestAborted);
                     break;
                 case "alphabeticalByName":
-                    albumQuery = await AlbumService.GetAlbumList2OrderedByAlbumTitleAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumOrderedByAlbumTitleAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, null, HttpContext.RequestAborted);
                     break;
                 case "alphabeticalByArtist":
-                    albumQuery = await AlbumService.GetAlbumList2OrderedByArtistNameAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumOrderedByArtistNameAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, null, HttpContext.RequestAborted);
                     break;
                 case "starred":
-                    albumQuery = await AlbumService.GetAlbumList2StarredAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumStarredAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, null, HttpContext.RequestAborted);
                     break;
                 case "byYear":
                     Util.CheckRequiredParameters(nameof(fromYear), fromYear);
                     Util.CheckRequiredParameters(nameof(toYear), toYear);
-                    albumQuery = await AlbumService.GetAlbumList2ByYearAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value,fromYear!.Value, toYear!.Value,  HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumByYearAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value,fromYear!.Value, toYear!.Value, null, HttpContext.RequestAborted);
                     break;
                 case "byGenre":
                     Util.CheckRequiredParameters(nameof(genre), genre);
-                    albumQuery = await AlbumService.GetAlbumList2ByGenreAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, genre!, HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumByGenreAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, genre!, null, HttpContext.RequestAborted);
                     break;
                 default:
                     throw RestApiErrorException.InvalidParameterError("type");
@@ -125,35 +125,35 @@ public class AlbumSongListController : AudioController
             switch (type)
             {
                 case "random":
-                    albumQuery = await AlbumService.GetAlbumList2RandomAsync(apiUserId.Value, musicFolderId, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumRandomAsync(apiUserId.Value, musicFolderId, size.Value, null, HttpContext.RequestAborted);
                     break;
                 case "newest":
-                    albumQuery = await AlbumService.GetAlbumList2NewestAsync(apiUserId.Value, musicFolderId,  offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumNewestAsync(apiUserId.Value, musicFolderId,  offset.Value, size.Value, null, HttpContext.RequestAborted);
                     break;
                 case "highest": // 与最高播放一致
                 case "frequent":
-                    albumQuery = await AlbumService.GetAlbumList2FrequentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumFrequentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, null, HttpContext.RequestAborted);
                     break;
                 case "recent":
-                    albumQuery = await AlbumService.GetAlbumList2RecentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumRecentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, null, HttpContext.RequestAborted);
                     break;
                 case "alphabeticalByName":
-                    albumQuery = await AlbumService.GetAlbumList2OrderedByAlbumTitleAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumOrderedByAlbumTitleAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, null, HttpContext.RequestAborted);
                     break;
                 case "alphabeticalByArtist":
-                    albumQuery = await AlbumService.GetAlbumList2OrderedByArtistNameAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumOrderedByArtistNameAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, null, HttpContext.RequestAborted);
                     break;
                 case "starred":
-                    albumQuery = await AlbumService.GetAlbumList2StarredAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumStarredAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, null, HttpContext.RequestAborted);
                     break;
                 case "byYear":
                     Util.CheckRequiredParameters(nameof(fromYear), fromYear);
                     Util.CheckRequiredParameters(nameof(toYear), toYear);
-                    albumQuery = await AlbumService.GetAlbumList2ByYearAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value,fromYear!.Value, toYear!.Value,  HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumByYearAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value,fromYear!.Value, toYear!.Value, null, HttpContext.RequestAborted);
                     break;
                 case "byGenre":
                     Util.CheckRequiredParameters(nameof(genre), genre);
-                    albumQuery = await AlbumService.GetAlbumList2ByGenreAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, genre!, HttpContext.RequestAborted);
+                    albumQuery = await AlbumService.QueryAlbumByGenreAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, genre!, null, HttpContext.RequestAborted);
                     break;
                 default:
                     throw RestApiErrorException.InvalidParameterError("type");

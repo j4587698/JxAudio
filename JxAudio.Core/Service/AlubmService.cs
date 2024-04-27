@@ -17,12 +17,13 @@ public class AlbumService
     [NotNull]
     private IStringLocalizer<ArtistService>? ArtistServiceLocalizer { get; set; }
 
-    private ISelect<AlbumEntity> GetAlbumBase(Guid? userId, int? musicFolderId)
+    private ISelect<AlbumEntity> GetAlbumBase(Guid? userId, int? musicFolderId, string? searchText)
     {
         return AlbumEntity.Where(x => x.TrackEntities!.Any(y =>
                 y.DirectoryEntity!.IsAccessControlled == false ||
                 y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
             .WhereIf(musicFolderId != null, x => x.TrackEntities!.Any(y => y.DirectoryId == musicFolderId))
+            .WhereIf(searchText != null, x => x.Title!.Contains(searchText!) || x.ArtistEntity!.Name!.Contains(searchText!))
             .Include(x => x.ArtistEntity)
             .Include(x => x.GenreEntity)
             .IncludeMany(x => x.AlbumStarEntities, then => then.Where(y => y.UserId == userId))
@@ -39,7 +40,7 @@ public class AlbumService
     
     public async Task<AlbumWithSongsID3> GetAlbumAsync(Guid userId, int albumId, CancellationToken cancellationToken)
     {
-        var album = await GetAlbumBase(userId, null).FirstAsync(cancellationToken);
+        var album = await GetAlbumBase(userId, null, null).FirstAsync(cancellationToken);
 
         if (album == null)
         {
@@ -82,9 +83,10 @@ public class AlbumService
         return albumId3;
     }
 
-    public async Task<QueryData<AlbumEntity>> GetAlbumList2RandomAsync(Guid userId, int? musicFolderId, int count, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> QueryAlbumRandomAsync(Guid userId, int? musicFolderId, int count, string? searchText, CancellationToken cancellationToken)
     {
-        var albums = await GetAlbumBase(userId, musicFolderId)
+        var albums = await GetAlbumBase(userId, musicFolderId, searchText)
+            
             .OrderByRandom()
             .Take(count)
             .ToListAsync(cancellationToken);
@@ -96,9 +98,9 @@ public class AlbumService
         };
     }
 
-    public async Task<QueryData<AlbumEntity>> GetAlbumList2NewestAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> QueryAlbumNewestAsync(Guid userId, int? musicFolderId, int offset, int count, string? searchText, CancellationToken cancellationToken)
     {
-        var albums = await GetAlbumBase(userId, musicFolderId)
+        var albums = await GetAlbumBase(userId, musicFolderId, searchText)
             .OrderByDescending(x => x.CreateTime)
             .Count(out var totalCount)
             .OrderBy(x => x.Id)
@@ -113,9 +115,9 @@ public class AlbumService
         };
     }
 
-    public async Task<QueryData<AlbumEntity>> GetAlbumList2FrequentAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> QueryAlbumFrequentAsync(Guid userId, int? musicFolderId, int offset, int count, string? searchText, CancellationToken cancellationToken)
     {
-        var albums = await GetAlbumBase(userId, musicFolderId)
+        var albums = await GetAlbumBase(userId, musicFolderId, searchText)
             .OrderByDescending(x => x.PlayCount)
             .OrderBy(x => x.Id)
             .Count(out var totalCount)
@@ -130,9 +132,9 @@ public class AlbumService
         };
     }
     
-    public async Task<QueryData<AlbumEntity>> GetAlbumList2RecentAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> QueryAlbumRecentAsync(Guid userId, int? musicFolderId, int offset, int count, string? searchText, CancellationToken cancellationToken)
     {
-        var albums = await GetAlbumBase(userId, musicFolderId)
+        var albums = await GetAlbumBase(userId, musicFolderId, searchText)
             .OrderByDescending(x => x.LatestPlayTime)
             .OrderBy(x => x.Id)
             .Count(out var totalCount)
@@ -147,9 +149,9 @@ public class AlbumService
         };
     }
     
-    public async Task<QueryData<AlbumEntity>> GetAlbumList2OrderedByAlbumTitleAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> QueryAlbumOrderedByAlbumTitleAsync(Guid userId, int? musicFolderId, int offset, int count, string? searchText, CancellationToken cancellationToken)
     {
-        var albums = await GetAlbumBase(userId, musicFolderId)
+        var albums = await GetAlbumBase(userId, musicFolderId, searchText)
             .OrderBy(x => x.Title)
             .OrderBy(x => x.Id)
             .Count(out var totalCount)
@@ -164,9 +166,9 @@ public class AlbumService
         };
     }
     
-    public async Task<QueryData<AlbumEntity>> GetAlbumList2OrderedByArtistNameAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> QueryAlbumOrderedByArtistNameAsync(Guid userId, int? musicFolderId, int offset, int count, string? searchText, CancellationToken cancellationToken)
     {
-        var albums = await GetAlbumBase(userId, musicFolderId)
+        var albums = await GetAlbumBase(userId, musicFolderId, searchText)
             .Where(x => x.ArtistEntity != null)
             .OrderBy(x => x.ArtistEntity!.Name)
             .OrderBy(x => x.Id)
@@ -182,9 +184,9 @@ public class AlbumService
         };
     }
     
-    public async Task<QueryData<AlbumEntity>> GetAlbumList2StarredAsync(Guid userId, int? musicFolderId, int offset, int count, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> QueryAlbumStarredAsync(Guid userId, int? musicFolderId, int offset, int count, string? searchText, CancellationToken cancellationToken)
     {
-        var albums = await GetAlbumBase(userId, musicFolderId)
+        var albums = await GetAlbumBase(userId, musicFolderId, searchText)
             .OrderBy(x => x.Id)
             .Count(out var totalCount)
             .Skip(offset)
@@ -198,9 +200,9 @@ public class AlbumService
         };
     }
     
-    public async Task<QueryData<AlbumEntity>> GetAlbumList2ByYearAsync(Guid userId, int? musicFolderId, int offset, int count, int fromYear, int toYear, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> QueryAlbumByYearAsync(Guid userId, int? musicFolderId, int offset, int count, int fromYear, int toYear, string? searchText, CancellationToken cancellationToken)
     {
-        var albums = await GetAlbumBase(userId, musicFolderId)
+        var albums = await GetAlbumBase(userId, musicFolderId, searchText)
             .Where(x => x.Year >= fromYear && x.Year <= toYear)
             .OrderBy(x => x.Id)
             .Count(out var totalCount)
@@ -215,9 +217,9 @@ public class AlbumService
         };
     }
     
-    public async Task<QueryData<AlbumEntity>> GetAlbumList2ByGenreAsync(Guid userId, int? musicFolderId, int offset, int count, string genre, CancellationToken cancellationToken)
+    public async Task<QueryData<AlbumEntity>> QueryAlbumByGenreAsync(Guid userId, int? musicFolderId, int offset, int count, string genre, string? searchText, CancellationToken cancellationToken)
     {
-        var albums = await GetAlbumBase(userId, musicFolderId)
+        var albums = await GetAlbumBase(userId, musicFolderId, searchText)
             .Where(x => x.GenreEntity!.Name == genre)
             .OrderBy(x => x.Id)
             .Count(out var totalCount)
@@ -234,7 +236,7 @@ public class AlbumService
     
     public async Task<AlbumID3[]> GetStar2AlbumsId3(Guid userId, int? musicFolderId, CancellationToken cancellationToken)
     {
-        var albums = await GetAlbumBase(userId, musicFolderId)
+        var albums = await GetAlbumBase(userId, musicFolderId, null)
             .Where(x => x.AlbumStarEntities!.Any(y => y.UserId == userId))
             .ToListAsync(cancellationToken);
         
@@ -248,7 +250,7 @@ public class AlbumService
             return [];
         }
 
-        var albums = await GetAlbumBase(userId, musicFolderId)
+        var albums = await GetAlbumBase(userId, musicFolderId, null)
             .Where(x => x.Title!.Contains(query))
             .Skip(albumOffset)
             .Take(albumCount)
