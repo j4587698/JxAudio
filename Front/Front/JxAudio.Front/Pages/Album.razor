@@ -9,19 +9,19 @@
         <BootstrapInput @bind-Value="_searchText" PlaceHolder="搜索" ShowLabel="true" DisplayText="搜索"></BootstrapInput>
     </div>
     <div class="col-6">
-        <Select TValue="string" Items="@_sortItems" ShowLabel="true" DisplayText="排序方式"></Select>
+        <Select @bind-Value="_sortName" Items="@_sortItems" ShowLabel="true" DisplayText="排序方式"></Select>
     </div>
 </div>
 <div style="margin-top: 0.5rem">
-<ListView TItem="Album" Items="_albums">
+<ListView TItem="AlbumID3" Items="_albums">
     <BodyTemplate>
         aaa
     </BodyTemplate>
     <FooterTemplate>
-        <Pagination PageCount="100" ShowPageInfo="true" ShowGotoNavigator="true">
+        <Pagination PageCount="100" ShowPageInfo="true" ShowGotoNavigator="true" OnPageLinkClick="OnPageLinkClick">
             <PageInfoTemplate>
                 <div class="page-info me-2">@_pageInfo</div>
-                <Select TValue="string" Items="_selectedItems" OnValueChanged="OnPageChanged"></Select>
+                <Select @bind-Value="_pageSize" Items="_selectedItems" ></Select>
             </PageInfoTemplate>
         </Pagination>
     </FooterTemplate>
@@ -29,6 +29,9 @@
 </div>
 
 @code {
+    
+    private int _pageSize = 10;
+    private string _sortName = "newest";
 
     private string? _searchText;
     private readonly List<SelectedItem> _sortItems = [
@@ -40,18 +43,37 @@
         new SelectedItem("starred", "星标")
     ];
     
-    private List<Album> _albums = new List<Album>();
+    private List<AlbumID3> _albums = new List<AlbumID3>();
     private string _pageInfo = "每页0条 共0条";
     private readonly List<SelectedItem> _selectedItems = [new SelectedItem("10", "10 条/页"), new SelectedItem("20", "20 条/页"), new SelectedItem("50", "50 条/页"), new SelectedItem("100", "100 条/页")];
 
-    private Task OnPageChanged(string page)
+    protected override async Task OnInitializedAsync()
     {
-        return Task.CompletedTask;
+        await base.OnInitializedAsync();
+        await GetAlbums();
     }
-    
-    private void GetAlbums()
+
+    private async Task GetAlbums()
     {
+        var res = await Http.PostAsJsonAsync("/api/Album", new QueryPageOptions()
+        {
+            SortName = _sortName,
+            SearchText = _searchText,
+            PageItems = _pageSize,
+            PageIndex = 1
+        });
+        var queryData = await res.Content.ReadFromJsonAsync<QueryData<AlbumID3>>();
+        if (queryData?.Items != null)
+        {
+            _pageInfo = $"每页{_pageSize}条 共{queryData.TotalCount}条";
+            _albums = queryData.Items.ToList();
+        }
         
+    }
+
+    private Task OnPageLinkClick(int page)
+    {
+        throw new NotImplementedException();
     }
 
 }

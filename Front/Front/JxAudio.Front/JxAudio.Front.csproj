@@ -30,4 +30,8 @@
       <_ContentIncludedByDefault Remove="wwwroot\sample-data\weather.json" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\JxAudio.TransVo\JxAudio.TransVo.csproj" />
+    </ItemGroup>
+
 </Project>

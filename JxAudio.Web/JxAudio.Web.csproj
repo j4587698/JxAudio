@@ -19,6 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Front\JxAudio.TransVo\JxAudio.TransVo.csproj" />
       <ProjectReference Include="..\JxAudio.Plugin\JxAudio.Plugin.csproj" />
     </ItemGroup>
 

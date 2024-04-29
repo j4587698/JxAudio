@@ -14,7 +14,7 @@ namespace JxAudio.Web.Controllers.Api;
 public class AlbumController(AlbumService albumService): DynamicControllerBase
 {
     [Authorize]
-    public async Task<object> Get([FromBody]QueryPageOptions options)
+    public async Task<object> Post([FromBody]QueryPageOptions options)
     {
         var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
         QueryData<AlbumEntity> albumQueryData = default!;
@@ -57,7 +57,8 @@ public class AlbumController(AlbumService albumService): DynamicControllerBase
             default:
                 return ResultVo.Fail(500, "分类错误");
         }
-        
+
+        var test = albumQueryData.Items?.Select(x => x.CreateAlbumId3());
         
         return ResultVo.Success(data: new QueryData<AlbumID3>()
         {

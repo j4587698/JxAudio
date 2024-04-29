@@ -1,5 +1,5 @@
-﻿using Front.WebAssembly;
-using Front.WebAssembly.Handler;
+﻿using JxAudio.Front;
+using JxAudio.Front.Handler;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 

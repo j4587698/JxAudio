@@ -1,4 +1,4 @@
-﻿namespace Front.WebAssembly.Data;
+﻿namespace JxAudio.TransVo;
 
 public class ResultVo()
 {

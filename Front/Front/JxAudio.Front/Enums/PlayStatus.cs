@@ -1,4 +1,4 @@
-﻿namespace Front.WebAssembly.Enums;
+﻿namespace JxAudio.Front.Enums;
 
 public enum PlayStatus
 {

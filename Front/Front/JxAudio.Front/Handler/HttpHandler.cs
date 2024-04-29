@@ -1,12 +1,12 @@
 ﻿using BootstrapBlazor.Components;
-using Front.WebAssembly.Data;
+using JxAudio.TransVo;
 using Microsoft.AspNetCore.Components;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 
-namespace Front.WebAssembly.Handler;
+namespace JxAudio.Front.Handler;
 
 public class HttpHandler(NavigationManager navigationManager, ToastService toastService): DelegatingHandler
 {
