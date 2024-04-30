@@ -14,7 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AListProviderPlugin", "Plug
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Front", "Front", "{F5ED347A-96E0-48C8-A707-03E672C484E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JxAudio.Front", "Front\Front\JxAudio.Front\JxAudio.Front.csproj", "{0BE58A8C-B7AD-408C-AA86-ED60D187120D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JxAudio.Front", "Front\JxAudio.Front\JxAudio.Front.csproj", "{0BE58A8C-B7AD-408C-AA86-ED60D187120D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JxAudio.TransVo", "Front\JxAudio.TransVo\JxAudio.TransVo.csproj", "{677CBCAA-F539-4C72-9F60-F6FB7A00D905}"
 EndProject
