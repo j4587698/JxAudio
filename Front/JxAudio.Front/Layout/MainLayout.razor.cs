@@ -1,7 +1,7 @@
 ﻿using BootstrapBlazor.Components;
-using JxAudio.Front.Data;
 using Microsoft.AspNetCore.Components.Routing;
 using System.Net.Http.Json;
+using JxAudio.TransVo;
 
 namespace JxAudio.Front.Layout;
 

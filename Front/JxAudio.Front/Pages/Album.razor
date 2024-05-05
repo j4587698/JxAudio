@@ -1,32 +1,20 @@
 ﻿@page "/Album"
+@using JxAudio.TransVo
+@using JxAudio.Front.Components
 
 @inject HttpClient Http
 
 <PageTitle>专辑</PageTitle>
 
-<div class="row g-3 form-inline" style="--bb-row-label-width: 80px">
-    <div class="col-6">
-        <BootstrapInput @bind-Value="_searchText" PlaceHolder="搜索" ShowLabel="true" DisplayText="搜索"></BootstrapInput>
-    </div>
-    <div class="col-6">
-        <Select @bind-Value="_sortName" Items="@_sortItems" ShowLabel="true" DisplayText="排序方式"></Select>
-    </div>
-</div>
-<div style="margin-top: 0.5rem">
-<ListView TItem="AlbumID3" Items="_albums">
-    <BodyTemplate>
-        aaa
-    </BodyTemplate>
-    <FooterTemplate>
-        <Pagination PageCount="100" ShowPageInfo="true" ShowGotoNavigator="true" OnPageLinkClick="OnPageLinkClick">
-            <PageInfoTemplate>
-                <div class="page-info me-2">@_pageInfo</div>
-                <Select @bind-Value="_pageSize" Items="_selectedItems" ></Select>
-            </PageInfoTemplate>
-        </Pagination>
-    </FooterTemplate>
-</ListView>
-</div>
+<FrontTable TItem="AlbumVo" OnQueryAsync="OnQueryAsync">
+    <TableColumns>
+        <TableColumn @bind-Field="@context.CoverId">
+            <Template Context="value">
+                <Avatar Url="@($"/api/Cover?coverId={value.Value}")"></Avatar>
+            </Template>
+        </TableColumn>
+    </TableColumns>
+</FrontTable>
 
 @code {
     
@@ -43,7 +31,7 @@
         new SelectedItem("starred", "星标")
     ];
     
-    private List<AlbumID3> _albums = new List<AlbumID3>();
+    private List<AlbumVo> _albums = new List<AlbumVo>();
     private string _pageInfo = "每页0条 共0条";
     private readonly List<SelectedItem> _selectedItems = [new SelectedItem("10", "10 条/页"), new SelectedItem("20", "20 条/页"), new SelectedItem("50", "50 条/页"), new SelectedItem("100", "100 条/页")];
 
@@ -62,7 +50,7 @@
             PageItems = _pageSize,
             PageIndex = 1
         });
-        var queryData = await res.Content.ReadFromJsonAsync<QueryData<AlbumID3>>();
+        var queryData = await res.Content.ReadFromJsonAsync<QueryData<AlbumVo>>();
         if (queryData?.Items != null)
         {
             _pageInfo = $"每页{_pageSize}条 共{queryData.TotalCount}条";
@@ -74,6 +62,18 @@
     private Task OnPageLinkClick(int page)
     {
         throw new NotImplementedException();
+    }
+
+    private async Task<QueryData<AlbumVo>> OnQueryAsync(QueryPageOptions queryPageOptions)
+    {
+        var responseMessage = await Http.PostAsJsonAsync("/api/Album", queryPageOptions);
+        var vo = await responseMessage.Content.ReadFromJsonAsync<QueryData<AlbumVo>>();
+        if (vo == null)
+        {
+            return new QueryData<AlbumVo>();
+        }
+
+        return vo;
     }
 
 }
