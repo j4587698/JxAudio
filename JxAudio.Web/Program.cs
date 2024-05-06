@@ -146,7 +146,7 @@ app.UseStaticFiles();
 app.UseMiddleware<InstallMiddleware>();
 
 app.UseAntiforgery();
-
+app.UseRouting();
 app.UseOpenApi();
 app.UseSwaggerUi();
 app.UseCookiePolicy();

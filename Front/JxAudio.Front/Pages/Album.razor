@@ -13,6 +13,10 @@
                 <Avatar Url="@($"/api/Cover?coverId={value.Value}")"></Avatar>
             </Template>
         </TableColumn>
+        <TableColumn @bind-Field="@context.Name" Searchable="true" Sortable="true" Filterable="true"></TableColumn>
+        <TableColumn @bind-Field="@context.ArtistName" Searchable="true" Sortable="true" Filterable="true"></TableColumn>
+        <TableColumn @bind-Field="@context.Count" Sortable="true"></TableColumn>
+        <TableColumn @bind-Field="@context.TotalSize" Sortable="true"></TableColumn>
     </TableColumns>
 </FrontTable>
 

@@ -12,13 +12,13 @@ using ResultVo = JxAudio.Web.Vo.ResultVo;
 
 namespace JxAudio.Web.Controllers.Api;
 
-public class AlbumController(AlbumService albumService, FreeSqlDataService<AlbumEntity> freeSqlDataService): DynamicControllerBase
+public class AlbumController(AlbumService albumService): DynamicControllerBase
 {
     [Authorize]
     public async Task<object> Post([FromBody]QueryPageOptions options)
     {
         var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
-        var queryAsync = await freeSqlDataService.QueryAsync(options);
+        var queryAsync = await albumService.QueryData(options, Guid.Parse(id));
         return ResultVo.Success(data: new QueryData<AlbumVo>()
         {
             Items = queryAsync.Items?.Select(x => new AlbumVo()

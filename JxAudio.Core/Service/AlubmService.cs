@@ -30,7 +30,8 @@ public class AlbumService
             .IncludeMany(x => x.TrackEntities!.Select(y => new TrackEntity()
                 {
                     Id = y.Id,
-                    Duration = y.Duration
+                    Duration = y.Duration,
+                    Size = y.Size
                 }),
                 then => then.Where(y =>
                     y.DirectoryEntity!.IsAccessControlled == false ||
@@ -312,5 +313,30 @@ public class AlbumService
             await BaseEntity.Orm.InsertOrUpdate<AlbumRatingEntity>().SetSource(albumRatingEntity)
                 .ExecuteAffrowsAsync(cancellationToken);
         }
+    }
+
+    public async Task<QueryData<AlbumEntity>> QueryData(QueryPageOptions options, Guid userId)
+    {
+        var select = GetAlbumBase(userId, null, null)
+            .WhereDynamicFilter(options.ToDynamicFilter())
+            .OrderByPropertyNameIf(options.SortOrder != SortOrder.Unset, options.SortName,
+                options.SortOrder == SortOrder.Asc)
+            .Count(out var count);
+        if (options.IsPage)
+        {
+            select.Page(options.PageIndex, options.PageItems);
+        }
+
+        var data = await select.ToListAsync();
+        
+        return new QueryData<AlbumEntity>()
+        {
+            TotalCount = (int)count,
+            Items = data,
+            IsSorted = options.SortOrder != SortOrder.Unset,
+            IsFiltered = options.Filters.Any(),
+            IsAdvanceSearch = options.AdvanceSearches.Any(),
+            IsSearch = options.Searches.Any() || options.CustomerSearches.Any()
+        };
     }
 }
