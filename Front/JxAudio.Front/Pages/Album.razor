@@ -14,7 +14,11 @@
             </Template>
         </TableColumn>
         <TableColumn @bind-Field="@context.Name" Searchable="true" Sortable="true" Filterable="true"></TableColumn>
-        <TableColumn @bind-Field="@context.ArtistName" Searchable="true" Sortable="true" Filterable="true"></TableColumn>
+        <TableColumn @bind-Field="@context.ArtistId" Searchable="true" Sortable="true" Filterable="true">
+            <Template Context="value">
+                @value.Row.ArtistName
+            </Template>
+        </TableColumn>
         <TableColumn @bind-Field="@context.Count" Sortable="true"></TableColumn>
         <TableColumn @bind-Field="@context.TotalSize" Sortable="true"></TableColumn>
     </TableColumns>

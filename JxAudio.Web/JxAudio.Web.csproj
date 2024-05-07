@@ -14,11 +14,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-      <PackageReference Include="Yarp.ReverseProxy" Version="2.1.0" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Front\JxAudio.Front\JxAudio.Front.csproj" />
       <ProjectReference Include="..\Front\JxAudio.TransVo\JxAudio.TransVo.csproj" />
       <ProjectReference Include="..\JxAudio.Plugin\JxAudio.Plugin.csproj" />
     </ItemGroup>

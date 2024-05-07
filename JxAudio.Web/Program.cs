@@ -13,7 +13,6 @@ using JxAudio.Web.Utils;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
 using Serilog;
-using Yarp.ReverseProxy.Forwarder;
 using Console = System.Console;
 using Constants = JxAudio.Core.Constants;
 using SearchOption = System.IO.SearchOption;
@@ -27,9 +26,6 @@ var builder = WebApplication.CreateBuilder(args).Inject(configOption =>
     configOption.ConfigSearchFolder = ["config"];
     configOption.DynamicPrefix = "/api/";
 });
-#if DEBUG
-builder.Services.AddHttpForwarder();
-#endif
 builder.Host.UseSerilog();
 
 var dbConfigOption = Application.GetValue<DbConfigOption>("Db");
@@ -130,6 +126,7 @@ if (option != null)
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
+    app.UseWebAssemblyDebugging();
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     //app.UseHsts();
@@ -145,8 +142,9 @@ app.UseStaticFiles();
 
 app.UseMiddleware<InstallMiddleware>();
 
-app.UseAntiforgery();
 app.UseRouting();
+app.UseAntiforgery();
+
 app.UseOpenApi();
 app.UseSwaggerUi();
 app.UseCookiePolicy();
@@ -164,20 +162,6 @@ app.UseExceptionHandler(applicationBuilder =>
         return Task.CompletedTask;
     });
 });
-#if DEBUG
-var httpClient = new HttpMessageInvoker(new SocketsHttpHandler
-{
-    UseProxy = false,
-    AllowAutoRedirect = false,
-    AutomaticDecompression = DecompressionMethods.None,
-    UseCookies = false,
-    EnableMultipleHttp2Connections = true,
-    ActivityHeadersPropagator = new ReverseProxyPropagator(DistributedContextPropagator.Current),
-    ConnectTimeout = TimeSpan.FromSeconds(15),
-});
-
-// Setup our own request transform class
-var requestOptions = new ForwarderRequestConfig { ActivityTimeout = TimeSpan.FromSeconds(100) };
-app.MapForwarder("{**catch-all}", "http://localhost:5077", requestOptions,HttpTransformer.Default,  httpClient);
-#endif
+app.UseBlazorFrameworkFiles();
+app.MapFallbackToFile("index.html");
 app.Run();
