@@ -10,7 +10,7 @@
                 <Avatar Url="@($"/api/Cover?coverId={value.Value}")"></Avatar>
             </Template>
         </TableColumn>
-        <TableColumn @bind-Field="@context.Title"></TableColumn>
+        <TableColumn @bind-Field="@context.Title" Searchable="true" Sortable="true" Filterable="true"></TableColumn>
         <TableColumn @bind-Field="@context.Year"></TableColumn>
         <TableColumn @bind-Field="@context.ArtistEntity">
             <Template Context="value">

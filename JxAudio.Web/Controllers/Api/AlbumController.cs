@@ -18,13 +18,17 @@ public class AlbumController(AlbumService albumService): DynamicControllerBase
     public async Task<object> Post([FromBody]QueryPageOptions options)
     {
         var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        if (options.SortName == "ArtistName")
+        {
+            options.SortName = "ArtistEntity.Name";
+        }
         var queryAsync = await albumService.QueryData(options, Guid.Parse(id));
         return ResultVo.Success(data: new QueryData<AlbumVo>()
         {
             Items = queryAsync.Items?.Select(x => new AlbumVo()
             {
                 CoverId = x.PictureId,
-                Name = x.Title,
+                Title = x.Title,
                 Id = x.Id,
                 ArtistId = x.ArtistId,
                 ArtistName = x.ArtistEntity?.Name,

@@ -1,6 +1,7 @@
 ﻿@page "/Album"
 @using JxAudio.TransVo
 @using JxAudio.Front.Components
+@using Console = System.Console
 
 @inject HttpClient Http
 
@@ -13,64 +14,15 @@
                 <Avatar Url="@($"/api/Cover?coverId={value.Value}")"></Avatar>
             </Template>
         </TableColumn>
-        <TableColumn @bind-Field="@context.Name" Searchable="true" Sortable="true" Filterable="true"></TableColumn>
-        <TableColumn @bind-Field="@context.ArtistId" Searchable="true" Sortable="true" Filterable="true">
-            <Template Context="value">
-                @value.Row.ArtistName
-            </Template>
-        </TableColumn>
-        <TableColumn @bind-Field="@context.Count" Sortable="true"></TableColumn>
+        <TableColumn @bind-Field="@context.Title" Searchable="true" Sortable="true" Filterable="true"></TableColumn>
+        <TableColumn @bind-Field="@context.ArtistName" Searchable="true" Sortable="true" Filterable="true"></TableColumn>
+        <TableColumn @bind-Field="@context.Count"></TableColumn>
         <TableColumn @bind-Field="@context.TotalSize" Sortable="true"></TableColumn>
     </TableColumns>
 </FrontTable>
 
 @code {
     
-    private int _pageSize = 10;
-    private string _sortName = "newest";
-
-    private string? _searchText;
-    private readonly List<SelectedItem> _sortItems = [
-        new SelectedItem("newest", "最新"), 
-        new SelectedItem("random", "随机"),
-        new SelectedItem("recent", "最多播放"),
-        new SelectedItem("alphabeticalByName", "名称"),
-        new SelectedItem("alphabeticalByArtist", "歌手"),
-        new SelectedItem("starred", "星标")
-    ];
-    
-    private List<AlbumVo> _albums = new List<AlbumVo>();
-    private string _pageInfo = "每页0条 共0条";
-    private readonly List<SelectedItem> _selectedItems = [new SelectedItem("10", "10 条/页"), new SelectedItem("20", "20 条/页"), new SelectedItem("50", "50 条/页"), new SelectedItem("100", "100 条/页")];
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        await GetAlbums();
-    }
-
-    private async Task GetAlbums()
-    {
-        var res = await Http.PostAsJsonAsync("/api/Album", new QueryPageOptions()
-        {
-            SortName = _sortName,
-            SearchText = _searchText,
-            PageItems = _pageSize,
-            PageIndex = 1
-        });
-        var queryData = await res.Content.ReadFromJsonAsync<QueryData<AlbumVo>>();
-        if (queryData?.Items != null)
-        {
-            _pageInfo = $"每页{_pageSize}条 共{queryData.TotalCount}条";
-            _albums = queryData.Items.ToList();
-        }
-        
-    }
-
-    private Task OnPageLinkClick(int page)
-    {
-        throw new NotImplementedException();
-    }
 
     private async Task<QueryData<AlbumVo>> OnQueryAsync(QueryPageOptions queryPageOptions)
     {
