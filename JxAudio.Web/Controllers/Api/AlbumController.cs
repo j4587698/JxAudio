@@ -10,6 +10,7 @@ using JxAudio.TransVo;
 using JxAudio.Web.Vo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NetTaste;
 using ResultVo = JxAudio.Web.Vo.ResultVo;
 
 namespace JxAudio.Web.Controllers.Api;
@@ -39,5 +40,10 @@ public class AlbumController(AlbumService albumService): DynamicControllerBase
             IsSearch = queryAsync.IsSearch,
             IsSorted = queryAsync.IsSorted
         });
+    }
+
+    public object GetAllTracks(int albumId)
+    {
+        
     }
 }

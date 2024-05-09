@@ -1,4 +1,5 @@
 ﻿@page "/Album"
+@using Jx.Toolbox.Extensions
 @using JxAudio.TransVo
 @using JxAudio.Front.Components
 @using JxAudio.Front.Filter
@@ -8,9 +9,10 @@
 
 <PageTitle>专辑</PageTitle>
 
-<FrontTable TItem="AlbumVo" ShowToolbar="true" OnQueryAsync="OnQueryAsync">
+<FrontTable TItem="AlbumVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"
+            ShowExtendDeleteButton="false" ShowExtendEditButton="false" OnQueryAsync="OnQueryAsync">
     <TableColumns>
-        <TableColumn @bind-Field="@context.CoverId">
+        <TableColumn @bind-Field="@context.CoverId" Width="40">
             <Template Context="value">
                 <Avatar Url="@($"/api/Cover?coverId={value.Value}")"></Avatar>
             </Template>
@@ -18,8 +20,15 @@
         <TableColumn @bind-Field="@context.Title" Searchable="true" Sortable="true" Filterable="true"></TableColumn>
         <TableColumn @bind-Field="@context.ArtistName" Searchable="true" Sortable="true" Filterable="true"></TableColumn>
         <TableColumn @bind-Field="@context.Count"></TableColumn>
-        <TableColumn @bind-Field="@context.TotalSize"></TableColumn>
+        <TableColumn @bind-Field="@context.TotalSize">
+            <Template Context="value">
+                @value.Value.ToSizeString()
+            </Template>
+        </TableColumn>
     </TableColumns>
+    <RowButtonTemplate>
+        <TableCellButton Text="全部播放" Icon="fa fa-play" OnClick="() => PlayAll(context)"></TableCellButton>
+    </RowButtonTemplate>
 </FrontTable>
 
 @code {
@@ -27,7 +36,6 @@
 
     private async Task<QueryData<AlbumVo>> OnQueryAsync(QueryPageOptions queryPageOptions)
     {
-        Console.WriteLine(queryPageOptions);
         queryPageOptions.SortName = queryPageOptions.SortName.ToFieldName();
         var responseMessage = await Http.PostAsJsonAsync("/api/Album", 
             new {DynamicFilterInfo = queryPageOptions.ToDynamicFilter(), QueryPageOptions = queryPageOptions});
@@ -38,6 +46,11 @@
         }
 
         return vo;
+    }
+
+    private void PlayAll(AlbumVo albumVo)
+    {
+        
     }
 
 }
