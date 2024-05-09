@@ -65,12 +65,18 @@ public static class FreeSqlExtension
             else
             {
                 var c = actions.Filters.First();
-                item.Field = c.FieldKey;
+                item.Field = c.FieldKey.ToFieldName();
                 item.Value = c.FieldValue;
                 item.Operator = c.FilterAction.ToDynamicFilterOperator();
             }
         }
-
+        else
+        {
+            item.Field = actions.FieldKey.ToFieldName();
+            item.Value = actions.FieldValue;
+            item.Operator = actions.FilterAction.ToDynamicFilterOperator();
+        }
+        
         return item;
     }
     

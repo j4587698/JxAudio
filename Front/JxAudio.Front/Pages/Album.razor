@@ -8,7 +8,7 @@
 
 <PageTitle>专辑</PageTitle>
 
-<FrontTable TItem="AlbumVo" OnQueryAsync="OnQueryAsync">
+<FrontTable TItem="AlbumVo" ShowToolbar="true" OnQueryAsync="OnQueryAsync">
     <TableColumns>
         <TableColumn @bind-Field="@context.CoverId">
             <Template Context="value">
@@ -18,7 +18,7 @@
         <TableColumn @bind-Field="@context.Title" Searchable="true" Sortable="true" Filterable="true"></TableColumn>
         <TableColumn @bind-Field="@context.ArtistName" Searchable="true" Sortable="true" Filterable="true"></TableColumn>
         <TableColumn @bind-Field="@context.Count"></TableColumn>
-        <TableColumn @bind-Field="@context.TotalSize" Sortable="true"></TableColumn>
+        <TableColumn @bind-Field="@context.TotalSize"></TableColumn>
     </TableColumns>
 </FrontTable>
 
@@ -27,6 +27,7 @@
 
     private async Task<QueryData<AlbumVo>> OnQueryAsync(QueryPageOptions queryPageOptions)
     {
+        Console.WriteLine(queryPageOptions);
         queryPageOptions.SortName = queryPageOptions.SortName.ToFieldName();
         var responseMessage = await Http.PostAsJsonAsync("/api/Album", 
             new {DynamicFilterInfo = queryPageOptions.ToDynamicFilter(), QueryPageOptions = queryPageOptions});
