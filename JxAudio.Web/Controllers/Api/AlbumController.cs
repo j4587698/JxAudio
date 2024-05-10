@@ -8,6 +8,7 @@ using JxAudio.Core.Service;
 using JxAudio.Core.Subsonic;
 using JxAudio.TransVo;
 using JxAudio.Web.Vo;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetTaste;
@@ -24,16 +25,7 @@ public class AlbumController(AlbumService albumService): DynamicControllerBase
         var queryAsync = await albumService.QueryData(queryVo.QueryPageOptions!, queryVo.DynamicFilterInfo!, Guid.Parse(id));
         return ResultVo.Success(data: new QueryData<AlbumVo>()
         {
-            Items = queryAsync.Items?.Select(x => new AlbumVo()
-            {
-                CoverId = x.PictureId,
-                Title = x.Title,
-                Id = x.Id,
-                ArtistId = x.ArtistId,
-                ArtistName = x.ArtistEntity?.Name,
-                Count = x.TrackEntities?.Count ?? 0,
-                TotalSize = x.TrackEntities?.Sum(y => y.Size) ?? 0
-            }),
+            Items = queryAsync.Items?.Select(x => x.Adapt<AlbumVo>()),
             TotalCount = queryAsync.TotalCount,
             IsAdvanceSearch = queryAsync.IsAdvanceSearch,
             IsFiltered = queryAsync.IsFiltered,
@@ -44,6 +36,6 @@ public class AlbumController(AlbumService albumService): DynamicControllerBase
 
     public object GetAllTracks(int albumId)
     {
-        
+        return null;
     }
 }

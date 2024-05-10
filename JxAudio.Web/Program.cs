@@ -26,6 +26,8 @@ var builder = WebApplication.CreateBuilder(args).Inject(configOption =>
     configOption.ConfigSearchFolder = ["config"];
     configOption.DynamicPrefix = "/api/";
 });
+
+MappingConfig.Configure();
 builder.Host.UseSerilog();
 
 var dbConfigOption = Application.GetValue<DbConfigOption>("Db");
