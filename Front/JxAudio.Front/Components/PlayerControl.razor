@@ -143,6 +143,8 @@
     
     private List<TrackVo> _tracks = new List<TrackVo>();
 
+    private int _playIndex = 0;
+
     protected override Task InvokeInitAsync() => InvokeVoidAsync("init", Interop);
 
     [JSInvokable]
@@ -203,7 +205,7 @@
        
     }
 
-    private Task Notify(DispatchEntry<AddTrackMessage> entry)
+    private async Task Notify(DispatchEntry<AddTrackMessage> entry)
     {
         if (entry.Entry != null)
         {
@@ -215,10 +217,11 @@
             else if (message is { Type: "replace", Tracks: not null })
             {
                 _tracks = message.Tracks;
+                _playIndex = 0;
+                await Play();
             }
             StateHasChanged();
         }
-        return Task.CompletedTask;
     }
 
 
