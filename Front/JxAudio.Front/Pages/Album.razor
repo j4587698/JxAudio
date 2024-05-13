@@ -2,10 +2,12 @@
 @using Jx.Toolbox.Extensions
 @using JxAudio.TransVo
 @using JxAudio.Front.Components
+@using JxAudio.Front.Data
 @using JxAudio.Front.Filter
 @using Console = System.Console
 
 @inject HttpClient Http
+@inject IDispatchService<AddTrackMessage> DispatchService
 
 <PageTitle>专辑</PageTitle>
 
@@ -48,9 +50,21 @@
         return vo;
     }
 
-    private void PlayAll(AlbumVo albumVo)
+    private async Task PlayAll(AlbumVo albumVo)
     {
-        
+        var responseMessage = await Http.GetAsync($"/api/Album/AllTracks?albumId={albumVo.Id}");
+        var tracks = await responseMessage.Content.ReadFromJsonAsync<List<TrackVo>>();
+        if (tracks != null)
+        {
+            DispatchService.Dispatch(new DispatchEntry<AddTrackMessage>()
+            {
+                Entry = new AddTrackMessage()
+                {
+                    Tracks = tracks,
+                    Type = "replace"
+                }
+            });
+        }
     }
 
 }

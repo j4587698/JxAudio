@@ -1,8 +1,12 @@
 ﻿@using JxAudio.Front.Enums
 @using IconPark
 @using Jx.Toolbox.Extensions
+@using JxAudio.Front.Data
+@using JxAudio.TransVo
 @using Console = System.Console
 @inherits BootstrapModuleComponentBase
+@implements IDisposable
+@inject IDispatchService<AddTrackMessage> DispatchService
 
 @attribute [JSModuleAutoLoader("./Components/PlayerControl.razor.js", JSObjectReference = true)]
 
@@ -75,10 +79,17 @@
                     @CurrentTime.ToTimeString()[3..] / @Duration.ToTimeString()[3..]
                 </span>
                 <TextMessage Size="18"></TextMessage>
-                <div class="d-flex align-items-center">
-                    <MusicList Size="18" StrokeWidth="3"></MusicList>
-                    <span class="text-xs">1</span>
-                </div>
+                <PopConfirmButton CustomClass="custom-popup" Placement="Placement.Top">
+                    <BodyTemplate>
+                        <PlayListControl TrackVos="_tracks"></PlayListControl>
+                    </BodyTemplate>
+                    <ChildContent>
+                        <div class="d-flex align-items-center">
+                            <MusicList Size="18" StrokeWidth="3"></MusicList>
+                            <span class="text-xs">@_tracks.Count</span>
+                        </div>
+                    </ChildContent>
+                </PopConfirmButton>
             </div>
         </div>
     </div>
@@ -129,6 +140,8 @@
             
         }
     }
+    
+    private List<TrackVo> _tracks = new List<TrackVo>();
 
     protected override Task InvokeInitAsync() => InvokeVoidAsync("init", Interop);
 
@@ -188,6 +201,36 @@
         }
 
        
+    }
+
+    private Task Notify(DispatchEntry<AddTrackMessage> entry)
+    {
+        if (entry.Entry != null)
+        {
+            var message = entry.Entry;
+            if (message.Type == "add" && message.Tracks != null)
+            {
+                _tracks.AddRange(message.Tracks);
+            }
+            else if (message is { Type: "replace", Tracks: not null })
+            {
+                _tracks = message.Tracks;
+            }
+            StateHasChanged();
+        }
+        return Task.CompletedTask;
+    }
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        DispatchService.Subscribe(Notify);
+    }
+
+    public void Dispose()
+    {
+        DispatchService.UnSubscribe(Notify);
     }
 
 }

@@ -1,0 +1,14 @@
+﻿@using JxAudio.TransVo
+
+<Repeater TItem="TrackVo" Items="TrackVos" EmptyText="播放列表为空">
+    <ItemTemplate>
+        <div class="d-flex">
+            <LinkButton Icon="fa fa-play" Text="@context.Title"></LinkButton>
+        </div>
+    </ItemTemplate>
+</Repeater>
+
+@code {
+    [Parameter]
+    public List<TrackVo>? TrackVos { get; set; }
+}

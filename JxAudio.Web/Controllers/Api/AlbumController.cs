@@ -34,8 +34,11 @@ public class AlbumController(AlbumService albumService): DynamicControllerBase
         });
     }
 
-    public object GetAllTracks(int albumId)
+    [Authorize]
+    public async Task<object> GetAllTracks(int albumId)
     {
-        return null;
+        var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        var tracks = await albumService.GetTracksByAlbumIdAsync(albumId, Guid.Parse(id), HttpContext.RequestAborted);
+        return ResultVo.Success(data: tracks.Adapt<List<TrackVo>>());
     }
 }

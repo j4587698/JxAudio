@@ -339,4 +339,17 @@ public class AlbumService
             IsSearch = options.Searches.Any() || options.CustomerSearches.Any()
         };
     }
+    
+    public async Task<List<TrackEntity>> GetTracksByAlbumIdAsync(int albumId, Guid userId, CancellationToken cancellationToken)
+    {
+        var tracks = await TrackEntity.Where(x => x.AlbumId == albumId && (x.DirectoryEntity!.IsAccessControlled == false ||
+                                                                           x.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
+            .IncludeMany(x => x.TrackStarEntities, then => then.Where(y => y.UserId == userId))
+            .IncludeMany(x => x.ArtistEntities)
+            .Include(x => x.AlbumEntity)
+            .Include(x => x.GenreEntity)
+            .ToListAsync(cancellationToken);
+
+        return tracks;
+    }
 }
