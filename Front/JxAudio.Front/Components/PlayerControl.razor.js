@@ -11,6 +11,7 @@ export function init(interop) {
         player._interop.invokeMethodAsync("OnTimeUpdate", audio.currentTime)
     }
     audio.onended = function() {
+        console.log('播放已结束');
         player._interop.invokeMethodAsync("OnEnded")
     }
     audio.onerror = function() {
@@ -30,10 +31,14 @@ export function dispose() {
     Data.remove("player")
 }
 
-export function play(url) {
+export function play(id, mimeType) {
     const player = Data.get("player")
-    player._audio.src = url
-    console.log("audio loaded")
+    let suffix = 'raw'
+    if (player._audio.canPlayType(mimeType) === "") {
+        suffix = 'mp3'
+    }
+    player._audio.src = `/api/Track/Stream?trackId=${id}&format=${suffix}`
+    //player._audio.src = "http://home.jvxiang.com:4533/rest/stream?u=j4587698&t=9da3c9c2714f7cac8688bcc28bc11d47&s=68ef00&f=json&v=1.8.0&c=NavidromeUI&id=f72fb644e228401b83a395a8d043b709&_=1713774716561&format=mp3"
     player._audio.play().catch(function(error) {
         console.log("audio play error", error)
     })
@@ -79,5 +84,6 @@ export function getMuted() {
 
 export function setCurrentTime(time) {
     const player = Data.get("player")
+    console.log("setCurrentTime", time)
     player._audio.currentTime = time
 }

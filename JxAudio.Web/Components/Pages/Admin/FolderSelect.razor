@@ -14,7 +14,7 @@
             ConfirmDeleteContentText="@FolderSelectLocalizer["Delete"]" OnDeleteAsync="OnDeleteAsync">
     <TableColumns>
         <TableColumn @bind-Field="@context.Provider" LookupServiceKey="plugin"></TableColumn>
-        <TableColumn @bind-Field="@context.Name"></TableColumn>
+        <TableColumn @bind-Field="@context.Name" Searchable="true"></TableColumn>
         <TableColumn @bind-Field="@context.IsAccessControlled"></TableColumn>
         <TableColumn @bind-Field="@context.UserEntities">
             <Template Context="value">

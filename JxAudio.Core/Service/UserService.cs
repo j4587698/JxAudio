@@ -103,4 +103,9 @@ public class UserService
             folder = ids.ToArray(),
         };
     }
+
+    public async Task<UserEntity?> GetUserById(Guid userId)
+    {
+        return await UserEntity.FindAsync(userId);
+    }
 }

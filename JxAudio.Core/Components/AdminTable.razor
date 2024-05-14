@@ -1,7 +1,7 @@
 ﻿@using BootstrapBlazor.Components
 @typeparam TItem
 
-<Table TItem="TItem" IsBordered="true" IsStriped="true" TableColumns="TableColumns" ShowToolbar="@ShowToolbar"
+<Table TItem="TItem" IsBordered="true" IsStriped="true" TableColumns="TableColumns" ShowToolbar="@ShowToolbar" ShowSearch="true"
        ShowExtendButtons="@ShowExtendButtons" IsPagination="IsPagination" PageItemsSource="new[] { 10, 30, 50 }" Items="Items"
        TableToolbarTemplate="@TableToolbarTemplate" RowButtonTemplate="@RowButtonTemplate" TableExtensionToolbarTemplate="TableExtensionToolbarTemplate"
        OnQueryAsync="OnQueryAsync" OnSaveAsync="OnSaveAsync" OnDeleteAsync="OnDeleteAsync" DetailRowTemplate="DetailRowTemplate"

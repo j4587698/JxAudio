@@ -21,8 +21,8 @@
                 <div class="ms-2 text-xs d-flex flex-column justify-content-between">
                     <div class="w-52 cursor-pointer text-truncate">
                         <div class="d-flex">
-                            <span>JxAudio</span>
-                            <div class="ms-2 text-secondary">Test</div>
+                            <span>@(CurrentTrack?.Title ?? "JxAudio")</span>
+                            <div class="ms-2 text-secondary">@(CurrentTrack?.ArtistName ?? "JxAudio")</div>
                         </div>
                     </div>
                     <div class="d-flex gap-x-3">
@@ -33,8 +33,19 @@
         </div>
         <div class="flex-1">
             <div class="d-flex align-items-center justify-content-center gap-x-3">
-                <Button Color="Color.None" style="color: red; font-size: 15px" Icon="fa-solid fa-shuffle">
-                    
+                <Button Color="Color.None" style="color: red" OnClick="LoopChanged">
+                    @switch(_loopStatus)
+                    {
+                        case LoopStatus.LoopOnce:
+                            <LoopOnce Size="20"></LoopOnce>
+                            break;
+                        case LoopStatus.PlayOnce:
+                            <PlayOnce Size="20"></PlayOnce>
+                            break;
+                        case LoopStatus.ShuffleOne:
+                            <ShuffleOne Size="20"></ShuffleOne>
+                            break;
+                    }
                 </Button>
                 <Button Color="Color.None">
                     <GoStart Size="28"></GoStart>
@@ -100,7 +111,7 @@
     [Parameter]
     public int CurrentTime { get; set; }
 
-    [Parameter] public int Duration { get; set; } = 100;
+    [Parameter] public int Duration { get; set; }
 
     [Parameter]
     public EventCallback<int> CurrentTimeChanged { get; set; }
@@ -124,6 +135,8 @@
 
     private PlayStatus _playStatus = PlayStatus.Stop;
 
+    private LoopStatus _loopStatus = LoopStatus.LoopOnce;
+
     private string CurrentTimeString
     {
         get => CurrentTime.ToString();
@@ -131,7 +144,6 @@
         {
             if (value != CurrentTimeString)
             {
-                Console.WriteLine(CurrentTimeString);
                 CurrentTime = int.Parse(value); 
                 Percent = CurrentTime * 100 / Duration;
                 CurrentTimeChanged.InvokeAsync(CurrentTime);
@@ -145,11 +157,14 @@
 
     private int _playIndex = 0;
 
+    private TrackVo? CurrentTrack => _tracks.Count > _playIndex ? _tracks[_playIndex] : null;
+
     protected override Task InvokeInitAsync() => InvokeVoidAsync("init", Interop);
 
     [JSInvokable]
     public void OnTimeUpdate(double currentTime)
     {
+        Console.WriteLine(currentTime);
         var time = (int) currentTime;
         if (CurrentTime != time)
         {
@@ -159,9 +174,26 @@
             StateHasChanged();
         }
     }
-    
+
     [JSInvokable]
-    public void OnEnded(){}
+    public async Task OnEnded()
+    {
+        _playStatus = PlayStatus.Stop;
+        switch (_loopStatus)
+        {
+            case LoopStatus.PlayOnce:
+                break;
+            case LoopStatus.LoopOnce:
+                _playIndex = _playIndex < _tracks.Count - 1 ? _playIndex + 1 : 0;
+                break;
+            case LoopStatus.ShuffleOne:
+                _playIndex = new Random().Next(0, _tracks.Count);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        await PlayNow();
+    }
 
     [JSInvokable]
     public void OnError(string error)
@@ -197,12 +229,20 @@
         }
         else if (_playStatus == PlayStatus.Stop)
         {
-            _playStatus = PlayStatus.Loading;
-            await InvokeAsync(StateHasChanged);
-            await InvokeVoidAsync("play", "http://home.jvxiang.com:4533/rest/stream?u=j4587698&t=9da3c9c2714f7cac8688bcc28bc11d47&s=68ef00&f=json&v=1.8.0&c=NavidromeUI&id=f72fb644e228401b83a395a8d043b709&_=1713774716561");
+            await PlayNow();
         }
+    }
 
-       
+    private async Task PlayNow()
+    {
+        if (CurrentTrack == null)
+        {
+            return;
+        }
+        _playStatus = PlayStatus.Loading;
+        Duration = (int)CurrentTrack.Duration;
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeVoidAsync("play", CurrentTrack.Id, CurrentTrack.MimeType);
     }
 
     private async Task Notify(DispatchEntry<AddTrackMessage> entry)
@@ -210,15 +250,27 @@
         if (entry.Entry != null)
         {
             var message = entry.Entry;
-            if (message.Type == "add" && message.Tracks != null)
+            if (message is { Type: "add", Tracks: not null })
             {
                 _tracks.AddRange(message.Tracks);
+                if (_playStatus == PlayStatus.Stop)
+                {
+                    await PlayNow();
+                }
             }
             else if (message is { Type: "replace", Tracks: not null })
             {
                 _tracks = message.Tracks;
+                if (_loopStatus == LoopStatus.ShuffleOne)
+                {
+                    _playIndex = new Random().Next(0, _tracks.Count);
+                }
+                else
+                {
+                    _playIndex = 0;
+                }
                 _playIndex = 0;
-                await Play();
+                await PlayNow();
             }
             StateHasChanged();
         }
@@ -234,6 +286,24 @@
     public void Dispose()
     {
         DispatchService.UnSubscribe(Notify);
+    }
+
+    private void LoopChanged()
+    {
+        switch (_loopStatus)
+        {
+            case LoopStatus.PlayOnce:
+                _loopStatus = LoopStatus.LoopOnce;
+                break;
+            case LoopStatus.LoopOnce:
+                _loopStatus = LoopStatus.ShuffleOne;
+                break;
+            case LoopStatus.ShuffleOne:
+                _loopStatus = LoopStatus.PlayOnce;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
 }

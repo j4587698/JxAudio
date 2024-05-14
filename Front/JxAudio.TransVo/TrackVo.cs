@@ -4,6 +4,8 @@ namespace JxAudio.TransVo;
 
 public class TrackVo
 {
+    public int Id { get; set; }
+    
     [Description("音轨大小")]
     public long Size { get; set; }
 
@@ -30,4 +32,7 @@ public class TrackVo
     
     [Description("音轨标题")]
     public string? Title { get; set; }
+
+    [Description("歌手名")]
+    public string? ArtistName { get; set; }
 }
