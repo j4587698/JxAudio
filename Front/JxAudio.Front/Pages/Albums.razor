@@ -1,0 +1,73 @@
+﻿@page "/Albums"
+@using Jx.Toolbox.Extensions
+@using JxAudio.TransVo
+@using JxAudio.Front.Components
+@using JxAudio.Front.Data
+@using JxAudio.Front.Filter
+
+@inject HttpClient Http
+@inject IDispatchService<AddTrackMessage> DispatchService
+
+<PageTitle>专辑</PageTitle>
+
+<FrontTable TItem="AlbumVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"
+            ShowExtendDeleteButton="false" ShowExtendEditButton="false" OnQueryAsync="OnQueryAsync">
+    <TableColumns>
+        <TableColumn @bind-Field="@context.CoverId" Width="40">
+            <Template Context="value">
+                <Avatar Url="@($"/api/Cover?coverId={value.Value}")"></Avatar>
+            </Template>
+        </TableColumn>
+        <TableColumn @bind-Field="@context.Title" Searchable="true" Sortable="true" Filterable="true">
+            <Template Context="value">
+                <LinkButton Text="@value.Value"></LinkButton>
+            </Template>
+        </TableColumn>
+        <TableColumn @bind-Field="@context.ArtistName" Searchable="true" Sortable="true" Filterable="true"></TableColumn>
+        <TableColumn @bind-Field="@context.Count"></TableColumn>
+        <TableColumn @bind-Field="@context.TotalSize">
+            <Template Context="value">
+                @value.Value.ToSizeString()
+            </Template>
+        </TableColumn>
+    </TableColumns>
+    <RowButtonTemplate>
+        <TableCellButton Text="全部播放" Icon="fa fa-play" OnClick="() => PlayAll(context)"></TableCellButton>
+    </RowButtonTemplate>
+</FrontTable>
+
+@code {
+    
+
+    private async Task<QueryData<AlbumVo>> OnQueryAsync(QueryPageOptions queryPageOptions)
+    {
+        queryPageOptions.SortName = queryPageOptions.SortName.ToFieldName();
+        var responseMessage = await Http.PostAsJsonAsync("/api/Album", 
+            new {DynamicFilterInfo = queryPageOptions.ToDynamicFilter(), QueryPageOptions = queryPageOptions});
+        var vo = await responseMessage.Content.ReadFromJsonAsync<QueryData<AlbumVo>>();
+        if (vo == null)
+        {
+            return new QueryData<AlbumVo>();
+        }
+
+        return vo;
+    }
+
+    private async Task PlayAll(AlbumVo albumVo)
+    {
+        var responseMessage = await Http.GetAsync($"/api/Album/AllTracks?albumId={albumVo.Id}");
+        var tracks = await responseMessage.Content.ReadFromJsonAsync<List<TrackVo>>();
+        if (tracks != null)
+        {
+            DispatchService.Dispatch(new DispatchEntry<AddTrackMessage>()
+            {
+                Entry = new AddTrackMessage()
+                {
+                    Tracks = tracks,
+                    Type = "replace"
+                }
+            });
+        }
+    }
+
+}

@@ -19,11 +19,12 @@ export function init(interop) {
     }
 
     audio.onloadedmetadata = function() {
-        player._interop.invokeMethodAsync("OnLoaded", audio.duration)
+        player._interop.invokeMethodAsync("OnLoaded")
     }
     
     audio.onplaying = function (){
         console.log('开始播放')
+        player._interop.invokeMethodAsync("OnPlaying")
     }
 }
 
@@ -38,7 +39,6 @@ export function play(id, mimeType) {
         suffix = 'mp3'
     }
     player._audio.src = `/api/Track/Stream?trackId=${id}&format=${suffix}`
-    //player._audio.src = "http://home.jvxiang.com:4533/rest/stream?u=j4587698&t=9da3c9c2714f7cac8688bcc28bc11d47&s=68ef00&f=json&v=1.8.0&c=NavidromeUI&id=f72fb644e228401b83a395a8d043b709&_=1713774716561&format=mp3"
     player._audio.play().catch(function(error) {
         console.log("audio play error", error)
     })

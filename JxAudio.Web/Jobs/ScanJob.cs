@@ -183,7 +183,7 @@ public class ScanJob : ITask
                                 ProviderId = providerPlugin.Id,
                                 TrackNumber = track.TrackNumber,
                                 DiscNumber = track.DiscNumber,
-                                Duration = track.Duration,
+                                Duration = track.DurationMs / 1000,
                                 BitRate = track.Bitrate,
                                 Title = track.Title,
                                 SortTitle = track.SortTitle,

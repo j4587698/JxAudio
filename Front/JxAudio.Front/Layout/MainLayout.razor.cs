@@ -52,7 +52,7 @@ public sealed partial class MainLayout
     {
         var menus = new List<MenuItem>
         {
-            new() { Text = "专辑", Icon = "fa-solid fa-fw fa-flag", Url = "/Album", Match = NavLinkMatch.All },
+            new() { Text = "专辑", Icon = "fa-solid fa-fw fa-flag", Url = "/Albums", Match = NavLinkMatch.All },
             new() { Text = "Counter", Icon = "fa-solid fa-fw fa-check-square", Url = "/counter" },
             new() { Text = "Weather", Icon = "fa-solid fa-fw fa-database", Url = "/weather" },
             new() { Text = "Table", Icon = "fa-solid fa-fw fa-table", Url = "/table" },

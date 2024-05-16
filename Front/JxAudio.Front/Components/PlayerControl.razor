@@ -164,7 +164,6 @@
     [JSInvokable]
     public void OnTimeUpdate(double currentTime)
     {
-        Console.WriteLine(currentTime);
         var time = (int) currentTime;
         if (CurrentTime != time)
         {
@@ -179,19 +178,13 @@
     public async Task OnEnded()
     {
         _playStatus = PlayStatus.Stop;
-        switch (_loopStatus)
+        _playIndex = _loopStatus switch
         {
-            case LoopStatus.PlayOnce:
-                break;
-            case LoopStatus.LoopOnce:
-                _playIndex = _playIndex < _tracks.Count - 1 ? _playIndex + 1 : 0;
-                break;
-            case LoopStatus.ShuffleOne:
-                _playIndex = new Random().Next(0, _tracks.Count);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            LoopStatus.PlayOnce => _playIndex,
+            LoopStatus.LoopOnce => _playIndex < _tracks.Count - 1 ? _playIndex + 1 : 0,
+            LoopStatus.ShuffleOne => new Random().Next(0, _tracks.Count),
+            _ => throw new ArgumentOutOfRangeException()
+        };
         await PlayNow();
     }
 
@@ -202,9 +195,15 @@
     }
 
     [JSInvokable]
-    public void OnLoaded(double duration)
+    public void OnLoaded()
     {
-        Console.WriteLine(duration);
+        _playStatus = PlayStatus.Play;
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void OnPlaying()
+    {
         _playStatus = PlayStatus.Play;
         StateHasChanged();
     }
@@ -290,20 +289,13 @@
 
     private void LoopChanged()
     {
-        switch (_loopStatus)
+        _loopStatus = _loopStatus switch
         {
-            case LoopStatus.PlayOnce:
-                _loopStatus = LoopStatus.LoopOnce;
-                break;
-            case LoopStatus.LoopOnce:
-                _loopStatus = LoopStatus.ShuffleOne;
-                break;
-            case LoopStatus.ShuffleOne:
-                _loopStatus = LoopStatus.PlayOnce;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            LoopStatus.PlayOnce => LoopStatus.LoopOnce,
+            LoopStatus.LoopOnce => LoopStatus.ShuffleOne,
+            LoopStatus.ShuffleOne => LoopStatus.PlayOnce,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
 }
