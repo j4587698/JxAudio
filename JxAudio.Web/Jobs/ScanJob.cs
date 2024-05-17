@@ -199,6 +199,7 @@ public class ScanJob : ITask
                             await trackEntity.SaveAsync();
                             await trackEntity.SaveManyAsync(nameof(TrackEntity.ArtistEntities));
                             Log.Information("加入歌曲{track}", trackEntity.Title);
+                            break;
                         }
                         catch (Exception e)
                         {

@@ -7,6 +7,7 @@ public class PartialHttpStream(Fs fs, InfoOut infoOut): Stream
 {
     private long _responseLength = infoOut.Data.Size;
     private long _position;
+    private Stream? _stream;
     
     public override void Flush()
     {
@@ -17,9 +18,9 @@ public class PartialHttpStream(Fs fs, InfoOut infoOut): Stream
     {
         if (_position >= _responseLength)
             return 0; // End of stream
-        using var stream = fs.RangeDownload(infoOut.Data.RawUrl, _position, count).Result;
+        _stream ??= fs.RangeDownload(infoOut.Data.RawUrl, _position, _responseLength - _position).Result;
         
-        var bytesRead = stream.Read(buffer, offset, count);
+        var bytesRead = _stream.Read(buffer, offset, count);
         _position += bytesRead;
         return bytesRead;
     }
@@ -29,9 +30,9 @@ public class PartialHttpStream(Fs fs, InfoOut infoOut): Stream
         if (_position >= _responseLength)
             return 0; // End of stream
 
-        await using var stream = await fs.RangeDownload(infoOut.Data.RawUrl, _position, count, cancellationToken);
+        _stream ??= await fs.RangeDownload(infoOut.Data.RawUrl, _position, _responseLength - _position, cancellationToken);
         
-        var bytesRead = await stream.ReadAsync(buffer, offset, count, cancellationToken);
+        var bytesRead = await _stream.ReadAsync(buffer, offset, count, cancellationToken);
         _position += bytesRead;
         return bytesRead;
     }
@@ -52,6 +53,7 @@ public class PartialHttpStream(Fs fs, InfoOut infoOut): Stream
             default:
                 throw new ArgumentOutOfRangeException(nameof(origin), "Invalid seek origin.");
         }
+        _stream = fs.RangeDownload(infoOut.Data.RawUrl, _position, _responseLength - _position).Result;
         return _position;
     }
 
@@ -75,5 +77,11 @@ public class PartialHttpStream(Fs fs, InfoOut infoOut): Stream
     {
         get => _position;
         set => Seek(value, SeekOrigin.Begin);
+    }
+
+    public override ValueTask DisposeAsync()
+    {
+        _stream?.Dispose();
+        return base.DisposeAsync();
     }
 }
