@@ -19,8 +19,13 @@ public class PartialHttpStream(Fs fs, InfoOut infoOut): Stream
         if (_position >= _responseLength)
             return 0; // End of stream
         _stream ??= fs.RangeDownload(infoOut.Data.RawUrl, _position, _responseLength - _position).Result;
-        
-        var bytesRead = _stream.Read(buffer, offset, count);
+
+        var bytesRead = 0;
+        while (bytesRead != count)
+        {
+            var read = _stream.Read(buffer, offset + bytesRead, count - bytesRead);
+            bytesRead += read;
+        }
         _position += bytesRead;
         return bytesRead;
     }
@@ -32,7 +37,12 @@ public class PartialHttpStream(Fs fs, InfoOut infoOut): Stream
 
         _stream ??= await fs.RangeDownload(infoOut.Data.RawUrl, _position, _responseLength - _position, cancellationToken);
         
-        var bytesRead = await _stream.ReadAsync(buffer, offset, count, cancellationToken);
+        var bytesRead = 0;
+        while (bytesRead != count)
+        {
+            var read = await _stream.ReadAsync(buffer, offset + bytesRead, count - bytesRead, cancellationToken);
+            bytesRead += read;
+        }
         _position += bytesRead;
         return bytesRead;
     }
@@ -53,7 +63,7 @@ public class PartialHttpStream(Fs fs, InfoOut infoOut): Stream
             default:
                 throw new ArgumentOutOfRangeException(nameof(origin), "Invalid seek origin.");
         }
-        _stream = fs.RangeDownload(infoOut.Data.RawUrl, _position, _responseLength - _position).Result;
+        _stream = null;
         return _position;
     }
 
