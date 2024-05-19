@@ -71,7 +71,7 @@ public class TrackController(TrackService trackService, UserService userService)
                 maxBitRate = maxBitRate == 0
                     ? 160
                     : Math.Min(Math.Max(maxBitRate.Value, 16), Math.Min(320, track.BitRate ?? 999));
-                var args = FFMpegArguments.FromPipeInput(new StreamPipeSource(stream))
+                await FFMpegArguments.FromPipeInput(new StreamPipeSource(stream))
                     .OutputToPipe(new StreamPipeSink(Response.Body), options =>
                     {
                         options.WithAudioCodec(AudioCodec.Aac)
@@ -79,9 +79,7 @@ public class TrackController(TrackService trackService, UserService userService)
                             .ForceFormat("adts")
                             .WithoutMetadata()
                             .WithCustomArgument($"-map a");
-                    }).CancellableThrough(HttpContext.RequestAborted);
-                Console.WriteLine(args.Arguments);
-                await args.ProcessAsynchronously();
+                    }).CancellableThrough(HttpContext.RequestAborted).ProcessAsynchronously();
                 break;
             case "mp3":
                 HttpContext.Response.ContentType = "audio/mpeg";

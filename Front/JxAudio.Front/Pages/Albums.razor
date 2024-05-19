@@ -32,7 +32,8 @@
         </TableColumn>
     </TableColumns>
     <RowButtonTemplate>
-        <TableCellButton Text="全部播放" Icon="fa fa-play" OnClick="() => PlayAll(context)"></TableCellButton>
+        <TableCellButton Icon="fa fa-play" OnClick="() => PlayAll(context)"></TableCellButton>
+        <TableCellButton Icon="fa fa-plus" OnClick="() => AddToPlayList(context)"></TableCellButton>
     </RowButtonTemplate>
 </FrontTable>
 
@@ -65,6 +66,23 @@
                 {
                     Tracks = tracks,
                     Type = "replace"
+                }
+            });
+        }
+    }
+
+    private async Task AddToPlayList(AlbumVo albumVo)
+    {
+        var responseMessage = await Http.GetAsync($"/api/Album/AllTracks?albumId={albumVo.Id}");
+        var tracks = await responseMessage.Content.ReadFromJsonAsync<List<TrackVo>>();
+        if (tracks != null)
+        {
+            DispatchService.Dispatch(new DispatchEntry<AddTrackMessage>()
+            {
+                Entry = new AddTrackMessage()
+                {
+                    Tracks = tracks,
+                    Type = "add"
                 }
             });
         }

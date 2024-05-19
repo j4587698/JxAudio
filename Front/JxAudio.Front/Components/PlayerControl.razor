@@ -7,6 +7,7 @@
 @inherits BootstrapModuleComponentBase
 @implements IDisposable
 @inject IDispatchService<AddTrackMessage> DispatchService
+@inject MessageService MessageService
 
 @attribute [JSModuleAutoLoader("./Components/PlayerControl.razor.js", JSObjectReference = true)]
 
@@ -287,15 +288,34 @@
         DispatchService.UnSubscribe(Notify);
     }
 
-    private void LoopChanged()
+    private async Task LoopChanged()
     {
-        _loopStatus = _loopStatus switch
+        switch (_loopStatus)
         {
-            LoopStatus.PlayOnce => LoopStatus.LoopOnce,
-            LoopStatus.LoopOnce => LoopStatus.ShuffleOne,
-            LoopStatus.ShuffleOne => LoopStatus.PlayOnce,
-            _ => throw new ArgumentOutOfRangeException()
-        };
+            case LoopStatus.PlayOnce:
+                _loopStatus = LoopStatus.LoopOnce;
+                await MessageService.Show(new MessageOption()
+                {
+                    Content = "单曲循环"
+                });
+                break;
+            case LoopStatus.LoopOnce:
+                _loopStatus = LoopStatus.ShuffleOne;
+                await MessageService.Show(new MessageOption()
+                {
+                    Content = "列表循环"
+                });
+                break;
+            case LoopStatus.ShuffleOne:
+                _loopStatus = LoopStatus.PlayOnce;
+                await MessageService.Show(new MessageOption()
+                {
+                    Content = "随机播放"
+                });
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
 }

@@ -1,14 +1,16 @@
 ﻿@page "/Album/{id:int?}"
+@using JxAudio.TransVo
 @inject NavigationManager NavigationManager
+@inject HttpClient Http
 
 <Card>
     <BodyTemplate>
         <div class="row">
-            <div class="col-3">
-                <img alt="cover" src="/api/Cover?coverId=1"/>
+            <div class="col-md-1 col-sm-3">
+                <img alt="cover" src="/api/Cover?coverId=@_album?.CoverId" class="w-11 h-11" />
             </div>
             <div class="col-9">
-                111
+                @_album?.Title
             </div>
         </div>
     </BodyTemplate>
@@ -18,10 +20,19 @@
     [Parameter]
     public int? Id { get; set; }
 
-    protected override void OnInitialized()
+    private AlbumVo? _album;
+
+
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
         if (Id == null)
+        {
+            NavigationManager.NavigateTo("/Albums");
+            return;
+        }
+
+        _album = await Http.GetFromJsonAsync<AlbumVo>($"/api/Album/AllTracks?albumId={Id}");
+        if (_album == null)
         {
             NavigationManager.NavigateTo("/Albums");
             return;
