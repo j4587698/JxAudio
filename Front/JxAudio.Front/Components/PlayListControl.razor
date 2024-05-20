@@ -1,6 +1,7 @@
 ﻿@using JxAudio.TransVo
 
-<ListGroup TItem="TrackVo" Items="TrackVos" Value="SelectedTrack" ValueChanged="SelectedTrackChanged"></ListGroup>
+<ListGroup TItem="TrackVo" Items="TrackVos" Value="SelectedTrack" ValueChanged="SelectedTrackChanged" GetItemDisplayText="GetItemDisplayText">
+</ListGroup>
 
 @code {
     [Parameter]
@@ -11,4 +12,10 @@
 
     [Parameter]
     public EventCallback<TrackVo> SelectedTrackChanged { get; set; }
+
+    private string GetItemDisplayText(TrackVo arg)
+    {
+        return $"{(arg.Title ?? "未知歌曲")} - {(arg.ArtistName ?? "未知歌手")}";
+    }
+
 }
