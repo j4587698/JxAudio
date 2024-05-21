@@ -197,6 +197,7 @@
 
 .custom-popup {
     --bs-popover-min-width: 0px;
+    --bs-popover-max-width: 100rem;
 }
 
 .custom-popup .popover-body{

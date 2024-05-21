@@ -1,6 +1,13 @@
 ﻿@using JxAudio.TransVo
 
-<ListGroup TItem="TrackVo" Items="TrackVos" Value="SelectedTrack" ValueChanged="SelectedTrackChanged" GetItemDisplayText="GetItemDisplayText">
+<ListGroup TItem="TrackVo" Items="TrackVos" Value="SelectedTrack" ValueChanged="SelectedTrackChanged"
+           GetItemDisplayText="GetItemDisplayText" style="height: 20rem;min-width: 300px">
+    <HeaderTemplate>
+        <div class="list-group-header">
+            <div class="flex-fill">播放列表</div>
+            <Button Color="Color.Danger" Icon="fa fa-plus" Size="Size.ExtraSmall">生成歌单</Button>
+        </div>
+    </HeaderTemplate>
 </ListGroup>
 
 @code {

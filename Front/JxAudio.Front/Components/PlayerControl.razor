@@ -93,7 +93,7 @@
                 <TextMessage Size="18"></TextMessage>
                 <PopConfirmButton CustomClass="custom-popup" Placement="Placement.Top">
                     <BodyTemplate>
-                        <PlayListControl TrackVos="_tracks" SelectedTrack="CurrentTrack"></PlayListControl>
+                        <PlayListControl TrackVos="_tracks" SelectedTrack="CurrentTrack" SelectedTrackChanged="SelectedTrackChanged"></PlayListControl>
                     </BodyTemplate>
                     <ChildContent>
                         <div class="d-flex align-items-center">
@@ -315,6 +315,16 @@
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private async Task SelectedTrackChanged(TrackVo track)
+    {
+        var index = _tracks.IndexOf(track);
+        if (index != -1)
+        {
+            _playIndex = index;
+            await PlayNow();
         }
     }
 
