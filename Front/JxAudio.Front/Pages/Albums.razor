@@ -20,7 +20,7 @@
         </TableColumn>
         <TableColumn @bind-Field="@context.Title" Searchable="true" Sortable="true" Filterable="true">
             <Template Context="value">
-                <LinkButton Text="@value.Value"></LinkButton>
+                <LinkButton Text="@value.Value" Url=@($"/Album/{value.Row.Id}")></LinkButton>
             </Template>
         </TableColumn>
         <TableColumn @bind-Field="@context.ArtistName" Searchable="true" Sortable="true" Filterable="true"></TableColumn>

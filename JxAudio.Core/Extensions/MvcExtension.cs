@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using JxAudio.Core.Options;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing;
@@ -70,8 +71,7 @@ public static class MvcExtension
                             {
                                 selectors.EndpointMetadata.Remove(nullableContext);
                             }
-                            
-                            var hasAttribute = false;
+
                             var prefix = option.GetPrefix.FirstOrDefault(x => action.ActionName.StartsWith(x));
                             if (prefix != null)
                             {
@@ -83,7 +83,10 @@ public static class MvcExtension
                                 selectors.AttributeRouteModel =
                                     new AttributeRouteModel(new Microsoft.AspNetCore.Mvc.RouteAttribute("[action]"));
                                 selectors.EndpointMetadata.Add(new HttpGetAttribute("[action]"));
-                                hasAttribute = true;
+                                selectors.EndpointMetadata.Add(new HttpMethodMetadata(["GET"]));
+
+                                selectors.ActionConstraints.Add(new HttpMethodActionConstraint(["GET"]));
+                                continue;
                             }
 
                             prefix = option.PutPrefix.FirstOrDefault(x => action.ActionName.StartsWith(x));
@@ -97,7 +100,10 @@ public static class MvcExtension
                                 selectors.AttributeRouteModel =
                                     new AttributeRouteModel(new Microsoft.AspNetCore.Mvc.RouteAttribute("[action]"));
                                 selectors.EndpointMetadata.Add(new HttpPutAttribute("[action]"));
-                                hasAttribute = true;
+                                selectors.EndpointMetadata.Add(new HttpMethodMetadata(["PUT"]));
+
+                                selectors.ActionConstraints.Add(new HttpMethodActionConstraint(["PUT"]));
+                                continue;
                             }
 
                             prefix = option.DeletePrefix.FirstOrDefault(x => action.ActionName.StartsWith(x));
@@ -111,21 +117,24 @@ public static class MvcExtension
                                 selectors.AttributeRouteModel =
                                     new AttributeRouteModel(new Microsoft.AspNetCore.Mvc.RouteAttribute("[action]"));
                                 selectors.EndpointMetadata.Add(new HttpDeleteAttribute("[action]"));
-                                hasAttribute = true;
+                                selectors.EndpointMetadata.Add(new HttpMethodMetadata(["DELETE"]));
+
+                                selectors.ActionConstraints.Add(new HttpMethodActionConstraint(["DELETE"]));
+                                continue;
                             }
 
                             prefix = option.PostPrefix.FirstOrDefault(x => action.ActionName.StartsWith(x));
-                            if (!hasAttribute)
+                            if (option.AutoRemoveDynamicPrefix && prefix != null)
                             {
-                                if (option.AutoRemoveDynamicPrefix && prefix != null)
-                                {
-                                    action.ActionName = action.ActionName[prefix.Length..];
-                                }
-
-                                selectors.AttributeRouteModel =
-                                    new AttributeRouteModel(new Microsoft.AspNetCore.Mvc.RouteAttribute("[action]"));
-                                selectors.EndpointMetadata.Add(new HttpPostAttribute("[action]"));
+                                action.ActionName = action.ActionName[prefix.Length..];
                             }
+
+                            selectors.AttributeRouteModel =
+                                new AttributeRouteModel(new Microsoft.AspNetCore.Mvc.RouteAttribute("[action]"));
+                            selectors.EndpointMetadata.Add(new HttpPostAttribute("[action]"));
+                            selectors.EndpointMetadata.Add(new HttpMethodMetadata(["POST"]));
+
+                            selectors.ActionConstraints.Add(new HttpMethodActionConstraint(["POST"]));
                         }
                     }
                 }

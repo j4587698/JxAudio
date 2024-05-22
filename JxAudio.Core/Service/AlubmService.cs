@@ -339,6 +339,14 @@ public class AlbumService
             IsSearch = options.Searches.Any() || options.CustomerSearches.Any()
         };
     }
+
+    public async Task<AlbumEntity> GetAlbumById(int albumId, Guid userId, CancellationToken cancellationToken)
+    {
+        var album = await GetAlbumBase(userId, null)
+            .Where(x => x.Id == albumId)
+            .FirstAsync(cancellationToken);
+        return album;
+    }
     
     public async Task<List<TrackEntity>> GetTracksByAlbumIdAsync(int albumId, Guid userId, CancellationToken cancellationToken)
     {

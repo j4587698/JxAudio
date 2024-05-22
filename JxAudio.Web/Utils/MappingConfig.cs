@@ -10,13 +10,13 @@ public class MappingConfig
     public static void Configure()
     {
         TypeAdapterConfig<AlbumEntity, AlbumVo>.NewConfig()
-            .Map(dest => dest.ArtistName, src => src.ArtistEntity!.Name ?? "[未知歌手]")
-            .Map(dest => dest.Count, src => src.TrackEntities!.Count)
+            .Map(dest => dest.ArtistName, src => src.ArtistEntity != null ? src.ArtistEntity.Name : "[未知歌手]")
+            .Map(dest => dest.Count, src => src.TrackEntities != null ? src.TrackEntities.Count : 0)
             .Map(dest => dest.CoverId, src => src.PictureId)
-            .Map(dest => dest.TotalSize, src => src.TrackEntities!.Sum(x => x.Size));
+            .Map(dest => dest.TotalSize, src => src.TrackEntities != null ? src.TrackEntities.Sum(x => x.Size) : 0);
 
         TypeAdapterConfig<TrackEntity, TrackVo>.NewConfig()
-            .Map(dest => dest.ArtistName, src => src.ArtistEntities!.Select(x => x.Name).Join(","));
+            .Map(dest => dest.ArtistName, src => (src.ArtistEntities??Array.Empty<ArtistEntity>()).Select(x => x.Name).Join(","));
     }
     
 }

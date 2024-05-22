@@ -22,6 +22,4 @@ public class AlbumVo
 
     [Description("专辑总大小")]
     public long TotalSize { get; set; }
-    
-    
 }

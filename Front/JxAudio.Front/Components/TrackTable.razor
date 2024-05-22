@@ -1,0 +1,52 @@
+﻿@using JxAudio.Front.Data
+@using JxAudio.TransVo
+@inject IDispatchService<AddTrackMessage> DispatchService
+
+<Table TItem="TrackVo" Items="Tracks" IsBordered="true" IsStriped="true" ShowExtendButtons="true" 
+       ShowExtendEditButton="false" ShowExtendDeleteButton="false">
+    <TableColumns>
+        <TableColumn @bind-Field="@context.Title"></TableColumn>
+        <TableColumn @bind-Field="@context.ArtistName"></TableColumn>
+        <TableColumn @bind-Field="@context.Name">
+            <Template Context="value">
+                @Path.GetExtension(value.Value!).ToUpper()
+            </Template>
+        </TableColumn>
+        <TableColumn @bind-Field="@context.BitRate"></TableColumn>
+        <TableColumn @bind-Field="@context.Size"></TableColumn>
+    </TableColumns>
+    <RowButtonTemplate>
+        <TableCellButton Icon="fa fa-play" OnClick="() => Play(context)"></TableCellButton>
+        <TableCellButton Icon="fa fa-plus" OnClick="() => AddToList(context)"></TableCellButton>
+    </RowButtonTemplate>
+</Table>
+
+@code {
+    [Parameter]
+    public List<TrackVo>? Tracks { get; set; }
+
+    private void Play(TrackVo trackVo)
+    {
+        DispatchService.Dispatch(new DispatchEntry<AddTrackMessage>()
+        {
+            Entry = new AddTrackMessage()
+            {
+                Tracks = [trackVo],
+                Type = "replace"
+            }
+        });
+    }
+
+    private void AddToList(TrackVo trackVo)
+    {
+        DispatchService.Dispatch(new DispatchEntry<AddTrackMessage>()
+        {
+            Entry = new AddTrackMessage()
+            {
+                Tracks = [trackVo],
+                Type = "add"
+            }
+        });
+    }
+
+}

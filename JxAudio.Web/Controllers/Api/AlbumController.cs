@@ -33,6 +33,14 @@ public class AlbumController(AlbumService albumService): DynamicControllerBase
             IsSorted = queryAsync.IsSorted
         });
     }
+    
+    [Authorize]
+    public async Task<object> Get(int id)
+    {
+        var userId = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        var album = await albumService.GetAlbumById(id, Guid.Parse(userId), HttpContext.RequestAborted);
+        return ResultVo.Success(data: album.Adapt<AlbumVo>());
+    }
 
     [Authorize]
     public async Task<object> GetAllTracks(int albumId)

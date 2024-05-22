@@ -53,7 +53,7 @@
 
     private async Task RunNow(ScheduleVo scheduleVo)
     {
-        scheduleVo.Scheduler!.Run();
+        _ = scheduleVo.Scheduler!.Run();
         await ToastService.Success(TaskManagerLocalizer["Success"], TaskManagerLocalizer["SuccessContent"]);
     }
 
