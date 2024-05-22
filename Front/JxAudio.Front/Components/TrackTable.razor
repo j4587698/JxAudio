@@ -6,10 +6,17 @@
        ShowExtendEditButton="false" ShowExtendDeleteButton="false">
     <TableColumns>
         <TableColumn @bind-Field="@context.Title"></TableColumn>
-        <TableColumn @bind-Field="@context.ArtistName"></TableColumn>
+        <TableColumn @bind-Field="@context.Artists">
+            <Template Context="value">
+                @foreach (var artist in value.Value)
+                {
+                    <a href="/Artist/@artist.Id">@artist.Name</a> @:&nbsp;
+                }
+            </Template>
+        </TableColumn>
         <TableColumn @bind-Field="@context.Name">
             <Template Context="value">
-                @Path.GetExtension(value.Value!).ToUpper()
+                @Path.GetExtension(value.Value!)[1..].ToUpper()
             </Template>
         </TableColumn>
         <TableColumn @bind-Field="@context.BitRate"></TableColumn>

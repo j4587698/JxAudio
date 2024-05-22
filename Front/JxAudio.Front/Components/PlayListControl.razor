@@ -22,7 +22,7 @@
 
     private string GetItemDisplayText(TrackVo arg)
     {
-        return $"{(arg.Title ?? "未知歌曲")} - {(arg.ArtistName ?? "未知歌手")}";
+        return $"{arg.Title ?? "未知歌曲"} - {(arg.Artists == null ? "未知歌手" :  string.Join(',', arg.Artists.Select(x => x.Name)))}";
     }
 
 }

@@ -34,5 +34,5 @@ public class TrackVo
     public string? Title { get; set; }
 
     [Description("歌手名")]
-    public string? ArtistName { get; set; }
+    public List<ArtistVo>? Artists { get; set; }
 }

@@ -23,7 +23,7 @@
                     <div class="w-52 cursor-pointer text-truncate">
                         <div class="d-flex">
                             <span>@(CurrentTrack?.Title ?? "JxAudio")</span>
-                            <div class="ms-2 text-secondary">@(CurrentTrack?.ArtistName ?? "JxAudio")</div>
+                            <div class="ms-2 text-secondary">@(CurrentTrack?.Artists == null ? "JxAudio" : string.Join(',', CurrentTrack.Artists.Select(x => x.Name)))</div>
                         </div>
                     </div>
                     <div class="d-flex gap-x-3">

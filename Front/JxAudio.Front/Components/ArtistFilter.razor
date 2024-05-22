@@ -1,0 +1,28 @@
+﻿@using JxAudio.Front.Filter
+@using JxAudio.TransVo
+@inherits FilterBase
+
+<BootstrapInput @bind-Value="@_value"></BootstrapInput>
+
+@code {
+    private string? _value;
+    
+    public override void Reset()
+    {
+        _value = null;
+        StateHasChanged();
+    }
+
+    public override FilterKeyValueAction GetFilterConditions()
+    {
+        var filter = new FilterKeyValueAction() { Filters = new() };
+        filter.Filters.Add(new FilterKeyValueAction()
+        {
+            FieldKey = FieldKey,
+            FieldValue = _value,
+            FilterAction = FilterAction.Equal
+        });
+        return filter;
+    }
+
+}

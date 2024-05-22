@@ -6,16 +6,24 @@
 <Card>
     <BodyTemplate>
         <div class="row">
-            <div class="col-xs-5 col-md-3 col-sm-4">
+            <div class="col-xs-5 col-md-3 col-sm-4 col-lg-2">
                 <img alt="cover" src="/api/Cover?coverId=@_album?.CoverId" class="w-100 h-100" />
             </div>
-            <div class="col-md-9 col-xs-7 col-sm-8">
+            <div class="col-md-9 col-xs-7 col-sm-8 col-lg-10">
                 <div class="row">
                     <div class="col-12">
                         <h1>@_album?.Title</h1>
                     </div>
                     <div class="col-12">
-                        <h3>@_album?.ArtistName</h3>
+                        <h3>@if (_album?.Artist == null)
+                            {
+                                @:未知歌手
+                            }
+                            else
+                            {
+                                <a href="/Artist/@_album.Artist.Id">@_album.Artist.Name</a> @:&nbsp;
+                            }</h3>
+                        
                     </div>
                 </div>
                  

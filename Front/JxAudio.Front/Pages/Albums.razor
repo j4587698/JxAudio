@@ -23,7 +23,14 @@
                 <LinkButton Text="@value.Value" Url=@($"/Album/{value.Row.Id}")></LinkButton>
             </Template>
         </TableColumn>
-        <TableColumn @bind-Field="@context.ArtistName" Searchable="true" Sortable="true" Filterable="true"></TableColumn>
+        <TableColumn @bind-Field="@context.Artist" Searchable="true" Sortable="true" Filterable="true">
+            <FilterTemplate>
+                <ArtistFilter></ArtistFilter>
+            </FilterTemplate>
+            <Template Context="value">
+                <LinkButton >@value.Value.Name</LinkButton>
+            </Template>
+        </TableColumn>
         <TableColumn @bind-Field="@context.Count"></TableColumn>
         <TableColumn @bind-Field="@context.TotalSize">
             <Template Context="value">

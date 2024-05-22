@@ -15,7 +15,7 @@ public class AlbumVo
     public int? ArtistId { get; set; }
 
     [Description("艺术家")]
-    public string? ArtistName { get; set; }
+    public ArtistVo? Artist { get; set; }
 
     [Description("歌曲数量")]
     public int Count { get; set; }
