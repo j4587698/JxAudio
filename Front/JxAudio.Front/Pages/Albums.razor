@@ -1,7 +1,6 @@
 ﻿@page "/Albums"
 @using Jx.Toolbox.Extensions
 @using JxAudio.TransVo
-@using JxAudio.Front.Components
 @using JxAudio.Front.Data
 @using JxAudio.Front.Filter
 
@@ -49,9 +48,14 @@
 
     private async Task<QueryData<AlbumVo>> OnQueryAsync(QueryPageOptions queryPageOptions)
     {
-        queryPageOptions.SortName = queryPageOptions.SortName.ToFieldName();
-        var responseMessage = await Http.PostAsJsonAsync("/api/Album", 
-            new {DynamicFilterInfo = queryPageOptions.ToDynamicFilter(), QueryPageOptions = queryPageOptions});
+        QueryOptionsVo queryOptionsVo = new QueryOptionsVo();
+        queryOptionsVo.SortName = queryPageOptions.SortName.ToFieldName();
+        queryOptionsVo.DynamicFilterInfo = queryPageOptions.ToDynamicFilter();
+        queryOptionsVo.SortOrder = (int)queryPageOptions.SortOrder;
+        queryOptionsVo.IsPage = queryPageOptions.IsPage;
+        queryOptionsVo.PageIndex = queryPageOptions.PageIndex;
+        queryOptionsVo.PageItems = queryPageOptions.PageItems;
+        var responseMessage = await Http.PostAsJsonAsync("/api/Album", queryOptionsVo);
         var vo = await responseMessage.Content.ReadFromJsonAsync<QueryData<AlbumVo>>();
         if (vo == null)
         {

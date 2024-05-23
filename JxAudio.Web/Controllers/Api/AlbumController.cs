@@ -12,6 +12,7 @@ using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetTaste;
+using DynamicFilterInfo = FreeSql.Internal.Model.DynamicFilterInfo;
 using ResultVo = JxAudio.Web.Vo.ResultVo;
 
 namespace JxAudio.Web.Controllers.Api;
@@ -19,18 +20,18 @@ namespace JxAudio.Web.Controllers.Api;
 public class AlbumController(AlbumService albumService): DynamicControllerBase
 {
     [Authorize]
-    public async Task<object> Post([FromBody]QueryVo queryVo)
+    public async Task<object> Post([FromBody]QueryOptionsVo queryOptionsVo)
     {
         var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
-        var queryAsync = await albumService.QueryData(queryVo.QueryPageOptions!, queryVo.DynamicFilterInfo!, Guid.Parse(id));
+        var queryAsync = await albumService.QueryData(queryOptionsVo.Adapt<QueryPageOptions>()!, queryOptionsVo.DynamicFilterInfo.Adapt<DynamicFilterInfo>()!, Guid.Parse(id));
         return ResultVo.Success(data: new QueryData<AlbumVo>()
         {
             Items = queryAsync.Items?.Select(x => x.Adapt<AlbumVo>()),
             TotalCount = queryAsync.TotalCount,
-            IsAdvanceSearch = queryAsync.IsAdvanceSearch,
-            IsFiltered = queryAsync.IsFiltered,
-            IsSearch = queryAsync.IsSearch,
-            IsSorted = queryAsync.IsSorted
+            IsAdvanceSearch = true,
+            IsFiltered = true,
+            IsSearch = true,
+            IsSorted = true
         });
     }
     

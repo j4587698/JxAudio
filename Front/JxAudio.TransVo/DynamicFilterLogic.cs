@@ -1,4 +1,4 @@
-﻿namespace JxAudio.Front.Filter;
+﻿namespace JxAudio.TransVo;
 
 public enum DynamicFilterLogic
 {
