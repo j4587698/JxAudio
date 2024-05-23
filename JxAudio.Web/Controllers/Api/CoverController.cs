@@ -6,14 +6,14 @@ namespace JxAudio.Web.Controllers.Api;
 
 public class CoverController: DynamicControllerBase
 {
-    public IActionResult Get(int? coverId)
+    public async Task<IActionResult> Get(int? coverId)
     {
         if (coverId is null or 0)
         {
             return File(Constants.GetDefaultCover(), "image/png");
         }
 
-        var picture = PictureEntity.Find(coverId.Value);
+        var picture = await PictureEntity.FindAsync(coverId.Value);
         if (picture == null)
         {
             return File(Constants.GetDefaultCover(), "image/png");
@@ -24,6 +24,6 @@ public class CoverController: DynamicControllerBase
             return File(Constants.GetDefaultCover(), "image/png");
         }
         
-        return File(System.IO.File.ReadAllBytes(coverPath), picture.MimeType!);
+        return File(await System.IO.File.ReadAllBytesAsync(coverPath), picture.MimeType!);
     }
 }

@@ -19,6 +19,7 @@ public class MappingConfig
             .Map(dest => dest.Artists, src =>src.ArtistEntities);
         
         TypeAdapterConfig<ArtistEntity, ArtistVo>.NewConfig()
+            .Map(dest => dest.CoverId, src => src.PictureId)
             .Map(dest => dest.Count, src => src.TrackEntities != null ? src.TrackEntities.Count : 0)
             .Map(dest => dest.TotalSize, src => src.TrackEntities != null ? src.TrackEntities.Sum(x => x.Size) : 0);
     }

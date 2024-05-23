@@ -44,10 +44,10 @@ public class AlbumController(AlbumService albumService): DynamicControllerBase
     }
 
     [Authorize]
-    public async Task<object> GetAllTracks(int albumId)
+    public async Task<object> GetAllTracks(int id)
     {
-        var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
-        var tracks = await albumService.GetTracksByAlbumIdAsync(albumId, Guid.Parse(id), HttpContext.RequestAborted);
+        var userId = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        var tracks = await albumService.GetTracksByAlbumIdAsync(id, Guid.Parse(userId), HttpContext.RequestAborted);
         return ResultVo.Success(data: tracks.Adapt<List<TrackVo>>());
     }
 }

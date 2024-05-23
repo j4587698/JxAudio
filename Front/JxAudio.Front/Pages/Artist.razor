@@ -1,0 +1,55 @@
+﻿@page "/Artist/{id:int?}"
+@using JxAudio.TransVo
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+
+<PageTitle>专辑 @_artist?.Name - JxAudio</PageTitle>
+
+<Card>
+    <BodyTemplate>
+        <div class="row">
+            <div class="col-xs-5 col-md-3 col-sm-4 col-lg-2">
+                <img alt="cover" src="/api/Artist/Avatar?id=@_artist?.CoverId" class="w-100 h-100" />
+            </div>
+            <div class="col-md-9 col-xs-7 col-sm-8 col-lg-10">
+                <div class="row">
+                    <div class="col-12">
+                        <h1>@_artist?.Name</h1>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </BodyTemplate>
+</Card>
+<br />
+<div class="g-3">
+    <TrackTable Tracks="_tracks"></TrackTable>
+</div>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private ArtistVo? _artist;
+
+    private List<TrackVo>? _tracks;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id == null)
+        {
+            NavigationManager.NavigateTo("/Artists");
+            return;
+        }
+
+        _artist = await Http.GetFromJsonAsync<ArtistVo>($"/api/Artist/?id={Id}");
+        if (_artist == null)
+        {
+            NavigationManager.NavigateTo("/Artists");
+            return;
+        }
+        
+        _tracks = await Http.GetFromJsonAsync<List<TrackVo>>($"/api/Artist/AllTracks?id={Id}");
+    }
+}

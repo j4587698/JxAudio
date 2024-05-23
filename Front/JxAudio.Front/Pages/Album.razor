@@ -63,7 +63,7 @@
             return;
         }
         
-        _tracks = await Http.GetFromJsonAsync<List<TrackVo>>($"/api/Album/AllTracks?albumId={Id}");
+        _tracks = await Http.GetFromJsonAsync<List<TrackVo>>($"/api/Album/AllTracks?id={Id}");
     }
 
 }

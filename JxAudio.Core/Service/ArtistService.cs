@@ -215,6 +215,13 @@ public class ArtistService
             IsSearch = true
         };
     }
+
+    public async Task<ArtistEntity> GetArtistById(int artistId, Guid userId, CancellationToken cancellationToken)
+    {
+        return await GetArtistBase(userId, null)
+            .Where(x => x.Id == artistId)
+            .FirstAsync(cancellationToken);
+    }
     
     public async Task<List<TrackEntity>> GetTracksByArtistIdAsync(int artistId, Guid userId, CancellationToken cancellationToken)
     {

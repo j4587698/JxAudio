@@ -55,7 +55,7 @@
     
     private async Task PlayAll(ArtistVo artistVo, string type)
     {
-        var responseMessage = await Http.GetAsync($"/api/Artist/AllTracks?artistId={artistVo.Id}");
+        var responseMessage = await Http.GetAsync($"/api/Artist/AllTracks?id={artistVo.Id}");
         var tracks = await responseMessage.Content.ReadFromJsonAsync<List<TrackVo>>();
         if (tracks != null)
         {

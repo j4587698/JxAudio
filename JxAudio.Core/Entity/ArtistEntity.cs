@@ -10,6 +10,11 @@ public class ArtistEntity: BaseEntity<ArtistEntity, int>
     [Description("歌手名")]
     public string? Name { get; set; }
 
+    public int PictureId { get; set; }
+
+    [Navigate(nameof(PictureId))]
+    public PictureEntity? PictureEntity { get; set; }
+
     [Column(IsIgnore = true)]
     public long Count { get; set; }
     

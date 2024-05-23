@@ -14,4 +14,7 @@ public class ArtistVo
 
     [Description("总大小")]
     public long TotalSize { get; set; }
+    
+    [Description("封面")]
+    public int? CoverId { get; set; }
 }
