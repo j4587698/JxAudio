@@ -1,0 +1,73 @@
+﻿@page "/Artists"
+@using Jx.Toolbox.Extensions
+@using JxAudio.Front.Data
+@using JxAudio.Front.Filter
+@using JxAudio.TransVo
+
+@inject HttpClient Http
+@inject IDispatchService<AddTrackMessage> DispatchService
+
+<PageTitle>歌手列表 - JxAudio</PageTitle>
+
+<FrontTable TItem="ArtistVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"
+            ShowExtendDeleteButton="false" ShowExtendEditButton="false" OnQueryAsync="OnQueryAsync">
+    <TableColumns>
+        <TableColumn @bind-Field="@context.Name" Searchable="true" Sortable="true" Filterable="true">
+            <Template Context="value">
+                <LinkButton Text="@value.Value" Url=@($"/Artist/{value.Row.Id}")></LinkButton>
+            </Template>
+        </TableColumn>
+        <TableColumn @bind-Field="@context.Count"></TableColumn>
+        <TableColumn @bind-Field="@context.TotalSize">
+            <Template Context="value">
+                @value.Value.ToSizeString()
+            </Template>
+        </TableColumn>
+    </TableColumns>
+    <RowButtonTemplate>
+        <TableCellButton Icon="fa fa-play" OnClick="@(() => PlayAll(context, "replace"))"></TableCellButton>
+        <TableCellButton Icon="fa fa-plus" OnClick="@(() => PlayAll(context, "add"))"></TableCellButton>
+    </RowButtonTemplate>
+</FrontTable>
+
+@code {
+
+    private async Task<QueryData<ArtistVo>> OnQueryAsync(QueryPageOptions queryPageOptions)
+    {
+        QueryOptionsVo queryOptionsVo = new QueryOptionsVo
+        {
+            SortName = queryPageOptions.SortName.ToFieldName(),
+            DynamicFilterInfo = queryPageOptions.ToDynamicFilter(),
+            SortOrder = (int)queryPageOptions.SortOrder,
+            IsPage = queryPageOptions.IsPage,
+            PageIndex = queryPageOptions.PageIndex,
+            PageItems = queryPageOptions.PageItems
+        };
+        var responseMessage = await Http.PostAsJsonAsync("/api/Artist", queryOptionsVo);
+        var vo = await responseMessage.Content.ReadFromJsonAsync<QueryData<ArtistVo>>();
+        if (vo == null)
+        {
+            return new QueryData<ArtistVo>();
+        }
+
+        return vo;
+    }
+    
+    private async Task PlayAll(ArtistVo artistVo, string type)
+    {
+        var responseMessage = await Http.GetAsync($"/api/Artist/AllTracks?artistId={artistVo.Id}");
+        var tracks = await responseMessage.Content.ReadFromJsonAsync<List<TrackVo>>();
+        if (tracks != null)
+        {
+            DispatchService.Dispatch(new DispatchEntry<AddTrackMessage>()
+            {
+                Entry = new AddTrackMessage()
+                {
+                    Tracks = tracks,
+                    Type = type
+                }
+            });
+        }
+    }
+
+}

@@ -8,19 +8,27 @@
         <TableColumn @bind-Field="@context.Title"></TableColumn>
         <TableColumn @bind-Field="@context.Artists">
             <Template Context="value">
-                @foreach (var artist in value.Value)
+                @if (value.Value != null)
                 {
-                    <a href="/Artist/@artist.Id">@artist.Name</a> @:&nbsp;
+                    @foreach (var artist in value.Value)
+                    {
+                        <LinkButton Url="@($"/Artist/{artist.Id}")">@artist.Name</LinkButton>
+                        @:&nbsp;
+                    }
                 }
             </Template>
         </TableColumn>
-        <TableColumn @bind-Field="@context.Name">
+        <TableColumn @bind-Field="@context.Name" Text="音频格式">
             <Template Context="value">
                 @Path.GetExtension(value.Value!)[1..].ToUpper()
             </Template>
         </TableColumn>
         <TableColumn @bind-Field="@context.BitRate"></TableColumn>
-        <TableColumn @bind-Field="@context.Size"></TableColumn>
+        <TableColumn @bind-Field="@context.Size">
+            <Template Context="value">
+                @value.Value.ToFileSizeString()
+            </Template>
+        </TableColumn>
     </TableColumns>
     <RowButtonTemplate>
         <TableCellButton Icon="fa fa-play" OnClick="() => Play(context)"></TableCellButton>

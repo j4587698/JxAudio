@@ -53,7 +53,7 @@ public sealed partial class MainLayout
         var menus = new List<MenuItem>
         {
             new() { Text = "专辑", Icon = "fa-solid fa-fw fa-flag", Url = "/Albums", Match = NavLinkMatch.All },
-            new() { Text = "Counter", Icon = "fa-solid fa-fw fa-check-square", Url = "/counter" },
+            new() { Text = "歌手", Icon = "fa-solid fa-fw fa-check-square", Url = "/Artists" },
             new() { Text = "Weather", Icon = "fa-solid fa-fw fa-database", Url = "/weather" },
             new() { Text = "Table", Icon = "fa-solid fa-fw fa-table", Url = "/table" },
             new() { Text = "花名册", Icon = "fa-solid fa-fw fa-users", Url = "/users" }

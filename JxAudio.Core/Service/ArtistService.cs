@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using BootstrapBlazor.Components;
 using FreeSql;
+using FreeSql.Internal.Model;
 using JxAudio.Core.Attributes;
 using JxAudio.Core.Entity;
 using JxAudio.Core.Extensions;
@@ -178,6 +180,53 @@ public class ArtistService
             await BaseEntity.Orm.InsertOrUpdate<ArtistRatingEntity>().SetSource(artistStarEntity)
                 .ExecuteAffrowsAsync(cancellationToken);
         }
+    }
+    
+    public async Task<QueryData<ArtistEntity>> QueryData(QueryPageOptions options, DynamicFilterInfo dynamicFilterInfo, Guid userId)
+    {
+        var select = GetArtistBase(userId, null)
+            .IncludeMany(x => x.TrackEntities!.Select(y => new TrackEntity()
+                {
+                    Id = y.Id,
+                    Duration = y.Duration,
+                    Size = y.Size
+                }),
+                then => then.Where(y =>
+                        y.DirectoryEntity!.IsAccessControlled == false ||
+                        y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
+            .WhereDynamicFilter(dynamicFilterInfo)
+            .OrderByPropertyNameIf(options.SortOrder != SortOrder.Unset, options.SortName,
+                options.SortOrder == SortOrder.Asc)
+            .Count(out var count);
+        if (options.IsPage)
+        {
+            select.Page(options.PageIndex, options.PageItems);
+        }
+
+        var data = await select.ToListAsync();
+        
+        return new QueryData<ArtistEntity>()
+        {
+            TotalCount = (int)count,
+            Items = data,
+            IsSorted = options.SortOrder != SortOrder.Unset,
+            IsFiltered = true,
+            IsAdvanceSearch = true,
+            IsSearch = true
+        };
+    }
+    
+    public async Task<List<TrackEntity>> GetTracksByArtistIdAsync(int artistId, Guid userId, CancellationToken cancellationToken)
+    {
+        var tracks = await TrackEntity.Where(x => x.ArtistEntities!.Any(y => y.Id == artistId) && (x.DirectoryEntity!.IsAccessControlled == false ||
+                                                                            x.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
+            .IncludeMany(x => x.TrackStarEntities, then => then.Where(y => y.UserId == userId))
+            .IncludeMany(x => x.ArtistEntities)
+            .Include(x => x.AlbumEntity)
+            .Include(x => x.GenreEntity)
+            .ToListAsync(cancellationToken);
+
+        return tracks;
     }
 
 }

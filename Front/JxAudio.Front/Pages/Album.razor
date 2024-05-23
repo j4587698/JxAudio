@@ -3,6 +3,8 @@
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 
+<PageTitle>专辑 @_album?.Title - JxAudio</PageTitle>
+
 <Card>
     <BodyTemplate>
         <div class="row">
@@ -21,7 +23,7 @@
                             }
                             else
                             {
-                                <a href="/Artist/@_album.Artist.Id">@_album.Artist.Name</a> @:&nbsp;
+                                @_album.Artist.Name
                             }</h3>
                         
                     </div>

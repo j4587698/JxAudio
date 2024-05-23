@@ -7,7 +7,7 @@
 @inject HttpClient Http
 @inject IDispatchService<AddTrackMessage> DispatchService
 
-<PageTitle>专辑</PageTitle>
+<PageTitle>所有专辑 - JxAudio</PageTitle>
 
 <FrontTable TItem="AlbumVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"
             ShowExtendDeleteButton="false" ShowExtendEditButton="false" OnQueryAsync="OnQueryAsync">
@@ -27,7 +27,14 @@
                 <ArtistFilter></ArtistFilter>
             </FilterTemplate>
             <Template Context="value">
-                <LinkButton >@value.Value.Name</LinkButton>
+                @if (value.Value != null)
+                {
+                    <LinkButton Url="@($"/Artist/{value.Value.Id}")">@value.Value?.Name</LinkButton>
+                }
+                else
+                {
+                    @:未知歌手
+                }
             </Template>
         </TableColumn>
         <TableColumn @bind-Field="@context.Count"></TableColumn>
@@ -48,13 +55,15 @@
 
     private async Task<QueryData<AlbumVo>> OnQueryAsync(QueryPageOptions queryPageOptions)
     {
-        QueryOptionsVo queryOptionsVo = new QueryOptionsVo();
-        queryOptionsVo.SortName = queryPageOptions.SortName.ToFieldName();
-        queryOptionsVo.DynamicFilterInfo = queryPageOptions.ToDynamicFilter();
-        queryOptionsVo.SortOrder = (int)queryPageOptions.SortOrder;
-        queryOptionsVo.IsPage = queryPageOptions.IsPage;
-        queryOptionsVo.PageIndex = queryPageOptions.PageIndex;
-        queryOptionsVo.PageItems = queryPageOptions.PageItems;
+        QueryOptionsVo queryOptionsVo = new QueryOptionsVo
+        {
+            SortName = queryPageOptions.SortName.ToFieldName(),
+            DynamicFilterInfo = queryPageOptions.ToDynamicFilter(),
+            SortOrder = (int)queryPageOptions.SortOrder,
+            IsPage = queryPageOptions.IsPage,
+            PageIndex = queryPageOptions.PageIndex,
+            PageItems = queryPageOptions.PageItems
+        };
         var responseMessage = await Http.PostAsJsonAsync("/api/Album", queryOptionsVo);
         var vo = await responseMessage.Content.ReadFromJsonAsync<QueryData<AlbumVo>>();
         if (vo == null)
