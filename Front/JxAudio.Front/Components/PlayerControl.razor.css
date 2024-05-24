@@ -77,6 +77,21 @@
     --bs-btn-padding-y: 0;
 }
 
+.lyrics {
+    cursor: default; /* 不需要拖动，所以用默认光标 */
+    width: auto; /* 宽度根据内容自动调整 */
+    min-width: 100px; /* 可以设置一个最小宽度 */
+    max-width: 100%; /* 限制最大宽度，避免超出屏幕 */
+    user-select: none; /* 防止文本选择 */
+    position: fixed; /* 固定定位 */
+    bottom: 5rem; /* 定位到底部 */
+    left: 50%; /* 定位到左边的50% */
+    transform: translateX(-50%); /* 向左偏移自身宽度的50% */
+    pointer-events: none; /* 允许点击事件穿透 */
+    background-color: transparent; /* 背景透明 */
+    font-size: 2rem;
+}
+
 @media (max-width: 1000px) {
     .hide-on-mobile {
         display: none;
