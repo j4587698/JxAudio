@@ -35,4 +35,9 @@ public class TrackVo
 
     [Description("歌手名")]
     public List<ArtistVo>? Artists { get; set; }
+
+    [Description("歌词Id")]
+    public int LrcId { get; set; }
+
+    public List<LrcVo>? Lrc { get; set; }
 }

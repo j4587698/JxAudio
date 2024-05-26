@@ -1,0 +1,339 @@
+using System.Net.Http.Json;
+using BootstrapBlazor.Components;
+using JxAudio.Front.Data;
+using JxAudio.Front.Enums;
+using JxAudio.TransVo;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using Console = System.Console;
+
+namespace JxAudio.Front.Components;
+
+public partial class PlayerControl
+{
+    [Parameter] public int CurrentTime { get; set; }
+
+    [Parameter] public int Duration { get; set; }
+
+    [Parameter] public EventCallback<int> CurrentTimeChanged { get; set; }
+
+    private int Percent { get; set; }
+    private int _volume = 100;
+
+    private int Volume
+    {
+        get => _volume;
+        set
+        {
+            if (_volume != value)
+            {
+                _volume = value;
+                InvokeVoidAsync("setVolume", value / 100.0);
+            }
+        }
+    }
+
+    private PlayStatus _playStatus = PlayStatus.Stop;
+    private LoopStatus _loopStatus = LoopStatus.LoopOnce;
+
+    private string CurrentTimeString
+    {
+        get => CurrentTime.ToString();
+        set
+        {
+            CurrentTime = int.Parse(value);
+            var lrc = CurrentTrack?.Lrc?.Where(x => x.TimestampMs <= CurrentTime * 1000).MaxBy(x => x.TimestampMs);
+            if (lrc != null)
+            {
+                _lrc = lrc.Text ?? "";
+                var index = CurrentTrack!.Lrc!.LastIndexOf(lrc);
+                if (index > -1 && index < CurrentTrack.Lrc.Count - 1)
+                {
+                    index++;
+                    _nextLrcTime = CurrentTrack.Lrc[index].TimestampMs;
+                }
+                else
+                {
+                    _nextLrcTime = int.MaxValue;
+                }
+            }
+            else
+            {
+                _lrc = "暂无歌词";
+            }
+
+            Percent = CurrentTime * 100 / Duration;
+            CurrentTimeChanged.InvokeAsync(CurrentTime);
+            InvokeVoidAsync("setCurrentTime", CurrentTime);
+        }
+    }
+
+    private List<TrackVo> _tracks = new List<TrackVo>();
+    private TrackVo[]? _shuffleTrack;
+    private int _playIndex = 0;
+    private int _nextLrcTime;
+    private bool _showLrc;
+    private string _lrc = "暂无歌词";
+
+    private TrackVo? CurrentTrack
+    {
+        get
+        {
+            if (_loopStatus == LoopStatus.ShuffleOne)
+            {
+                return _shuffleTrack?.Length > _playIndex ? _shuffleTrack[_playIndex] : null;
+            }
+
+            return _tracks.Count > _playIndex ? _tracks[_playIndex] : null;
+        }
+    }
+
+    protected override Task InvokeInitAsync() => InvokeVoidAsync("init", Interop);
+
+    [JSInvokable]
+    public void OnTimeUpdate(double currentTime)
+    {
+        var time = (int)currentTime;
+        if (_showLrc && CurrentTrack?.Lrc?.Count > 0 && _nextLrcTime <= currentTime * 1000)
+        {
+            var lrc = CurrentTrack.Lrc.First(x => x.TimestampMs == _nextLrcTime);
+            _lrc = lrc.Text ?? "";
+            var index = CurrentTrack.Lrc.LastIndexOf(lrc);
+            if (index < CurrentTrack.Lrc.Count - 1)
+            {
+                index++;
+                _nextLrcTime = CurrentTrack.Lrc[index].TimestampMs;
+            }
+            else
+            {
+                _nextLrcTime = int.MaxValue;
+            }
+        }
+        if (CurrentTime != time)
+        {
+            CurrentTime = time;
+            CurrentTimeChanged.InvokeAsync(time);
+            Percent = CurrentTime * 100 / Duration;
+            StateHasChanged();
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnEnded()
+    {
+        _playStatus = PlayStatus.Stop;
+        switch (_loopStatus)
+        {
+            case LoopStatus.LoopOnce:
+                _playIndex = _playIndex < _tracks.Count - 1 ? _playIndex + 1 : 0;
+                break;
+            case LoopStatus.ShuffleOne:
+                _playIndex = _playIndex < _shuffleTrack!.Length - 1 ? _playIndex + 1 : 0;
+                break;
+        }
+
+        await PlayNow();
+    }
+
+    [JSInvokable]
+    public void OnError(string error)
+    {
+        Console.WriteLine(error);
+    }
+
+    [JSInvokable]
+    public void OnLoaded()
+    {
+        var lrc = CurrentTrack?.Lrc;
+        if (lrc == null)
+        {
+            _lrc = "暂无歌词";
+        }
+        else
+        {
+            _lrc = lrc[0].Text ?? "";
+            _nextLrcTime = lrc.Count >= 1 ? lrc[1].TimestampMs : int.MaxValue;
+        }
+        _playStatus = PlayStatus.Play;
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void OnPlaying()
+    {
+        _playStatus = PlayStatus.Play;
+        StateHasChanged();
+    }
+
+    private async Task Play()
+    {
+        if (_playStatus == PlayStatus.Loading)
+        {
+            return;
+        }
+
+        if (_playStatus == PlayStatus.Play)
+        {
+            _playStatus = PlayStatus.Pause;
+            await InvokeVoidAsync("playOrPause");
+        }
+        else if (_playStatus == PlayStatus.Pause)
+        {
+            _playStatus = PlayStatus.Play;
+            await InvokeVoidAsync("playOrPause");
+        }
+        else if (_playStatus == PlayStatus.Stop)
+        {
+            await PlayNow();
+        }
+    }
+
+    private async Task PlayNow()
+    {
+        if (CurrentTrack == null)
+        {
+            return;
+        }
+        
+        _playStatus = PlayStatus.Loading;
+        Duration = (int)CurrentTrack.Duration;
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+        await InvokeVoidAsync("play", CurrentTrack.Id, CurrentTrack.MimeType);
+    }
+
+    private async Task Notify(DispatchEntry<AddTrackMessage> entry)
+    {
+        if (entry.Entry != null)
+        {
+            var message = entry.Entry;
+            if (message is { Type: "add", Tracks: not null })
+            {
+                _tracks = _tracks.Union(message.Tracks).ToList();
+                if (_loopStatus == LoopStatus.ShuffleOne)
+                {
+                    _shuffleTrack = _tracks.ToArray();
+                    Shuffle();
+                    ToShuffle();
+                }
+
+                if (_playStatus == PlayStatus.Stop)
+                {
+                    await PlayNow();
+                }
+            }
+            else if (message is { Type: "replace", Tracks: not null })
+            {
+                _tracks = message.Tracks;
+                if (_loopStatus == LoopStatus.ShuffleOne)
+                {
+                    _shuffleTrack = _tracks.ToArray();
+                }
+
+                _playIndex = 0;
+                await PlayNow();
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        DispatchService.Subscribe(Notify);
+    }
+
+    public void Dispose()
+    {
+        DispatchService.UnSubscribe(Notify);
+    }
+
+    private async Task LoopChanged()
+    {
+        switch (_loopStatus)
+        {
+            case LoopStatus.PlayOnce:
+                _loopStatus = LoopStatus.LoopOnce;
+                await MessageService.Show(new MessageOption()
+                {
+                    Content = "列表循环"
+                });
+                break;
+            case LoopStatus.LoopOnce:
+                _loopStatus = LoopStatus.ShuffleOne;
+                Shuffle();
+                ToShuffle();
+                await MessageService.Show(new MessageOption()
+                {
+                    Content = "随机播放"
+                });
+                break;
+            case LoopStatus.ShuffleOne:
+                _loopStatus = LoopStatus.PlayOnce;
+                ToBase();
+                await MessageService.Show(new MessageOption()
+                {
+                    Content = "单曲循环"
+                });
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private async Task SelectedTrackChanged(TrackVo track)
+    {
+        var index = -1;
+        if (_loopStatus == LoopStatus.ShuffleOne)
+        {
+            index = _shuffleTrack == null ? -1 : Array.IndexOf(_shuffleTrack, track);
+        }
+        else
+        {
+            index = _tracks.IndexOf(track);
+        }
+
+        if (index != -1)
+        {
+            _playIndex = index;
+            await PlayNow();
+        }
+    }
+
+    private void ToShuffle()
+    {
+        var track = _tracks.Count < _playIndex ? null : _tracks[_playIndex];
+        if (track == null)
+        {
+            _playIndex = 0;
+            return;
+        }
+
+        if (_shuffleTrack == null)
+        {
+            Shuffle();
+        }
+
+        var index = Array.IndexOf(_shuffleTrack!, track);
+        _playIndex = index == -1 ? 0 : index;
+    }
+
+    private void ToBase()
+    {
+        var track = _shuffleTrack?[_playIndex];
+        if (track != null)
+        {
+            _playIndex = _tracks.IndexOf(track);
+            if (_playIndex == -1)
+            {
+                _playIndex = 0;
+            }
+        }
+    }
+
+    private void Shuffle()
+    {
+        _shuffleTrack = _tracks.ToArray();
+        (new Random()).Shuffle(_shuffleTrack);
+    }
+}

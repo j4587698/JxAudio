@@ -354,6 +354,7 @@ public class AlbumService
                                                                            x.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
             .IncludeMany(x => x.TrackStarEntities, then => then.Where(y => y.UserId == userId))
             .IncludeMany(x => x.ArtistEntities)
+            .Include(x => x.LrcEntity)
             .Include(x => x.AlbumEntity)
             .Include(x => x.GenreEntity)
             .ToListAsync(cancellationToken);

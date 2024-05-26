@@ -9,11 +9,17 @@
 }
 
 .progress-slider::-moz-range-thumb {
+    -webkit-appearance: none;
     appearance: none; /* Firefox */
 }
 
 .progress-slider::-ms-thumb {
-    appearance: none; /* IE and older versions of Edge */
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    cursor: pointer;
 }
 
 /* 其他滑块样式 */

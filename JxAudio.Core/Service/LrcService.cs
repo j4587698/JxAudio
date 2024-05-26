@@ -19,4 +19,10 @@ public class LrcService
         var lrcText = string.Join("\n", info.SynchronizedLyrics.Select(x => x.Text));
         return lrcText;
     }
+
+    public async Task<LrcEntity> GetLrcByIdAsync(int lrcId)
+    {
+        var lrc = await LrcEntity.FindAsync(lrcId);
+        return lrc;
+    }
 }
