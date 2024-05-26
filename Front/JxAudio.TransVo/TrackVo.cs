@@ -39,5 +39,8 @@ public class TrackVo
     [Description("歌词Id")]
     public int LrcId { get; set; }
 
+    [Description("封面Id")]
+    public int CoverId { get; set; }
+
     public List<LrcVo>? Lrc { get; set; }
 }

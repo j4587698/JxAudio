@@ -74,6 +74,10 @@
     animation: rotate 1s linear infinite;
 }
 
+::deep .slow_rotating {
+    animation: rotate 3s linear infinite;
+}
+
 ::deep .show-on-mobile {
     display: none;
 }
@@ -96,6 +100,7 @@
     pointer-events: none; /* 允许点击事件穿透 */
     background-color: transparent; /* 背景透明 */
     font-size: 2rem;
+    color: var(--bb-header-bg);
 }
 
 @media (max-width: 1000px) {

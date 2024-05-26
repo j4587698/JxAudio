@@ -42,26 +42,6 @@ public partial class PlayerControl
         set
         {
             CurrentTime = int.Parse(value);
-            var lrc = CurrentTrack?.Lrc?.Where(x => x.TimestampMs <= CurrentTime * 1000).MaxBy(x => x.TimestampMs);
-            if (lrc != null)
-            {
-                _lrc = lrc.Text ?? "";
-                var index = CurrentTrack!.Lrc!.LastIndexOf(lrc);
-                if (index > -1 && index < CurrentTrack.Lrc.Count - 1)
-                {
-                    index++;
-                    _nextLrcTime = CurrentTrack.Lrc[index].TimestampMs;
-                }
-                else
-                {
-                    _nextLrcTime = int.MaxValue;
-                }
-            }
-            else
-            {
-                _lrc = "暂无歌词";
-            }
-
             Percent = CurrentTime * 100 / Duration;
             CurrentTimeChanged.InvokeAsync(CurrentTime);
             InvokeVoidAsync("setCurrentTime", CurrentTime);
@@ -71,7 +51,6 @@ public partial class PlayerControl
     private List<TrackVo> _tracks = new List<TrackVo>();
     private TrackVo[]? _shuffleTrack;
     private int _playIndex = 0;
-    private int _nextLrcTime;
     private bool _showLrc;
     private string _lrc = "暂无歌词";
 
@@ -94,20 +73,9 @@ public partial class PlayerControl
     public void OnTimeUpdate(double currentTime)
     {
         var time = (int)currentTime;
-        if (_showLrc && CurrentTrack?.Lrc?.Count > 0 && _nextLrcTime <= currentTime * 1000)
+        if (_showLrc)
         {
-            var lrc = CurrentTrack.Lrc.First(x => x.TimestampMs == _nextLrcTime);
-            _lrc = lrc.Text ?? "";
-            var index = CurrentTrack.Lrc.LastIndexOf(lrc);
-            if (index < CurrentTrack.Lrc.Count - 1)
-            {
-                index++;
-                _nextLrcTime = CurrentTrack.Lrc[index].TimestampMs;
-            }
-            else
-            {
-                _nextLrcTime = int.MaxValue;
-            }
+            GetCurrentLrc(currentTime);
         }
         if (CurrentTime != time)
         {
@@ -144,16 +112,6 @@ public partial class PlayerControl
     [JSInvokable]
     public void OnLoaded()
     {
-        var lrc = CurrentTrack?.Lrc;
-        if (lrc == null)
-        {
-            _lrc = "暂无歌词";
-        }
-        else
-        {
-            _lrc = lrc[0].Text ?? "";
-            _nextLrcTime = lrc.Count >= 1 ? lrc[1].TimestampMs : int.MaxValue;
-        }
         _playStatus = PlayStatus.Play;
         StateHasChanged();
     }
@@ -163,6 +121,46 @@ public partial class PlayerControl
     {
         _playStatus = PlayStatus.Play;
         StateHasChanged();
+    }
+    
+    private async Task Next()
+    {
+        switch (_loopStatus)
+        {
+            case LoopStatus.PlayOnce:
+                return;
+            case LoopStatus.LoopOnce:
+                if (_playIndex < _tracks.Count - 1)
+                {
+                    _playIndex++;
+                }
+                break;
+            case LoopStatus.ShuffleOne:
+                if (_playIndex < _shuffleTrack?.Length - 1)
+                {
+                    _playIndex++;
+                }
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        await PlayNow();
+    }
+
+    private async Task Preview()
+    {
+        if (_loopStatus == LoopStatus.PlayOnce)
+        {
+            return;
+        }
+
+        if (_playIndex > 0)
+        {
+            _playIndex--;
+        }
+
+        await PlayNow();
     }
 
     private async Task Play()
@@ -335,5 +333,18 @@ public partial class PlayerControl
     {
         _shuffleTrack = _tracks.ToArray();
         (new Random()).Shuffle(_shuffleTrack);
+    }
+
+    private void GetCurrentLrc(double currentTime)
+    {
+        var lrc = CurrentTrack?.Lrc?.Where(x => x.TimestampMs <= currentTime * 1000).MaxBy(x => x.TimestampMs);
+        if (lrc != null)
+        {
+            _lrc = lrc.Text ?? "";
+        }
+        else
+        {
+            _lrc = "暂无歌词";
+        }
     }
 }

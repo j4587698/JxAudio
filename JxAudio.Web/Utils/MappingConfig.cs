@@ -18,6 +18,7 @@ public static class MappingConfig
 
         TypeAdapterConfig<TrackEntity, TrackVo>.NewConfig()
             .Map(dest => dest.LrcId, src => src.LrcId)
+            .Map(dest => dest.CoverId, src => src.PictureId)
             .Map(dest => dest.Lrc, src => LrcEntityToLrcVo(src.LrcEntity))
             .Map(dest => dest.Artists, src =>src.ArtistEntities);
         

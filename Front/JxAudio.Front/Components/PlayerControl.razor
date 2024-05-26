@@ -6,6 +6,7 @@
 @using Console = System.Console
 @inherits BootstrapModuleComponentBase
 @implements IDisposable
+
 @inject IDispatchService<AddTrackMessage> DispatchService
 @inject MessageService MessageService
 
@@ -18,7 +19,7 @@
     <div class="d-flex flex-grow-1 align-items-center">
         <div class="flex-1 hide-on-mobile">
             <div class="d-flex">
-                <img alt="" src="favicon.png" class="w-11 h-11 rounded">
+                <BootstrapBlazor.Components.Avatar Url=@($"/api/Cover?coverId={CurrentTrack?.CoverId}") IsCircle="true" class="@(_playStatus == PlayStatus.Play ? "slow_rotating w-11 h-11 " : "w-11 h-11 ")"></BootstrapBlazor.Components.Avatar>
                 <div class="ms-2 text-xs d-flex flex-column justify-content-between">
                     <div class="w-52 cursor-pointer text-truncate">
                         <div class="d-flex">
@@ -48,7 +49,7 @@
                             break;
                     }
                 </Button>
-                <Button Color="Color.None">
+                <Button Color="Color.None" OnClick="Preview">
                     <GoStart Size="28"></GoStart>
                 </Button>
                 <Button Color="Color.None" style="color: var(--bb-header-bg)" OnClick="Play" 
@@ -67,7 +68,9 @@
                             break;
                     }
                 </Button>
-                <GoEnd Size="28"></GoEnd>
+                <Button Color="Color.None" OnClick="Next">
+                    <GoEnd Size="28"></GoEnd>
+                </Button>
                 <PopConfirmButton CustomClass="custom-popup" Placement="Placement.Top">
                     <BodyTemplate>
                         <div class="d-flex align-items-center">
