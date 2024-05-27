@@ -91,7 +91,7 @@
         <div class="flex-1 hide-on-mobile">
             <div class="d-flex justify-content-end align-items-center gap-x-2-5">
                 <span class="text-xs">
-                    @CurrentTime.ToTimeString()[3..] / @Duration.ToTimeString()[3..]
+                    @CurrentTime.ToTimeString() / @Duration.ToTimeString()
                 </span>
                 <Button Color="Color.None" OnClick="() => { _showLrc = !_showLrc; StateHasChanged();}">
                     <TextMessage Size="18"></TextMessage>

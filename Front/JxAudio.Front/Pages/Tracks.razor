@@ -1,0 +1,108 @@
+﻿@page "/Tracks"
+@using Jx.Toolbox.Extensions
+@using JxAudio.Front.Data
+@using JxAudio.Front.Filter
+@using JxAudio.TransVo
+
+@inject HttpClient Http
+@inject IDispatchService<AddTrackMessage> DispatchService
+
+<PageTitle>所有歌曲 - JxAudio</PageTitle>
+
+<div style="height: calc(100vh - 5.1rem - 82px)">
+    <FrontTable TItem="TrackVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"
+                ShowExtendDeleteButton="false" ShowExtendEditButton="false" OnQueryAsync="OnQueryAsync">
+        <TableColumns>
+            <TableColumn @bind-Field="@context.Title">
+                <Template Context="value">
+                    @if (value.Value.IsNullOrEmpty())
+                    {
+                        @value.Row.Name
+                    }
+                    else
+                    {
+                        @value.Value
+                    }
+                </Template>
+            </TableColumn>
+            <TableColumn @bind-Field="@context.Artists">
+                <Template Context="value">
+                    @if (value.Value is { Count: > 0 })
+                    {
+                        @foreach (var artist in value.Value)
+                        {
+                            <LinkButton Url="@($"/Artist/{artist.Id}")">@artist.Name</LinkButton>
+                            @:&nbsp;
+                        }
+                    }
+                    else
+                    {
+                        @:未知歌手
+                    }
+                </Template>
+            </TableColumn>
+            <TableColumn @bind-Field="@context.Album">
+                <Template Context="value">
+                    @if (value.Value != null)
+                    {
+                        <LinkButton Url="@($"/Album/{value.Value.Id}")">@value.Value.Title</LinkButton>
+                    }
+                    else
+                    {
+                        @:未知专辑
+                    }
+                </Template>
+            </TableColumn>
+            <TableColumn @bind-Field="@context.Name" Text="音频格式">
+                <Template Context="value">
+                    @Path.GetExtension(value.Value!)[1..].ToUpper()
+                </Template>
+            </TableColumn>
+            <TableColumn @bind-Field="@context.BitRate"></TableColumn>
+            <TableColumn @bind-Field="@context.Size">
+                <Template Context="value">
+                    @value.Value.ToSizeString()
+                </Template>
+            </TableColumn>
+            <TableColumn @bind-Field="@context.Duration">
+                <Template Context="value">
+                    @value.Value.ToTimeString()
+                </Template>
+            </TableColumn>
+        </TableColumns>
+        <RowButtonTemplate>
+            <TableCellButton Icon="fa fa-play" OnClick="@(() => Play(context, "replace"))"></TableCellButton>
+            <TableCellButton Icon="fa fa-plus" OnClick="@(() => Play(context, "add"))"></TableCellButton>
+        </RowButtonTemplate>
+    </FrontTable>
+</div>
+
+@code {
+
+    private Task Play(TrackVo context, string type)
+    {
+        throw new NotImplementedException();
+    }
+
+    private async Task<QueryData<TrackVo>> OnQueryAsync(QueryPageOptions queryPageOptions)
+    {
+        QueryOptionsVo queryOptionsVo = new QueryOptionsVo
+        {
+            SortName = queryPageOptions.SortName.ToFieldName(),
+            DynamicFilterInfo = queryPageOptions.ToDynamicFilter(),
+            SortOrder = (int)queryPageOptions.SortOrder,
+            IsPage = queryPageOptions.IsPage,
+            PageIndex = queryPageOptions.PageIndex,
+            PageItems = queryPageOptions.PageItems
+        };
+        var responseMessage = await Http.PostAsJsonAsync("/api/Track", queryOptionsVo);
+        var vo = await responseMessage.Content.ReadFromJsonAsync<QueryData<TrackVo>>();
+        if (vo == null)
+        {
+            return new QueryData<TrackVo>();
+        }
+
+        return vo;
+    }
+
+}

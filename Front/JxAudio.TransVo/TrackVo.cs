@@ -36,6 +36,9 @@ public class TrackVo
     [Description("歌手名")]
     public List<ArtistVo>? Artists { get; set; }
 
+    [Description("专辑名")]
+    public AlbumVo? Album { get; set; }
+
     [Description("歌词Id")]
     public int LrcId { get; set; }
 

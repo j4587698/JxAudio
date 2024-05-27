@@ -9,26 +9,33 @@
 
 <PageTitle>歌手列表 - JxAudio</PageTitle>
 
-<FrontTable TItem="ArtistVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"
-            ShowExtendDeleteButton="false" ShowExtendEditButton="false" OnQueryAsync="OnQueryAsync">
-    <TableColumns>
-        <TableColumn @bind-Field="@context.Name" Searchable="true" Sortable="true" Filterable="true">
-            <Template Context="value">
-                <LinkButton Text="@value.Value" Url=@($"/Artist/{value.Row.Id}")></LinkButton>
-            </Template>
-        </TableColumn>
-        <TableColumn @bind-Field="@context.Count"></TableColumn>
-        <TableColumn @bind-Field="@context.TotalSize">
-            <Template Context="value">
-                @value.Value.ToSizeString()
-            </Template>
-        </TableColumn>
-    </TableColumns>
-    <RowButtonTemplate>
-        <TableCellButton Icon="fa fa-play" OnClick="@(() => PlayAll(context, "replace"))"></TableCellButton>
-        <TableCellButton Icon="fa fa-plus" OnClick="@(() => PlayAll(context, "add"))"></TableCellButton>
-    </RowButtonTemplate>
-</FrontTable>
+<div style="height: calc(100vh - 5.1rem - 82px)">
+    <FrontTable TItem="ArtistVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"
+                ShowExtendDeleteButton="false" ShowExtendEditButton="false" OnQueryAsync="OnQueryAsync">
+        <TableColumns>
+            <TableColumn @bind-Field="@context.Name" Searchable="true" Sortable="true" Filterable="true">
+                <Template Context="value">
+                    <LinkButton Text="@value.Value" Url=@($"/Artist/{value.Row.Id}")></LinkButton>
+                </Template>
+            </TableColumn>
+            <TableColumn @bind-Field="@context.Count"></TableColumn>
+            <TableColumn @bind-Field="@context.TotalSize">
+                <Template Context="value">
+                    @value.Value.ToSizeString()
+                </Template>
+            </TableColumn>
+            <TableColumn @bind-Field="@context.TotalTime">
+                <Template Context="value">
+                    @value.Value.ToTimeString()
+                </Template>
+            </TableColumn>
+        </TableColumns>
+        <RowButtonTemplate>
+            <TableCellButton Icon="fa fa-play" OnClick="@(() => PlayAll(context, "replace"))"></TableCellButton>
+            <TableCellButton Icon="fa fa-plus" OnClick="@(() => PlayAll(context, "add"))"></TableCellButton>
+        </RowButtonTemplate>
+    </FrontTable>
+</div>
 
 @code {
 

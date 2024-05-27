@@ -1,18 +1,39 @@
 ﻿using System.Security.Claims;
+using BootstrapBlazor.Components;
 using FFMpegCore;
 using FFMpegCore.Enums;
 using FFMpegCore.Pipes;
 using JxAudio.Core;
 using JxAudio.Core.Service;
 using JxAudio.Extensions;
+using JxAudio.TransVo;
 using JxAudio.Web.Utils;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ResultVo = JxAudio.Web.Vo.ResultVo;
+using DynamicFilterInfo = FreeSql.Internal.Model.DynamicFilterInfo;
 
 namespace JxAudio.Web.Controllers.Api;
 
 public class TrackController(TrackService trackService, UserService userService): DynamicControllerBase
 {
+
+    [Authorize]
+    public async Task<object> Post([FromBody] QueryOptionsVo queryOptionsVo)
+    {
+        var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        var queryAsync = await trackService.QueryData(queryOptionsVo.Adapt<QueryPageOptions>()!, queryOptionsVo.DynamicFilterInfo.Adapt<DynamicFilterInfo>()!, Guid.Parse(id));
+        return ResultVo.Success(data: new QueryData<TrackVo>()
+        {
+            Items = queryAsync.Items?.Select(x => x.Adapt<TrackVo>()),
+            TotalCount = queryAsync.TotalCount,
+            IsAdvanceSearch = true,
+            IsFiltered = true,
+            IsSearch = true,
+            IsSorted = true
+        });
+    }
     
     [Authorize]
     public async Task<IActionResult> GetStream(int trackId, int? maxBitRate, string? format)

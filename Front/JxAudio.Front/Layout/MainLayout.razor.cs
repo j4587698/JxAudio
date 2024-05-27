@@ -10,19 +10,7 @@ namespace JxAudio.Front.Layout;
 /// </summary>
 public sealed partial class MainLayout
 {
-    private bool UseTabSet { get; set; }
-
     private string Theme { get; set; } = "";
-
-    private bool IsOpen { get; set; }
-
-    private bool IsFixedHeader { get; set; } = true;
-
-    private bool IsFixedFooter { get; set; } = true;
-
-    private bool IsFullSide { get; set; } = true;
-
-    private bool ShowFooter { get; set; } = true;
 
     private List<MenuItem>? Menus { get; set; }
     

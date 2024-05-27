@@ -9,46 +9,53 @@
 
 <PageTitle>所有专辑 - JxAudio</PageTitle>
 
-<FrontTable TItem="AlbumVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"
-            ShowExtendDeleteButton="false" ShowExtendEditButton="false" OnQueryAsync="OnQueryAsync">
-    <TableColumns>
-        <TableColumn @bind-Field="@context.CoverId" Width="40">
-            <Template Context="value">
-                <Avatar Url="@($"/api/Cover?coverId={value.Value}")"></Avatar>
-            </Template>
-        </TableColumn>
-        <TableColumn @bind-Field="@context.Title" Searchable="true" Sortable="true" Filterable="true">
-            <Template Context="value">
-                <LinkButton Text="@value.Value" Url=@($"/Album/{value.Row.Id}")></LinkButton>
-            </Template>
-        </TableColumn>
-        <TableColumn @bind-Field="@context.Artist" Searchable="true" Sortable="true" Filterable="true">
-            <FilterTemplate>
-                <ArtistFilter></ArtistFilter>
-            </FilterTemplate>
-            <Template Context="value">
-                @if (value.Value != null)
-                {
-                    <LinkButton Url="@($"/Artist/{value.Value.Id}")">@value.Value?.Name</LinkButton>
-                }
-                else
-                {
-                    @:未知歌手
-                }
-            </Template>
-        </TableColumn>
-        <TableColumn @bind-Field="@context.Count"></TableColumn>
-        <TableColumn @bind-Field="@context.TotalSize">
-            <Template Context="value">
-                @value.Value.ToSizeString()
-            </Template>
-        </TableColumn>
-    </TableColumns>
-    <RowButtonTemplate>
-        <TableCellButton Icon="fa fa-play" OnClick="() => PlayAll(context)"></TableCellButton>
-        <TableCellButton Icon="fa fa-plus" OnClick="() => AddToPlayList(context)"></TableCellButton>
-    </RowButtonTemplate>
-</FrontTable>
+<div style="height: calc(100vh - 5.1rem - 82px)">
+    <FrontTable TItem="AlbumVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"
+                ShowExtendDeleteButton="false" ShowExtendEditButton="false" OnQueryAsync="OnQueryAsync">
+        <TableColumns>
+            <TableColumn @bind-Field="@context.CoverId" Width="40">
+                <Template Context="value">
+                    <Avatar Url="@($"/api/Cover?coverId={value.Value}")"></Avatar>
+                </Template>
+            </TableColumn>
+            <TableColumn @bind-Field="@context.Title" Searchable="true" Sortable="true" Filterable="true">
+                <Template Context="value">
+                    <LinkButton Text="@value.Value" Url=@($"/Album/{value.Row.Id}")></LinkButton>
+                </Template>
+            </TableColumn>
+            <TableColumn @bind-Field="@context.Artist" Searchable="true" Sortable="true" Filterable="true">
+                <FilterTemplate>
+                    <ArtistFilter></ArtistFilter>
+                </FilterTemplate>
+                <Template Context="value">
+                    @if (value.Value != null)
+                    {
+                        <LinkButton Url="@($"/Artist/{value.Value.Id}")">@value.Value?.Name</LinkButton>
+                    }
+                    else
+                    {
+                        @:未知歌手
+                    }
+                </Template>
+            </TableColumn>
+            <TableColumn @bind-Field="@context.Count"></TableColumn>
+            <TableColumn @bind-Field="@context.TotalSize">
+                <Template Context="value">
+                    @value.Value.ToSizeString()
+                </Template>
+            </TableColumn>
+            <TableColumn @bind-Field="@context.TotalTime">
+                <Template Context="value">
+                    @value.Value.ToTimeString()
+                </Template>
+            </TableColumn>
+        </TableColumns>
+        <RowButtonTemplate>
+            <TableCellButton Icon="fa fa-play" OnClick="() => PlayAll(context)"></TableCellButton>
+            <TableCellButton Icon="fa fa-plus" OnClick="() => AddToPlayList(context)"></TableCellButton>
+        </RowButtonTemplate>
+    </FrontTable>
+</div>
 
 @code {
     

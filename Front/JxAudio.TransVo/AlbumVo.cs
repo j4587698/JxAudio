@@ -22,4 +22,7 @@ public class AlbumVo
 
     [Description("专辑总大小")]
     public long TotalSize { get; set; }
+
+    [Description("专辑总时长")]
+    public long TotalTime { get; set; }
 }

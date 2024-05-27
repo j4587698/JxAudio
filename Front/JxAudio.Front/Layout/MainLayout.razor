@@ -3,12 +3,12 @@
 @inject HttpClient Http
 
 <BootstrapBlazorRoot>
-    <Layout ShowGotoTop="false" ShowCollapseBar="true" ShowFooter="@ShowFooter" SideWidth="0"
-            IsPage="true" IsFullSide="@IsFullSide" IsFixedHeader="@IsFixedHeader" IsFixedFooter="@IsFixedFooter"
-            TabDefaultUrl="/" UseTabSet="@UseTabSet" AdditionalAssemblies="new[] { GetType().Assembly }"
+    <Layout ShowGotoTop="false" ShowCollapseBar="true" ShowFooter="true" SideWidth="0"
+            IsPage="true" IsFullSide="false" IsFixedHeader="true" IsFixedFooter="true"
+            TabDefaultUrl="/" UseTabSet="false" AdditionalAssemblies="new[] { GetType().Assembly }"
             Menus="@Menus" class="@Theme">
         <Header>
-            <span class="ms-3 flex-sm-fill d-none d-sm-block"></span>
+            <span class="ms-3 flex-sm-fill d-none d-sm-block layout-title">JxAudio</span>
             <div class="flex-fill d-sm-none">
             </div>
             <Logout ImageUrl="@_avatar" DisplayName="@User?.UserName" UserName="@User?.UserName">
@@ -17,9 +17,6 @@
                     <LogoutLink/>
                 </LinkTemplate>
             </Logout>
-            <div class="layout-drawer" @onclick="@(e => IsOpen = !IsOpen)">
-                <i class="fa fa-gears"></i>
-            </div>
         </Header>
         <Side>
             <div class="layout-banner">
@@ -41,63 +38,4 @@
             <p>Sorry, there's nothing at this address.</p>
         </NotFound>
     </Layout>
-
-    <Drawer Placement="Placement.Right" @bind-IsOpen="@IsOpen" IsBackdrop="true">
-        <div class="layout-drawer-body">
-            <div class="btn btn-info w-100" @onclick="@(e => IsOpen = false)">点击关闭</div>
-            <GroupBox Title="布局调整">
-                <div class="row">
-                    <div class="col-6">
-                        <div class="layout-item @(IsFullSide ? "active d-flex" : "d-flex")" @onclick="@(e => IsFullSide = true)" data-toggle="tooltip" title="左右结构">
-                            <div class="layout-left d-flex flex-column">
-                                <div class="layout-left-header"></div>
-                                <div class="layout-left-body flex-fill"></div>
-                            </div>
-                            <div class="layout-right d-flex flex-column flex-fill">
-                                <div class="layout-right-header"></div>
-                                <div class="layout-right-body flex-fill"></div>
-                                <div class="layout-right-footer"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="layout-item flex-column @(IsFullSide ? "d-flex" : "active d-flex")" @onclick="@(e => IsFullSide = false)" data-toggle="tooltip" title="上下结构">
-                            <div class="layout-top">
-                            </div>
-                            <div class="layout-body d-flex flex-fill">
-                                <div class="layout-left">
-                                </div>
-                                <div class="layout-right flex-fill">
-                                </div>
-                            </div>
-                            <div class="layout-right-footer">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </GroupBox>
-
-            <GroupBox Title="固定调整">
-                <div class="row">
-                    <div class="col-6 d-flex align-items-center">
-                        <Switch @bind-Value="@IsFixedHeader" OnColor="@Color.Success"></Switch>
-                    </div>
-                    <div class="col-6 text-right">
-                        <span class="cell-label">固定页头</span>
-                    </div>
-                </div>
-            </GroupBox>
-
-            <GroupBox Title="更多设置">
-                <div class="row">
-                    <div class="col-6 d-flex align-items-center">
-                        <Switch @bind-Value="@UseTabSet" OnColor="@Color.Success"></Switch>
-                    </div>
-                    <div class="col-6 text-right">
-                        <span class="cell-label">@(UseTabSet ? "多标签" : "单页")</span>
-                    </div>
-                </div>
-            </GroupBox>
-        </div>
-    </Drawer>
 </BootstrapBlazorRoot>

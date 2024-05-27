@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using BootstrapBlazor.Components;
 using FreeSql;
+using FreeSql.Internal.Model;
 using JxAudio.Core.Attributes;
 using JxAudio.Core.Entity;
 using JxAudio.Core.Extensions;
@@ -200,5 +202,30 @@ public class TrackService
         }
 
         await track.SaveAsync();
+    }
+    
+    public async Task<QueryData<TrackEntity>> QueryData(QueryPageOptions options, DynamicFilterInfo dynamicFilterInfo, Guid userId)
+    {
+        var select = GetTrackBase(userId, null)
+            .WhereDynamicFilter(dynamicFilterInfo)
+            .OrderByPropertyNameIf(options.SortOrder != SortOrder.Unset, options.SortName,
+                options.SortOrder == SortOrder.Asc)
+            .Count(out var count);
+        if (options.IsPage)
+        {
+            select.Page(options.PageIndex, options.PageItems);
+        }
+
+        var data = await select.ToListAsync();
+        
+        return new QueryData<TrackEntity>()
+        {
+            TotalCount = (int)count,
+            Items = data,
+            IsSorted = options.SortOrder != SortOrder.Unset,
+            IsFiltered = options.Filters.Any(),
+            IsAdvanceSearch = options.AdvanceSearches.Any(),
+            IsSearch = options.Searches.Any() || options.CustomerSearches.Any()
+        };
     }
 }
