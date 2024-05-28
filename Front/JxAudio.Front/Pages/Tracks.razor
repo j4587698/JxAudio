@@ -13,7 +13,7 @@
     <FrontTable TItem="TrackVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"
                 ShowExtendDeleteButton="false" ShowExtendEditButton="false" OnQueryAsync="OnQueryAsync">
         <TableColumns>
-            <TableColumn @bind-Field="@context.Title">
+            <TableColumn @bind-Field="@context.Title" Searchable="true" Filterable="true">
                 <Template Context="value">
                     @if (value.Value.IsNullOrEmpty())
                     {
@@ -25,7 +25,10 @@
                     }
                 </Template>
             </TableColumn>
-            <TableColumn @bind-Field="@context.Artists">
+            <TableColumn @bind-Field="@context.Artists" Searchable="true" Filterable="true">
+                <FilterTemplate>
+                    <ArtistFilter></ArtistFilter>
+                </FilterTemplate>
                 <Template Context="value">
                     @if (value.Value is { Count: > 0 })
                     {
@@ -79,9 +82,16 @@
 
 @code {
 
-    private Task Play(TrackVo context, string type)
+    private void Play(TrackVo context, string type)
     {
-        throw new NotImplementedException();
+        DispatchService.Dispatch(new DispatchEntry<AddTrackMessage>()
+        {
+            Entry = new AddTrackMessage()
+            {
+                Tracks = [context],
+                Type = type
+            }
+        });
     }
 
     private async Task<QueryData<TrackVo>> OnQueryAsync(QueryPageOptions queryPageOptions)
