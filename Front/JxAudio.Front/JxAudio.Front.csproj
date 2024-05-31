@@ -18,8 +18,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="BootstrapBlazor" Version="8.5.8-beta03" />
-        <PackageReference Include="BootstrapBlazor.FontAwesome" Version="8.0.2" />
+        <PackageReference Include="BootstrapBlazor" Version="8.6.1-beta01" />
+        <PackageReference Include="BootstrapBlazor.FontAwesome" Version="8.0.4" />
         <PackageReference Include="IconPark.Blazor" Version="1.3.0.3" />
         <PackageReference Include="Jx.Toolbox" Version="0.3.11" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />

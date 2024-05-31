@@ -34,6 +34,21 @@ public class TrackController(TrackService trackService, UserService userService)
             IsSorted = true
         });
     }
+
+    [Authorize]
+    public async Task<object> GetStar(int id)
+    {
+        var userId = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        await trackService.StarTrackAsync(Guid.Parse(userId), [id], HttpContext.RequestAborted);
+        return ResultVo.Success();
+    }
+
+    public async Task<object> GetUnStar(int id)
+    {
+        var userId = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        await trackService.UnStarTrackAsync(Guid.Parse(userId), [id], HttpContext.RequestAborted);
+        return ResultVo.Success();
+    }
     
     [Authorize]
     public async Task<IActionResult> GetStream(int trackId, int? maxBitRate, string? format)

@@ -23,7 +23,7 @@
                     <LinkButton Text="@value.Value" Url=@($"/Album/{value.Row.Id}")></LinkButton>
                 </Template>
             </TableColumn>
-            <TableColumn @bind-Field="@context.Artist" Searchable="true" Sortable="true" Filterable="true">
+            <TableColumn @bind-Field="@context.Artist" Searchable="true" Sortable="true" Filterable="true" CustomSearch="SearchArtist">
                 <FilterTemplate>
                     <ArtistFilter></ArtistFilter>
                 </FilterTemplate>
@@ -53,6 +53,7 @@
         <RowButtonTemplate>
             <TableCellButton Icon="fa fa-play" OnClick="() => PlayAll(context)"></TableCellButton>
             <TableCellButton Icon="fa fa-plus" OnClick="() => AddToPlayList(context)"></TableCellButton>
+            <TableCellButton Icon="@(context.Star? "fas fa-heart" : "far fa-heart")" style="color: red"></TableCellButton>
         </RowButtonTemplate>
     </FrontTable>
 </div>
@@ -113,6 +114,11 @@
                 }
             });
         }
+    }
+
+    private SearchFilterAction SearchArtist(ITableColumn tableColumn, string? value)
+    {
+        return new SearchFilterAction(tableColumn.GetFieldName(), value);
     }
 
 }

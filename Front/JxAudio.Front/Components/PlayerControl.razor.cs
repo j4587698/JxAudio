@@ -123,6 +123,25 @@ public partial class PlayerControl
         StateHasChanged();
     }
     
+    private async Task Star()
+    {
+        if (CurrentTrack == null)
+        {
+            return;
+        }
+
+        if (CurrentTrack.Star)
+        {
+            await Http.GetAsync("/api/Track/UnStar?id=" + CurrentTrack.Id);
+            CurrentTrack.Star = false;
+        }
+        else
+        {
+            await Http.GetAsync("/api/Track/Star?id=" + CurrentTrack.Id);
+            CurrentTrack.Star = true;
+        }
+    }
+    
     private async Task Next()
     {
         switch (_loopStatus)

@@ -45,5 +45,8 @@ public class TrackVo
     [Description("封面Id")]
     public int CoverId { get; set; }
 
+    [Description("是否Star")]
+    public bool Star { get; set; }
+
     public List<LrcVo>? Lrc { get; set; }
 }

@@ -2,13 +2,12 @@
 @using IconPark
 @using Jx.Toolbox.Extensions
 @using JxAudio.Front.Data
-@using JxAudio.TransVo
-@using Console = System.Console
 @inherits BootstrapModuleComponentBase
 @implements IDisposable
 
 @inject IDispatchService<AddTrackMessage> DispatchService
 @inject MessageService MessageService
+@inject HttpClient Http
 
 @attribute [JSModuleAutoLoader("./Components/PlayerControl.razor.js", JSObjectReference = true)]
 
@@ -28,7 +27,9 @@
                         </div>
                     </div>
                     <div class="d-flex gap-x-3">
-                        <Like Size="18" StrokeWidth="3" Theme="ThemeType.Filled"></Like>
+                        <Button Color="Color.None" style="color: red" OnClick="Star">
+                            <Like Size="18" StrokeWidth="3" Theme="@(CurrentTrack?.Star == true ? ThemeType.Filled : ThemeType.Outline)"></Like>
+                        </Button>
                     </div>
                 </div>
             </div>

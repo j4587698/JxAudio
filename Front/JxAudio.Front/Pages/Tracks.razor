@@ -13,7 +13,7 @@
     <FrontTable TItem="TrackVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"
                 ShowExtendDeleteButton="false" ShowExtendEditButton="false" OnQueryAsync="OnQueryAsync">
         <TableColumns>
-            <TableColumn @bind-Field="@context.Title" Searchable="true" Filterable="true">
+            <TableColumn @bind-Field="@context.Title" Searchable="true" Filterable="true" Sortable="true">
                 <Template Context="value">
                     @if (value.Value.IsNullOrEmpty())
                     {
@@ -25,10 +25,7 @@
                     }
                 </Template>
             </TableColumn>
-            <TableColumn @bind-Field="@context.Artists" Searchable="true" Filterable="true">
-                <FilterTemplate>
-                    <ArtistFilter></ArtistFilter>
-                </FilterTemplate>
+            <TableColumn @bind-Field="@context.Artists" >
                 <Template Context="value">
                     @if (value.Value is { Count: > 0 })
                     {
@@ -44,7 +41,10 @@
                     }
                 </Template>
             </TableColumn>
-            <TableColumn @bind-Field="@context.Album">
+            <TableColumn @bind-Field="@context.Album" Filterable="true" Searchable="true" Sortable="true" CustomSearch="SearchAlbum">
+                <FilterTemplate>
+                    <ArtistFilter></ArtistFilter>
+                </FilterTemplate>
                 <Template Context="value">
                     @if (value.Value != null)
                     {
@@ -113,6 +113,11 @@
         }
 
         return vo;
+    }
+
+    private SearchFilterAction SearchAlbum(ITableColumn tableColumn, string? value)
+    {
+        return new SearchFilterAction(tableColumn.GetFieldName(), value);
     }
 
 }

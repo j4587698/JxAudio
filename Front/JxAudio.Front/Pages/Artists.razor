@@ -13,7 +13,7 @@
     <FrontTable TItem="ArtistVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"
                 ShowExtendDeleteButton="false" ShowExtendEditButton="false" OnQueryAsync="OnQueryAsync">
         <TableColumns>
-            <TableColumn @bind-Field="@context.Name" Searchable="true" Sortable="true" Filterable="true">
+            <TableColumn @bind-Field="@context.Name" Searchable="true" Sortable="true" Filterable="true" CustomSearch="SearchAlbum">
                 <Template Context="value">
                     <LinkButton Text="@value.Value" Url=@($"/Artist/{value.Row.Id}")></LinkButton>
                 </Template>
@@ -75,6 +75,11 @@
                 }
             });
         }
+    }
+
+    private SearchFilterAction SearchAlbum(ITableColumn tableColumn, string? value)
+    {
+        return new SearchFilterAction(tableColumn.GetFieldName(), value);
     }
 
 }

@@ -25,4 +25,7 @@ public class AlbumVo
 
     [Description("专辑总时长")]
     public long TotalTime { get; set; }
+
+    [Description("是否Star")]
+    public bool Star { get; set; }
 }

@@ -22,6 +22,7 @@ public static class MappingConfig
             .Map(dest => dest.CoverId, src => src.PictureId)
             .Map(dest => dest.Lrc, src => LrcEntityToLrcVo(src.LrcEntity))
             .Map(dest => dest.Album, src => src.AlbumEntity)
+            .Map(dest => dest.Star, src => src.TrackStarEntities != null && src.TrackStarEntities.Count > 0)
             .Map(dest => dest.Artists, src =>src.ArtistEntities);
         
         TypeAdapterConfig<ArtistEntity, ArtistVo>.NewConfig()

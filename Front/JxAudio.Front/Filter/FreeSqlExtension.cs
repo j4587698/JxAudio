@@ -84,7 +84,8 @@ public static class FreeSqlExtension
     private static readonly Dictionary<string, string> _fieldMap = new()
     {
         { "Artists", "ArtistEntity.Name" },
-        { "Artist", "ArtistEntity.Name" }
+        { "Artist", "ArtistEntity.Name" },
+        {"Album", "AlbumEntity.Title"}
     };
 
     public static string? ToFieldName(this string? key)
