@@ -36,7 +36,7 @@ public class UserController(IStringLocalizer<UserController> userLocalizer, User
         }
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, 
             new ClaimsPrincipal(identity), 
-            new AuthenticationProperties(){IsPersistent = true, ExpiresUtc = DateTimeOffset.Now.AddDays(1)});
+            new AuthenticationProperties(){IsPersistent = true, ExpiresUtc = loginVo.IsKeep ? DateTimeOffset.Now.AddDays(7) : DateTimeOffset.Now.AddDays(1)});
         return ResultVo.Success();
     }
 

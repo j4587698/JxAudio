@@ -20,12 +20,12 @@ public class PartialHttpStream(Fs fs, InfoOut infoOut): Stream
             return 0; // End of stream
         _stream ??= fs.RangeDownload(infoOut.Data.RawUrl, _position, _responseLength - _position).Result;
 
-        var bytesRead = 0;
-        while (bytesRead != count)
-        {
-            var read = _stream.Read(buffer, offset + bytesRead, count - bytesRead);
-            bytesRead += read;
-        }
+        // var bytesRead = 0;
+        // while (bytesRead != count)
+        // {
+        var bytesRead = _stream.Read(buffer, offset, count);
+        //     bytesRead += read;
+        // }
         _position += bytesRead;
         return bytesRead;
     }

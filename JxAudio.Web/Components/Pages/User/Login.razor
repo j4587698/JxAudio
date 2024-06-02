@@ -19,7 +19,7 @@
                         <ValidateForm Model="@LoginVo" OnValidSubmit="DoLogin">
                             <BootstrapInput TValue="string" @bind-Value="LoginVo.UserName" ShowLabel="false" PlaceHolder="请输入账号" />
                             <BootstrapPassword ShowLabel="false" @bind-Value="LoginVo.Password" PlaceHolder="请输入密码" />
-                            <Checkbox TValue="bool" ShowLabel="false" ShowAfterLabel="true" DisplayText="记住登录状态" />
+                            <Checkbox ShowLabel="false" @bind-Value="LoginVo.IsKeep" ShowAfterLabel="true" DisplayText="记住登录状态" />
                             <Button Text="登录" Color="Color.Primary" ButtonType="ButtonType.Submit"></Button>
                         </ValidateForm>
                     </div>

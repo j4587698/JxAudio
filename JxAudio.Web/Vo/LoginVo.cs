@@ -9,4 +9,6 @@ public class LoginVo
 
     [Required]
     public string? Password { get; set; }
+
+    public bool IsKeep { get; set; }
 }
