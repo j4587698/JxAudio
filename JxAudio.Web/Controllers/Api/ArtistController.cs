@@ -49,6 +49,22 @@ public class ArtistController(ArtistService artistService): DynamicControllerBas
     }
     
     [Authorize]
+    public async Task<object> GetStar(int id)
+    {
+        var userId = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        await artistService.StarArtistAsync(Guid.Parse(userId), [id], HttpContext.RequestAborted);
+        return ResultVo.Success(data: "s");
+    }
+
+    [Authorize]
+    public async Task<object> GetUnStar(int id)
+    {
+        var userId = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        await artistService.UnStarArtistAsync(Guid.Parse(userId), [id], HttpContext.RequestAborted);
+        return ResultVo.Success(data: "s");
+    }
+    
+    [Authorize]
     public async Task<IActionResult> GetAvatar(int? id)
     {
         if (id is null or 0)

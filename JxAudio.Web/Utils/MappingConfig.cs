@@ -14,6 +14,7 @@ public static class MappingConfig
             .Map(dest => dest.Artist, src => src.ArtistEntity)
             .Map(dest => dest.Count, src => src.TrackEntities != null ? src.TrackEntities.Count : 0)
             .Map(dest => dest.CoverId, src => src.PictureId)
+            .Map(dest => dest.Star, src => src.AlbumStarEntities != null && src.AlbumStarEntities.Count > 0)
             .Map(dest => dest.TotalTime, src => src.TrackEntities != null ? src.TrackEntities.Sum(x => x.Duration) : 0)
             .Map(dest => dest.TotalSize, src => src.TrackEntities != null ? src.TrackEntities.Sum(x => x.Size) : 0);
 
@@ -27,6 +28,7 @@ public static class MappingConfig
         
         TypeAdapterConfig<ArtistEntity, ArtistVo>.NewConfig()
             .Map(dest => dest.CoverId, src => src.PictureId)
+            .Map(dest => dest.Star, src => src.ArtistStarEntities != null && src.ArtistStarEntities.Count > 0)
             .Map(dest => dest.Count, src => src.TrackEntities != null ? src.TrackEntities.Count : 0)
             .Map(dest => dest.TotalTime, src => src.TrackEntities != null ? src.TrackEntities.Sum(x => x.Duration) : 0)
             .Map(dest => dest.TotalSize, src => src.TrackEntities != null ? src.TrackEntities.Sum(x => x.Size) : 0);

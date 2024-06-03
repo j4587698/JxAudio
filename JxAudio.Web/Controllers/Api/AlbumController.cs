@@ -50,4 +50,20 @@ public class AlbumController(AlbumService albumService): DynamicControllerBase
         var tracks = await albumService.GetTracksByAlbumIdAsync(id, Guid.Parse(userId), HttpContext.RequestAborted);
         return ResultVo.Success(data: tracks.Adapt<List<TrackVo>>());
     }
+    
+    [Authorize]
+    public async Task<object> GetStar(int id)
+    {
+        var userId = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        await albumService.StarAlbumAsync(Guid.Parse(userId), [id], HttpContext.RequestAborted);
+        return ResultVo.Success(data: "s");
+    }
+
+    [Authorize]
+    public async Task<object> GetUnStar(int id)
+    {
+        var userId = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        await albumService.UnStarAlbumAsync(Guid.Parse(userId), [id], HttpContext.RequestAborted);
+        return ResultVo.Success(data: "s");
+    }
 }

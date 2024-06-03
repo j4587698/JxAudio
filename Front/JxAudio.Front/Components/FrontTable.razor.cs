@@ -7,6 +7,8 @@ namespace JxAudio.Front.Components;
 [CascadingTypeParameter(nameof(TItem))]
 public partial class FrontTable<TItem> where TItem: class, new()
 {
+    [NotNull] public Table<TItem>? Table { get; set; }
+    
     [NotNull] [Parameter] public RenderFragment<TItem>? TableColumns { get; set; }
 
     [Parameter] public Func<QueryPageOptions, Task<QueryData<TItem>>>? OnQueryAsync { get; set; }
@@ -33,4 +35,9 @@ public partial class FrontTable<TItem> where TItem: class, new()
     [Parameter] public RenderFragment<TItem>? DetailRowTemplate { get; set; }
     [Parameter] public IEnumerable<TItem>? Items { get; set; }
     [Parameter] public bool IsPagination { get; set; } = true;
+
+    public async Task QueryAsync()
+    {
+        await Table.QueryAsync();
+    }
 }

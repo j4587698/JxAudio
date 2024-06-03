@@ -20,4 +20,6 @@ public class ArtistVo
     
     [Description("封面")]
     public int? CoverId { get; set; }
+
+    public bool Star { get; set; }
 }

@@ -76,6 +76,8 @@
         <RowButtonTemplate>
             <TableCellButton Icon="fa fa-play" OnClick="@(() => Play(context, "replace"))"></TableCellButton>
             <TableCellButton Icon="fa fa-plus" OnClick="@(() => Play(context, "add"))"></TableCellButton>
+            <TableCellButton Icon="@(context.Star? "fas fa-heart" : "far fa-heart")"
+                             OnClick="() => Star(context)" style="color: red"></TableCellButton>
         </RowButtonTemplate>
     </FrontTable>
 </div>
@@ -118,6 +120,24 @@
     private SearchFilterAction SearchAlbum(ITableColumn tableColumn, string? value)
     {
         return new SearchFilterAction(tableColumn.GetFieldName(), value);
+    }
+    
+    private async Task Star(TrackVo trackVo)
+    {
+        if (trackVo.Star)
+        {
+            if (await Http.GetStringAsync("/api/Track/UnStar?id=" + trackVo.Id) == "s")
+            {
+                trackVo.Star = false;
+            }
+        }
+        else
+        {
+            if (await Http.GetStringAsync("/api/Track/Star?id=" + trackVo.Id) == "s")
+            {
+                trackVo.Star = true;
+            }
+        }
     }
 
 }

@@ -33,6 +33,8 @@
         <RowButtonTemplate>
             <TableCellButton Icon="fa fa-play" OnClick="@(() => PlayAll(context, "replace"))"></TableCellButton>
             <TableCellButton Icon="fa fa-plus" OnClick="@(() => PlayAll(context, "add"))"></TableCellButton>
+            <TableCellButton Icon="@(context.Star? "fas fa-heart" : "far fa-heart")"
+                             OnClick="() => Star(context)" style="color: red"></TableCellButton>
         </RowButtonTemplate>
     </FrontTable>
 </div>
@@ -80,6 +82,24 @@
     private SearchFilterAction SearchAlbum(ITableColumn tableColumn, string? value)
     {
         return new SearchFilterAction(tableColumn.GetFieldName(), value);
+    }
+    
+    private async Task Star(ArtistVo artistVo)
+    {
+        if (artistVo.Star)
+        {
+            if (await Http.GetStringAsync("/api/Artist/UnStar?id=" + artistVo.Id) == "s")
+            {
+                artistVo.Star = false;
+            }
+        }
+        else
+        {
+            if (await Http.GetStringAsync("/api/Artist/Star?id=" + artistVo.Id) == "s")
+            {
+                artistVo.Star = true;
+            }
+        }
     }
 
 }

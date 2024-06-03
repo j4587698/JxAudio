@@ -40,14 +40,15 @@ public class TrackController(TrackService trackService, UserService userService)
     {
         var userId = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
         await trackService.StarTrackAsync(Guid.Parse(userId), [id], HttpContext.RequestAborted);
-        return ResultVo.Success();
+        return ResultVo.Success(data: "s");
     }
 
+    [Authorize]
     public async Task<object> GetUnStar(int id)
     {
         var userId = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
         await trackService.UnStarTrackAsync(Guid.Parse(userId), [id], HttpContext.RequestAborted);
-        return ResultVo.Success();
+        return ResultVo.Success(data: "s");
     }
     
     [Authorize]

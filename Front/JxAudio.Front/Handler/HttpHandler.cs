@@ -32,8 +32,16 @@ public class HttpHandler(NavigationManager navigationManager, ToastService toast
             }
             else
             {
-                var data = JsonSerializer.Serialize(content.Data);
-                response.Content = new StringContent(data, Encoding.UTF8, "application/json");
+                if (content.Data is JsonElement { ValueKind: JsonValueKind.String } jsonElement)
+                {
+                    response.Content = new StringContent(jsonElement.GetString() ?? "", Encoding.UTF8, "text/plain");
+                }
+                else
+                {
+                    var data = JsonSerializer.Serialize(content.Data);
+                    response.Content = new StringContent(data, Encoding.UTF8, "application/json");
+                }
+                
             }
         }
         else
