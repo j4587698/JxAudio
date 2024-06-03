@@ -23,7 +23,25 @@ public class AlbumController(AlbumService albumService): DynamicControllerBase
     public async Task<object> Post([FromBody]QueryOptionsVo queryOptionsVo)
     {
         var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
-        var queryAsync = await albumService.QueryData(queryOptionsVo.Adapt<QueryPageOptions>()!, queryOptionsVo.DynamicFilterInfo.Adapt<DynamicFilterInfo>()!, Guid.Parse(id));
+        var queryAsync = await albumService.QueryData(queryOptionsVo.Adapt<QueryPageOptions>(), 
+            queryOptionsVo.DynamicFilterInfo.Adapt<DynamicFilterInfo>()!, Guid.Parse(id), false);
+        return ResultVo.Success(data: new QueryData<AlbumVo>()
+        {
+            Items = queryAsync.Items?.Select(x => x.Adapt<AlbumVo>()),
+            TotalCount = queryAsync.TotalCount,
+            IsAdvanceSearch = true,
+            IsFiltered = true,
+            IsSearch = true,
+            IsSorted = true
+        });
+    }
+    
+    [Authorize]
+    public async Task<object> PostStar([FromBody]QueryOptionsVo queryOptionsVo)
+    {
+        var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        var queryAsync = await albumService.QueryData(queryOptionsVo.Adapt<QueryPageOptions>(), 
+            queryOptionsVo.DynamicFilterInfo.Adapt<DynamicFilterInfo>()!, Guid.Parse(id), true);
         return ResultVo.Success(data: new QueryData<AlbumVo>()
         {
             Items = queryAsync.Items?.Select(x => x.Adapt<AlbumVo>()),

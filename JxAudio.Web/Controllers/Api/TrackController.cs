@@ -23,7 +23,25 @@ public class TrackController(TrackService trackService, UserService userService)
     public async Task<object> Post([FromBody] QueryOptionsVo queryOptionsVo)
     {
         var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
-        var queryAsync = await trackService.QueryData(queryOptionsVo.Adapt<QueryPageOptions>()!, queryOptionsVo.DynamicFilterInfo.Adapt<DynamicFilterInfo>()!, Guid.Parse(id));
+        var queryAsync = await trackService.QueryData(queryOptionsVo.Adapt<QueryPageOptions>()!,
+            queryOptionsVo.DynamicFilterInfo.Adapt<DynamicFilterInfo>()!, Guid.Parse(id), false);
+        return ResultVo.Success(data: new QueryData<TrackVo>()
+        {
+            Items = queryAsync.Items?.Select(x => x.Adapt<TrackVo>()),
+            TotalCount = queryAsync.TotalCount,
+            IsAdvanceSearch = true,
+            IsFiltered = true,
+            IsSearch = true,
+            IsSorted = true
+        });
+    }
+    
+    [Authorize]
+    public async Task<object> PostStar([FromBody] QueryOptionsVo queryOptionsVo)
+    {
+        var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        var queryAsync = await trackService.QueryData(queryOptionsVo.Adapt<QueryPageOptions>()!,
+            queryOptionsVo.DynamicFilterInfo.Adapt<DynamicFilterInfo>()!, Guid.Parse(id), true);
         return ResultVo.Success(data: new QueryData<TrackVo>()
         {
             Items = queryAsync.Items?.Select(x => x.Adapt<TrackVo>()),

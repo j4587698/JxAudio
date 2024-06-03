@@ -1,13 +1,13 @@
-﻿@page "/Albums"
+﻿@page "/Star/Album"
 @using Jx.Toolbox.Extensions
-@using JxAudio.TransVo
 @using JxAudio.Front.Data
 @using JxAudio.Front.Filter
+@using JxAudio.TransVo
 
 @inject HttpClient Http
 @inject IDispatchService<AddTrackMessage> DispatchService
 
-<PageTitle>所有专辑 - JxAudio</PageTitle>
+<PageTitle>我收藏的专辑 - JxAudio</PageTitle>
 
 <div style="height: calc(100vh - 5.1rem - 82px)">
     <FrontTable TItem="AlbumVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"
@@ -60,7 +60,6 @@
 </div>
 
 @code {
-    
 
     private async Task<QueryData<AlbumVo>> OnQueryAsync(QueryPageOptions queryPageOptions)
     {
@@ -73,7 +72,7 @@
             PageIndex = queryPageOptions.PageIndex,
             PageItems = queryPageOptions.PageItems
         };
-        var responseMessage = await Http.PostAsJsonAsync("/api/Album", queryOptionsVo);
+        var responseMessage = await Http.PostAsJsonAsync("/api/Album/Star", queryOptionsVo);
         var vo = await responseMessage.Content.ReadFromJsonAsync<QueryData<AlbumVo>>();
         if (vo == null)
         {
@@ -83,9 +82,9 @@
         return vo;
     }
 
-    private async Task PlayAll(AlbumVo albumVo, string type)
+    private async Task PlayAll(AlbumVo context, string type)
     {
-        var responseMessage = await Http.GetAsync($"/api/Album/AllTracks?id={albumVo.Id}");
+        var responseMessage = await Http.GetAsync($"/api/Artist/AllTracks?id={context.Id}");
         var tracks = await responseMessage.Content.ReadFromJsonAsync<List<TrackVo>>();
         if (tracks != null)
         {
@@ -122,7 +121,6 @@
                 albumVo.Star = true;
             }
         }
-        
     }
 
 }

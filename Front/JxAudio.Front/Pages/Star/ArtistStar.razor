@@ -1,0 +1,105 @@
+﻿@page "/Star/Artist"
+@using Jx.Toolbox.Extensions
+@using JxAudio.Front.Data
+@using JxAudio.Front.Filter
+@using JxAudio.TransVo
+
+@inject HttpClient Http
+@inject IDispatchService<AddTrackMessage> DispatchService
+
+<PageTitle>我收藏的歌手 - JxAudio</PageTitle>
+
+<div style="height: calc(100vh - 5.1rem - 82px)">
+<FrontTable TItem="ArtistVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"
+            ShowExtendDeleteButton="false" ShowExtendEditButton="false" OnQueryAsync="OnQueryAsync">
+    <TableColumns>
+        <TableColumn @bind-Field="@context.Name" Searchable="true" Sortable="true" Filterable="true" CustomSearch="SearchAlbum">
+            <Template Context="value">
+                <LinkButton Text="@value.Value" Url=@($"/Artist/{value.Row.Id}")></LinkButton>
+            </Template>
+        </TableColumn>
+        <TableColumn @bind-Field="@context.Count"></TableColumn>
+        <TableColumn @bind-Field="@context.TotalSize">
+            <Template Context="value">
+                @value.Value.ToSizeString()
+            </Template>
+        </TableColumn>
+        <TableColumn @bind-Field="@context.TotalTime">
+            <Template Context="value">
+                @value.Value.ToTimeString()
+            </Template>
+        </TableColumn>
+    </TableColumns>
+    <RowButtonTemplate>
+        <TableCellButton Icon="fa fa-play" OnClick="@(() => PlayAll(context, "replace"))"></TableCellButton>
+        <TableCellButton Icon="fa fa-plus" OnClick="@(() => PlayAll(context, "add"))"></TableCellButton>
+        <TableCellButton Icon="@(context.Star? "fas fa-heart" : "far fa-heart")"
+                         OnClick="() => Star(context)" style="color: red"></TableCellButton>
+    </RowButtonTemplate>
+</FrontTable>
+</div>
+
+@code {
+
+    private SearchFilterAction SearchAlbum(ITableColumn tableColumn, string? value)
+    {
+        return new SearchFilterAction(tableColumn.GetFieldName(), value);
+    }
+
+    private async Task<QueryData<ArtistVo>> OnQueryAsync(QueryPageOptions queryPageOptions)
+    {
+        QueryOptionsVo queryOptionsVo = new QueryOptionsVo
+        {
+            SortName = queryPageOptions.SortName.ToFieldName(),
+            DynamicFilterInfo = queryPageOptions.ToDynamicFilter(),
+            SortOrder = (int)queryPageOptions.SortOrder,
+            IsPage = queryPageOptions.IsPage,
+            PageIndex = queryPageOptions.PageIndex,
+            PageItems = queryPageOptions.PageItems
+        };
+        var responseMessage = await Http.PostAsJsonAsync("/api/Artist/Star", queryOptionsVo);
+        var vo = await responseMessage.Content.ReadFromJsonAsync<QueryData<ArtistVo>>();
+        if (vo == null)
+        {
+            return new QueryData<ArtistVo>();
+        }
+
+        return vo;
+    }
+
+    private async Task PlayAll(ArtistVo context, string type)
+    {
+        var responseMessage = await Http.GetAsync($"/api/Artist/AllTracks?id={context.Id}");
+        var tracks = await responseMessage.Content.ReadFromJsonAsync<List<TrackVo>>();
+        if (tracks != null)
+        {
+            DispatchService.Dispatch(new DispatchEntry<AddTrackMessage>()
+            {
+                Entry = new AddTrackMessage()
+                {
+                    Tracks = tracks,
+                    Type = type
+                }
+            });
+        }
+    }
+    
+    private async Task Star(ArtistVo artistVo)
+    {
+        if (artistVo.Star)
+        {
+            if (await Http.GetStringAsync("/api/Artist/UnStar?id=" + artistVo.Id) == "s")
+            {
+                artistVo.Star = false;
+            
+            }
+        }
+        else
+        {
+            if (await Http.GetStringAsync("/api/Artist/Star?id=" + artistVo.Id) == "s")
+            {
+                artistVo.Star = true;
+            }
+        }
+    }
+}

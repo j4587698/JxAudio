@@ -16,8 +16,12 @@
                     <div class="col-12">
                         <h1>@_artist?.Name</h1>
                     </div>
+                    <div class="col-1">
+                        <Button Color="Color.None" style="color: red" OnClick="Star">
+                            <IconPark.Like Size="18" StrokeWidth="3" Theme="@(_artist?.Star == true ? IconPark.ThemeType.Filled : IconPark.ThemeType.Outline)"></IconPark.Like>
+                        </Button>
+                    </div>
                 </div>
-
             </div>
         </div>
     </BodyTemplate>
@@ -52,4 +56,29 @@
         
         _tracks = await Http.GetFromJsonAsync<List<TrackVo>>($"/api/Artist/AllTracks?id={Id}");
     }
+
+    private async Task Star()
+    {
+        if (_artist == null)
+        {
+            return;
+        }
+        
+        if (_artist.Star)
+        {
+            if (await Http.GetStringAsync("/api/Artist/UnStar?id=" + _artist.Id) == "s")
+            {
+                _artist.Star = false;
+            
+            }
+        }
+        else
+        {
+            if (await Http.GetStringAsync("/api/Artist/Star?id=" + _artist.Id) == "s")
+            {
+                _artist.Star = true;
+            }
+        }
+    }
+
 }

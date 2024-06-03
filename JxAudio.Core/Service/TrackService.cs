@@ -204,9 +204,11 @@ public class TrackService
         await track.SaveAsync();
     }
     
-    public async Task<QueryData<TrackEntity>> QueryData(QueryPageOptions options, DynamicFilterInfo dynamicFilterInfo, Guid userId)
+    public async Task<QueryData<TrackEntity>> QueryData(QueryPageOptions options, DynamicFilterInfo dynamicFilterInfo, 
+        Guid userId, bool starOnly)
     {
         var select = GetTrackBase(userId, null)
+            .WhereIf(starOnly, x => x.TrackStarEntities.Any(y => y.UserId == userId))
             .WhereDynamicFilter(dynamicFilterInfo)
             .OrderByPropertyNameIf(options.SortOrder != SortOrder.Unset, options.SortName,
                 options.SortOrder == SortOrder.Asc)

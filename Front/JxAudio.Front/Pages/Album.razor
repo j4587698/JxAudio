@@ -24,8 +24,13 @@
                             else
                             {
                                 @_album.Artist.Name
-                            }</h3>
-                        
+                            }
+                        </h3>
+                    </div>
+                    <div class="col-1">
+                        <Button Color="Color.None" style="color: red" OnClick="Star">
+                            <IconPark.Like Size="18" StrokeWidth="3" Theme="@(_album?.Star == true ? IconPark.ThemeType.Filled : IconPark.ThemeType.Outline)"></IconPark.Like>
+                        </Button>
                     </div>
                 </div>
                  
@@ -64,6 +69,30 @@
         }
         
         _tracks = await Http.GetFromJsonAsync<List<TrackVo>>($"/api/Album/AllTracks?id={Id}");
+    }
+
+    private async Task Star()
+    {
+        if (_album == null)
+        {
+            return;
+        }
+        
+        if (_album.Star)
+        {
+            if (await Http.GetStringAsync("/api/Album/UnStar?id=" + _album.Id) == "s")
+            {
+                _album.Star = false;
+            
+            }
+        }
+        else
+        {
+            if (await Http.GetStringAsync("/api/Album/Star?id=" + _album.Id) == "s")
+            {
+                _album.Star = true;
+            }
+        }
     }
 
 }

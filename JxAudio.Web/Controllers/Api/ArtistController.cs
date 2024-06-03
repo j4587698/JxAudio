@@ -20,7 +20,24 @@ public class ArtistController(ArtistService artistService): DynamicControllerBas
     {
         var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
         var queryAsync = await artistService.QueryData(queryOptionsVo.Adapt<QueryPageOptions>(),
-            queryOptionsVo.DynamicFilterInfo.Adapt<DynamicFilterInfo>(), Guid.Parse(id));
+            queryOptionsVo.DynamicFilterInfo.Adapt<DynamicFilterInfo>(), Guid.Parse(id), false);
+        return ResultVo.Success(data: new QueryData<ArtistVo>()
+        {
+            Items = queryAsync.Items?.Select(x => x.Adapt<ArtistVo>()),
+            TotalCount = queryAsync.TotalCount,
+            IsAdvanceSearch = true,
+            IsFiltered = true,
+            IsSearch = true,
+            IsSorted = true
+        });
+    }
+    
+    [Authorize]
+    public async Task<object> PostStar([FromBody] QueryOptionsVo queryOptionsVo)
+    {
+        var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        var queryAsync = await artistService.QueryData(queryOptionsVo.Adapt<QueryPageOptions>(),
+            queryOptionsVo.DynamicFilterInfo.Adapt<DynamicFilterInfo>(), Guid.Parse(id), true);
         return ResultVo.Success(data: new QueryData<ArtistVo>()
         {
             Items = queryAsync.Items?.Select(x => x.Adapt<ArtistVo>()),

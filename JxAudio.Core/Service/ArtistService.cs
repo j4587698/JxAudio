@@ -182,9 +182,11 @@ public class ArtistService
         }
     }
     
-    public async Task<QueryData<ArtistEntity>> QueryData(QueryPageOptions options, DynamicFilterInfo dynamicFilterInfo, Guid userId)
+    public async Task<QueryData<ArtistEntity>> QueryData(QueryPageOptions options, DynamicFilterInfo dynamicFilterInfo,
+        Guid userId, bool starOnly)
     {
         var select = GetArtistBase(userId, null)
+            .WhereIf(starOnly, x => x.ArtistStarEntities.Any(y => y.UserId == userId))
             .IncludeMany(x => x.TrackEntities!.Select(y => new TrackEntity()
                 {
                     Id = y.Id,

@@ -315,9 +315,10 @@ public class AlbumService
         }
     }
 
-    public async Task<QueryData<AlbumEntity>> QueryData(QueryPageOptions options, DynamicFilterInfo dynamicFilterInfo, Guid userId)
+    public async Task<QueryData<AlbumEntity>> QueryData(QueryPageOptions options, DynamicFilterInfo dynamicFilterInfo, Guid userId, bool starOnly)
     {
         var select = GetAlbumBase(userId, null)
+            .WhereIf(starOnly, x => x.AlbumStarEntities.Any(y => y.UserId == userId))
             .WhereDynamicFilter(dynamicFilterInfo)
             .OrderByPropertyNameIf(options.SortOrder != SortOrder.Unset, options.SortName,
                 options.SortOrder == SortOrder.Asc)
