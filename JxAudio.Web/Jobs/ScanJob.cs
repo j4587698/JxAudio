@@ -203,7 +203,7 @@ public class ScanJob : ITask
                         }
                         catch (Exception e)
                         {
-                            Log.Error(e, "第{i}获取数据失败", i);
+                            Log.Error(e, $"第{i + 1}/3次获取数据失败");
                         }
 
                     }
