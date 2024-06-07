@@ -1,13 +1,38 @@
 ﻿@using JxAudio.TransVo
 
 <ListGroup TItem="TrackVo" Items="TrackVos" Value="SelectedTrack" ValueChanged="SelectedTrackChanged"
-           GetItemDisplayText="GetItemDisplayText" style="height: 20rem;min-width: 300px">
+           style="height: 20rem;min-width: 300px">
     <HeaderTemplate>
         <div class="list-group-header">
             <div class="flex-fill">播放列表</div>
             <Button Color="Color.Danger" Icon="fa fa-plus" Size="Size.ExtraSmall">生成歌单</Button>
         </div>
     </HeaderTemplate>
+    <ItemTemplate>
+        <div class="list-group-item" style="@CreateStyle(context)">
+            <div class="flex-1" @onclick="() => SelectChanged(context)">
+                @if (context == SelectedTrack)
+                {
+                    <i class="fas fa-play"></i>
+                }
+                else
+                {
+                    var index = TrackVos?.IndexOf(context);
+                    if (index is null or -1)
+                    {
+                        index = 0;
+                    }
+                    index++;
+
+                    @index
+                }
+            </div>
+            <div class="flex-fill" @onclick="() => SelectChanged(context)">
+                @($"{context.Title ?? "未知歌曲"} - {(context.Artists == null ? "未知歌手" : string.Join(',', context.Artists.Select(x => x.Name)))}")
+            </div>
+            <LinkButton Color="Color.None" Icon="far fa-trash-alt" OnClick="() => DeleteTrack(context)"></LinkButton>
+        </div>
+    </ItemTemplate>
 </ListGroup>
 
 @code {
@@ -20,9 +45,22 @@
     [Parameter]
     public EventCallback<TrackVo> SelectedTrackChanged { get; set; }
 
-    private string GetItemDisplayText(TrackVo arg)
+    private string? CreateStyle(TrackVo trackVo)
     {
-        return $"{arg.Title ?? "未知歌曲"} - {(arg.Artists == null ? "未知歌手" :  string.Join(',', arg.Artists.Select(x => x.Name)))}";
+        return CssBuilder.Default("display: flex;")
+            .AddClass("color: var(--bb-header-bg);", SelectedTrack == trackVo)
+            .Build();
+    }
+
+    private void SelectChanged(TrackVo trackVo)
+    {
+        SelectedTrack = trackVo;
+        SelectedTrackChanged.InvokeAsync(SelectedTrack);
+    }
+
+    private void DeleteTrack(TrackVo trackVo)
+    {
+        TrackVos?.Remove(trackVo);
     }
 
 }

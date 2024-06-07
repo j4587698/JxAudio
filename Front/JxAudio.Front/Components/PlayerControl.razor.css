@@ -9,6 +9,7 @@
 }
 
 .progress-slider::-moz-range-thumb {
+    --moz-appearance: none;
     -webkit-appearance: none;
     appearance: none; /* Firefox */
 }
@@ -33,50 +34,6 @@
     cursor: pointer;
 }
 
-.flex-1 {
-    flex: 1 1 0%;
-}
-
-.w-11 {
-    width: 2.75rem; /* 假设 11 是基于 0.25rem 递增的 */
-}
-
-.h-11 {
-    height: 2.75rem; /* 同上 */
-}
-
-.text-xs {
-    font-size: 0.75rem; /* 或者你希望的任何尺寸 */
-}
-
-.w-52 {
-    width: 13rem;
-}
-
-.gap-x-2-5 {
-    gap: 0.625rem; /* Tailwind 的 gap-x-2.5 对应的值 */
-}
-
-.gap-x-3 {
-    gap: 0.75rem;
-}
-
-@keyframes rotate {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-::deep .rotating {
-    animation: rotate 1s linear infinite;
-}
-
-::deep .slow_rotating {
-    animation: rotate 3s linear infinite;
-}
 
 ::deep .show-on-mobile {
     display: none;
