@@ -18,9 +18,9 @@ public class PlaylistService
         && (x.UserId == userId || x.IsPublic));
     }
 
-    public async Task<Playlists> GetPlaylistsAsync(Guid apiUserId, CancellationToken cancellationToken)
+    public async Task<List<PlaylistEntity>> GetPlaylistsAsync(Guid apiUserId, CancellationToken cancellationToken)
     {
-        var playlists = await PlaylistEntity.Where(x => x.UserId == apiUserId || x.IsPublic)
+        return await PlaylistEntity.Where(x => x.UserId == apiUserId || x.IsPublic)
             .Include(x => x.UserEntity)
             .IncludeMany(x => x.TrackEntities!.Select(y => new TrackEntity()
             {
@@ -28,16 +28,11 @@ public class PlaylistService
                 Duration = y.Duration
             }))
             .ToListAsync(cancellationToken);
-
-        return new Playlists()
-        {
-            playlist = playlists.Select(x => x.CreatePlaylist()).ToArray()
-        };
     }
 
-    public async Task<PlaylistWithSongs> GetPlaylistAsync(Guid userId, int playlistId, CancellationToken cancellationToken)
+    public async Task<PlaylistEntity> GetPlaylistAsync(Guid userId, int playlistId, CancellationToken cancellationToken)
     {
-        var playlist = await PlaylistEntity.Where(x => (x.IsPublic || x.UserId == userId) && x.Id == playlistId)
+        return await PlaylistEntity.Where(x => (x.IsPublic || x.UserId == userId) && x.Id == playlistId)
             .Include(x => x.UserEntity)
             .IncludeMany(x => x.TrackEntities,
                 then => then.Where(y => y.DirectoryEntity!.IsAccessControlled == false ||
@@ -46,31 +41,9 @@ public class PlaylistService
                     .Include(y => y.AlbumEntity)
                     .IncludeMany(y => y.ArtistEntities))
             .FirstAsync(cancellationToken);
-
-        if (playlist == null)
-        {
-            throw RestApiErrorException.DataNotFoundError();
-        }
-
-        return new PlaylistWithSongs()
-        {
-            allowedUser = null,
-            id = playlist.Id.ToPlaylistId(),
-            name = playlist.Name,
-            comment = playlist.Description,
-            owner = playlist.UserEntity?.UserName,
-            @public = playlist.IsPublic,
-            publicSpecified = true,
-            songCount = playlist.TrackEntities?.Count ?? 0,
-            duration = playlist.TrackEntities?.Sum(x => (int)x.Duration) ?? 0,
-            created = playlist.CreateTime,
-            changed = playlist.UpdateTime,
-            coverArt = null,
-            entry = playlist.TrackEntities?.Select(x => x.CreateTrackChild()).ToArray()
-        };
     }
 
-    public async Task<string> CreatePlaylistAsync(Guid userId, string name, List<int>? songId, CancellationToken cancellationToken)
+    public async Task<int> CreatePlaylistAsync(Guid userId, string name, List<int>? songId, CancellationToken cancellationToken)
     {
         if (songId != null)
         {
@@ -93,7 +66,7 @@ public class PlaylistService
         await playlist.SaveAsync();
         await playlist.SaveManyAsync(nameof(playlist.TrackEntities));
 
-        return playlist.Id.ToPlaylistId();
+        return playlist.Id;
     }
 
     public async Task RecreatePlaylistAsync(Guid userId, int playlistId, string? name, List<int>? songId, CancellationToken cancellationToken)

@@ -26,7 +26,10 @@ public class PlaylistsController: AudioController
         {
             var playlists = await PlaylistService.GetPlaylistsAsync(apiUserId.Value, HttpContext.RequestAborted);
 
-            await HttpContext.WriteResponseAsync(ItemChoiceType.playlists, playlists);
+            await HttpContext.WriteResponseAsync(ItemChoiceType.playlists, new Playlists()
+            {
+                playlist = playlists.Select(x => x.CreatePlaylist()).ToArray()
+            });
         }
     }
 
@@ -42,7 +45,7 @@ public class PlaylistsController: AudioController
         {
             var playlist = await PlaylistService.GetPlaylistAsync(apiUserId.Value, playlistId, HttpContext.RequestAborted);
             
-            await HttpContext.WriteResponseAsync(ItemChoiceType.playlist, playlist);
+            await HttpContext.WriteResponseAsync(ItemChoiceType.playlist, playlist.CreatePlaylistWithSongs());
         }
     }
 
@@ -57,8 +60,9 @@ public class PlaylistsController: AudioController
             {
                 Util.CheckRequiredParameters(nameof(name), name);
 
-                playlistId = await PlaylistService.CreatePlaylistAsync(apiUserId.Value, name!,
+                var id = await PlaylistService.CreatePlaylistAsync(apiUserId.Value, name!,
                     songId?.Select(x => x.ParseTrackId()).ToList(), HttpContext.RequestAborted);
+                playlistId = id.ToPlaylistId();
             }
             else
             {
@@ -68,7 +72,7 @@ public class PlaylistsController: AudioController
             
             var playlist = await PlaylistService.GetPlaylistAsync(apiUserId.Value, playlistId!.ParsePlaylistId(), HttpContext.RequestAborted);
             
-            await HttpContext.WriteResponseAsync(ItemChoiceType.playlist, playlist);
+            await HttpContext.WriteResponseAsync(ItemChoiceType.playlist, playlist.CreatePlaylistWithSongs());
         }
     }
 
@@ -86,7 +90,7 @@ public class PlaylistsController: AudioController
         
             var playlist = await PlaylistService.GetPlaylistAsync(apiUserId.Value, playlistId!.ParsePlaylistId(), HttpContext.RequestAborted);
             
-            await HttpContext.WriteResponseAsync(ItemChoiceType.playlist, playlist);
+            await HttpContext.WriteResponseAsync(ItemChoiceType.playlist, playlist.CreatePlaylistWithSongs());
         }
     }
 

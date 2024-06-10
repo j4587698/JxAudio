@@ -311,4 +311,24 @@ public static class SubsonicExtension
             coverArt = null
         };
     }
+
+    public static PlaylistWithSongs CreatePlaylistWithSongs(this PlaylistEntity playlist)
+    {
+        return new PlaylistWithSongs()
+        {
+            allowedUser = null,
+            id = playlist.Id.ToPlaylistId(),
+            name = playlist.Name,
+            comment = playlist.Description,
+            owner = playlist.UserEntity?.UserName,
+            @public = playlist.IsPublic,
+            publicSpecified = true,
+            songCount = playlist.TrackEntities?.Count ?? 0,
+            duration = playlist.TrackEntities?.Sum(x => (int)x.Duration) ?? 0,
+            created = playlist.CreateTime,
+            changed = playlist.UpdateTime,
+            coverArt = null,
+            entry = playlist.TrackEntities?.Select(x => x.CreateTrackChild()).ToArray()
+        };
+    }
 }
