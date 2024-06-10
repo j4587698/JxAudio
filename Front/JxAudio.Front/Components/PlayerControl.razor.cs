@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using BootstrapBlazor.Components;
+using Jx.Toolbox.Extensions;
 using JxAudio.Front.Data;
 using JxAudio.Front.Enums;
 using JxAudio.TransVo;
@@ -49,7 +50,7 @@ public partial class PlayerControl
     }
 
     private List<TrackVo> _tracks = new List<TrackVo>();
-    private TrackVo[]? _shuffleTrack;
+    private List<TrackVo>? _shuffleTrack;
     private int _playIndex = 0;
     private bool _showLrc;
     private string _lrc = "暂无歌词";
@@ -60,7 +61,7 @@ public partial class PlayerControl
         {
             if (_loopStatus == LoopStatus.ShuffleOne)
             {
-                return _shuffleTrack?.Length > _playIndex ? _shuffleTrack[_playIndex] : null;
+                return _shuffleTrack?.Count > _playIndex ? _shuffleTrack[_playIndex] : null;
             }
 
             return _tracks.Count > _playIndex ? _tracks[_playIndex] : null;
@@ -96,7 +97,7 @@ public partial class PlayerControl
                 _playIndex = _playIndex < _tracks.Count - 1 ? _playIndex + 1 : 0;
                 break;
             case LoopStatus.ShuffleOne:
-                _playIndex = _playIndex < _shuffleTrack!.Length - 1 ? _playIndex + 1 : 0;
+                _playIndex = _playIndex < _shuffleTrack!.Count - 1 ? _playIndex + 1 : 0;
                 break;
         }
 
@@ -159,7 +160,7 @@ public partial class PlayerControl
                 }
                 break;
             case LoopStatus.ShuffleOne:
-                if (_playIndex < _shuffleTrack?.Length - 1)
+                if (_playIndex < _shuffleTrack?.Count - 1)
                 {
                     _playIndex++;
                 }
@@ -232,7 +233,7 @@ public partial class PlayerControl
                 _tracks = _tracks.Union(message.Tracks).ToList();
                 if (_loopStatus == LoopStatus.ShuffleOne)
                 {
-                    _shuffleTrack = _tracks.ToArray();
+                    _shuffleTrack = new List<TrackVo>(_tracks);
                     Shuffle();
                     ToShuffle();
                 }
@@ -247,7 +248,7 @@ public partial class PlayerControl
                 _tracks = message.Tracks;
                 if (_loopStatus == LoopStatus.ShuffleOne)
                 {
-                    _shuffleTrack = _tracks.ToArray();
+                    _shuffleTrack = new List<TrackVo>(_tracks);
                 }
 
                 _playIndex = 0;
@@ -307,7 +308,7 @@ public partial class PlayerControl
         var index = -1;
         if (_loopStatus == LoopStatus.ShuffleOne)
         {
-            index = _shuffleTrack == null ? -1 : Array.IndexOf(_shuffleTrack, track);
+            index = _shuffleTrack?.IndexOf(track) ?? -1;
         }
         else
         {
@@ -335,7 +336,7 @@ public partial class PlayerControl
             Shuffle();
         }
 
-        var index = Array.IndexOf(_shuffleTrack!, track);
+        var index = _shuffleTrack!.IndexOf(track);
         _playIndex = index == -1 ? 0 : index;
     }
 
@@ -354,8 +355,8 @@ public partial class PlayerControl
 
     private void Shuffle()
     {
-        _shuffleTrack = _tracks.ToArray();
-        (new Random()).Shuffle(_shuffleTrack);
+        _shuffleTrack = new List<TrackVo>(_tracks);
+        _shuffleTrack.Shuffle();
     }
 
     private void GetCurrentLrc(double currentTime)
@@ -368,6 +369,17 @@ public partial class PlayerControl
         else
         {
             _lrc = "暂无歌词";
+        }
+    }
+    
+    private async Task TrackDelete(TrackVo track)
+    {
+        var deletePlaying = CurrentTrack == track;
+        _tracks.Remove(track);
+        _shuffleTrack?.Remove(track);
+        if (deletePlaying && _playStatus is not PlayStatus.Stop)
+        {
+            await PlayNow();
         }
     }
 }

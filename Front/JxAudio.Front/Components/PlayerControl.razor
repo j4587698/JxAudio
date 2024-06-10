@@ -99,7 +99,8 @@
                 </Button>
                 <PopConfirmButton CustomClass="custom-popup" Placement="Placement.Top">
                     <BodyTemplate>
-                        <PlayListControl TrackVos="_tracks" SelectedTrack="CurrentTrack" SelectedTrackChanged="SelectedTrackChanged"></PlayListControl>
+                        <PlayListControl Tracks="_tracks" SelectedTrack="CurrentTrack" SelectedTrackChanged="SelectedTrackChanged"
+                                         OnTrackDelete="TrackDelete"></PlayListControl>
                     </BodyTemplate>
                     <ChildContent>
                         <div class="d-flex align-items-center">

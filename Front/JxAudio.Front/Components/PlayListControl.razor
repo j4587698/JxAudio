@@ -1,6 +1,6 @@
 ﻿@using JxAudio.TransVo
 
-<ListGroup TItem="TrackVo" Items="TrackVos" Value="SelectedTrack" ValueChanged="SelectedTrackChanged"
+<ListGroup TItem="TrackVo" Items="Tracks" Value="SelectedTrack" ValueChanged="SelectedTrackChanged"
            style="height: 20rem;min-width: 300px">
     <HeaderTemplate>
         <div class="list-group-header">
@@ -17,7 +17,7 @@
                 }
                 else
                 {
-                    var index = TrackVos?.IndexOf(context);
+                    var index = Tracks?.IndexOf(context);
                     if (index is null or -1)
                     {
                         index = 0;
@@ -37,13 +37,16 @@
 
 @code {
     [Parameter]
-    public List<TrackVo>? TrackVos { get; set; }
+    public List<TrackVo>? Tracks { get; set; }
 
     [Parameter]
     public TrackVo? SelectedTrack { get; set; }
 
     [Parameter]
     public EventCallback<TrackVo> SelectedTrackChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<TrackVo> OnTrackDelete { get; set; }
 
     private string? CreateStyle(TrackVo trackVo)
     {
@@ -58,9 +61,9 @@
         SelectedTrackChanged.InvokeAsync(SelectedTrack);
     }
 
-    private void DeleteTrack(TrackVo trackVo)
+    private async Task DeleteTrack(TrackVo trackVo)
     {
-        TrackVos?.Remove(trackVo);
+        await OnTrackDelete.InvokeAsync(trackVo);
     }
 
 }
