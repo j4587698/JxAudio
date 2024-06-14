@@ -37,7 +37,7 @@ public static class MvcExtension
             foreach (var controller in application.Controllers)
             {
                 // 检查是否是ControllerBase的派生类
-                if (controller.ControllerType.BaseType == typeof(DynamicControllerBase))
+                if (controller.ControllerType.IsAssignableTo(typeof(DynamicControllerBase)))
                 {
                     // 检查是否已经有RouteAttribute定义
                     var hasRouteAttribute = controller.Selectors.Any(selector =>

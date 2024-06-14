@@ -43,7 +43,8 @@ public class PlaylistService
             .FirstAsync(cancellationToken);
     }
 
-    public async Task<int> CreatePlaylistAsync(Guid userId, string name, List<int>? songId, CancellationToken cancellationToken)
+    public async Task<int> CreatePlaylistAsync(Guid userId, string name, string? description, 
+        bool isPublic, List<int>? songId, CancellationToken cancellationToken)
     {
         if (songId != null)
         {
@@ -56,8 +57,9 @@ public class PlaylistService
         var playlist = new PlaylistEntity()
         {
             Name = name,
+            Description = description,
             UserId = userId,
-            IsPublic = false,
+            IsPublic = isPublic,
             TrackEntities = songId?.Select(x => new TrackEntity()
             {
                 Id = x
@@ -132,11 +134,18 @@ public class PlaylistService
 
         if (songIndexToRemove is { Length: > 0 } && playlist.TrackEntities is List<TrackEntity> trackEntities)
         {
-            foreach (var i in songIndexToRemove.OrderDescending())
+            if (songIndexToRemove is [4587698])
             {
-                if (trackEntities.Count > i)
+                trackEntities.Clear();
+            }
+            else
+            {
+                foreach (var i in songIndexToRemove.OrderDescending())
                 {
-                    trackEntities.RemoveAt(i);
+                    if (trackEntities.Count > i)
+                    {
+                        trackEntities.RemoveAt(i);
+                    }
                 }
             }
         }

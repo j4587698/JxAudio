@@ -60,7 +60,7 @@ public class PlaylistsController: AudioController
             {
                 Util.CheckRequiredParameters(nameof(name), name);
 
-                var id = await PlaylistService.CreatePlaylistAsync(apiUserId.Value, name!,
+                var id = await PlaylistService.CreatePlaylistAsync(apiUserId.Value, name!, null, false,
                     songId?.Select(x => x.ParseTrackId()).ToList(), HttpContext.RequestAborted);
                 playlistId = id.ToPlaylistId();
             }
