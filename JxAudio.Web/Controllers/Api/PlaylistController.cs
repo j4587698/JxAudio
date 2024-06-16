@@ -28,7 +28,7 @@ public class PlaylistController(PlaylistService playlistService): DynamicControl
         }
         var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
         await playlistService.CreatePlaylistAsync(Guid.Parse(id), playlist.Name!, playlist.Description, playlist.IsPublic,
-            playlist.Songs, HttpContext.RequestAborted);
+            playlist.Songs?.Select(x => x.Id).ToList(), HttpContext.RequestAborted);
         return ResultVo.Success();
     }
 
@@ -41,7 +41,7 @@ public class PlaylistController(PlaylistService playlistService): DynamicControl
         
         var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
         await playlistService.UpdatePlaylistAsync(Guid.Parse(id),playlist.Id.Value, playlist.Name, playlist.Description, playlist.IsPublic,
-            playlist.Songs, [4587698], HttpContext.RequestAborted);
+            playlist.Songs?.Select(x => x.Id).ToList(), [4587698], HttpContext.RequestAborted);
         return ResultVo.Success();
     }
     

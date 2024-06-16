@@ -10,5 +10,5 @@ public class PlaylistVo
 
     public bool IsPublic { get; set; }
 
-    public List<int>? Songs { get; set; }
+    public List<TrackVo>? Songs { get; set; }
 }

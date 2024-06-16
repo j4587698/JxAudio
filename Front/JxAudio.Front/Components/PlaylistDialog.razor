@@ -1,5 +1,27 @@
-﻿<h3>PlaylistDialog</h3>
+﻿@using System.Diagnostics.CodeAnalysis
+@using JxAudio.TransVo
+
+<div class="row g-3">
+    <div class="col-12">
+        <BootstrapInput @bind-Value="@Playlist.Name" ShowLabel="true" DisplayText="歌单名"></BootstrapInput>
+    </div>
+    <div class="col-12">
+        <Textarea rows="4" @bind-Value="@Playlist.Description" ShowLabel="true" DisplayText="歌单描述"></Textarea>
+    </div>
+    <div class="col-12">
+        <Table TItem="TrackVo"></Table>
+    </div>
+</div>
 
 @code {
-    
+    [NotNull]
+    [Parameter]
+    public PlaylistVo? Playlist { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Playlist ??= new PlaylistVo();
+    }
+
 }
