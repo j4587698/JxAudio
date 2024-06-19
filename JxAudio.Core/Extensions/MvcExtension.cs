@@ -47,12 +47,17 @@ public static class MvcExtension
                     {
                         var routeAttribute = new Microsoft.AspNetCore.Mvc.RouteAttribute(
                             $"{option.DynamicPrefix}{(option.DynamicPrefix?.EndsWith('/') == false ? "/" : "")}[controller]");
-                        controller.Selectors.Clear();
-                        // 没有RouteAttribute，所以添加一个
-                        controller.Selectors.Add(new SelectorModel
+                        var selectors = controller.Selectors.First();
+                        var nullableContext = selectors.EndpointMetadata
+                            .FirstOrDefault(x => x is NullableContextAttribute);
+                        if (nullableContext != null)
                         {
-                            AttributeRouteModel = new AttributeRouteModel(routeAttribute)
-                        });
+                            selectors.EndpointMetadata.Remove(nullableContext);
+                        }
+                        // 没有RouteAttribute，所以添加一个
+
+                        selectors.AttributeRouteModel = new AttributeRouteModel(routeAttribute);
+
                     }
 
                     foreach (var action in controller.Actions)
