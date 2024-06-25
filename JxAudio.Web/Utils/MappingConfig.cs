@@ -33,6 +33,11 @@ public static class MappingConfig
             .Map(dest => dest.TotalTime, src => src.TrackEntities != null ? src.TrackEntities.Sum(x => x.Duration) : 0)
             .Map(dest => dest.TotalSize, src => src.TrackEntities != null ? src.TrackEntities.Sum(x => x.Size) : 0);
 
+        TypeAdapterConfig<PlaylistEntity, PlaylistVo>.NewConfig()
+            .Map(dest => dest.Count, src => src.TrackEntities != null ? src.TrackEntities.Count : 0)
+            .Map(dest => dest.TotalTime, src => src.TrackEntities != null ? src.TrackEntities.Sum(x => x.Duration) : 0)
+            .Map(dest => dest.TotalSize, src => src.TrackEntities != null ? src.TrackEntities.Sum(x => x.Size) : 0)
+            .Map(dest => dest.Songs, src => src.TrackEntities);
     }
 
     private static List<LrcVo>? LrcEntityToLrcVo(LrcEntity? lrcEntity)

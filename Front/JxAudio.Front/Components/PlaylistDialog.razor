@@ -2,14 +2,17 @@
 @using JxAudio.TransVo
 
 <div class="row g-3">
-    <div class="col-12">
+    <div class="col-6">
         <BootstrapInput @bind-Value="@Playlist.Name" ShowLabel="true" DisplayText="歌单名"></BootstrapInput>
+    </div>
+    <div class="col-6">
+        <Switch @bind-Value="@Playlist.IsPublic" ShowLabel="true" DisplayText="是否公开"></Switch>
     </div>
     <div class="col-12">
         <Textarea rows="4" @bind-Value="@Playlist.Description" ShowLabel="true" DisplayText="歌单描述"></Textarea>
     </div>
     <div class="col-12">
-        <Table TItem="TrackVo"></Table>
+        <TrackTable Tracks="Playlist.Songs"></TrackTable>
     </div>
 </div>
 
