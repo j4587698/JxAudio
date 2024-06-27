@@ -48,6 +48,9 @@
 
     [Parameter]
     public EventCallback<TrackVo> OnTrackDelete { get; set; }
+    
+    [CascadingParameter(Name = "PopoverConfirmButtonCloseAsync")]
+    private Func<Task>? OnCloseAsync { get; set; }
 
     private string? CreateStyle(TrackVo trackVo)
     {
@@ -69,9 +72,17 @@
 
     private async Task CreatePlaylist()
     {
+
+        await OnCloseAsync();
+
+        var playlist = new PlaylistVo();
+        playlist.Songs = Tracks;
         await DialogService.Show(new DialogOption()
         {
-            BodyTemplate = BootstrapDynamicComponent.CreateComponent<PlaylistDialog>().Render(),
+            BodyTemplate = BootstrapDynamicComponent.CreateComponent<PlaylistDialog>(new Dictionary<string, object?>()
+            {
+                ["Playlist"] = playlist
+            }).Render(),
             Title = "创建新歌单"
         });
     }

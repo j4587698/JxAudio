@@ -18,7 +18,7 @@ public partial class PlayerControl
 
     [Parameter] public EventCallback<int> CurrentTimeChanged { get; set; }
 
-    private int Percent { get; set; }
+    private double Percent { get; set; }
     private int _volume = 100;
 
     private int Volume
@@ -43,7 +43,7 @@ public partial class PlayerControl
         set
         {
             CurrentTime = int.Parse(value);
-            Percent = CurrentTime * 100 / Duration;
+            Percent = CurrentTime * 100.0 / Duration;
             CurrentTimeChanged.InvokeAsync(CurrentTime);
             InvokeVoidAsync("setCurrentTime", CurrentTime);
         }
@@ -82,7 +82,7 @@ public partial class PlayerControl
         {
             CurrentTime = time;
             CurrentTimeChanged.InvokeAsync(time);
-            Percent = CurrentTime * 100 / Duration;
+            Percent = currentTime * 100.0 / Duration;
             StateHasChanged();
         }
     }

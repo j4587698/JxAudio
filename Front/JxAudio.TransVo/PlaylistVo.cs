@@ -1,13 +1,18 @@
-﻿namespace JxAudio.TransVo;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace JxAudio.TransVo;
 
 public class PlaylistVo
 {
     public int? Id { get; set; }
 
+    [Required]
     public string? Name { get; set; }
 
+    [Required]
     public string? Description { get; set; }
 
+    [Required]
     public bool IsPublic { get; set; }
     
     public int Count { get; set; }
