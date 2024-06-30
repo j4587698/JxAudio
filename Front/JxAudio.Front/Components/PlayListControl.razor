@@ -72,9 +72,11 @@
 
     private async Task CreatePlaylist()
     {
-
-        await OnCloseAsync();
-
+        if (OnCloseAsync != null)
+        {
+            await OnCloseAsync();
+        }
+        
         var playlist = new PlaylistVo();
         playlist.Songs = Tracks;
         await DialogService.Show(new DialogOption()
@@ -83,7 +85,8 @@
             {
                 ["Playlist"] = playlist
             }).Render(),
-            Title = "创建新歌单"
+            Title = "创建新歌单",
+            ShowFooter = false
         });
     }
 

@@ -49,14 +49,22 @@
         </TableColumn>
     </TableColumns>
     <RowButtonTemplate>
-        <TableCellButton Icon="fa fa-play" OnClick="() => Play(context)"></TableCellButton>
-        <TableCellButton Icon="fa fa-plus" OnClick="() => AddToList(context)"></TableCellButton>
+        <TableCellButton Icon="fa fa-play" OnClick="() => Play(context)" IsShow="ShowDefaultButton"></TableCellButton>
+        <TableCellButton Icon="fa fa-plus" OnClick="() => AddToList(context)" IsShow="ShowDefaultButton"></TableCellButton>
+        @TrackButton?.Invoke(context)
     </RowButtonTemplate>
 </Table>
 
 @code {
     [Parameter]
     public List<TrackVo>? Tracks { get; set; }
+
+    [Parameter]
+    public RenderFragment<TrackVo>? TrackButton { get; set; }
+
+    [Parameter] public bool ShowDefaultButton { get; set; } = true;
+
+    [Parameter] public bool ShowToolbar { get; set; } = true;
 
     private void Play(TrackVo trackVo)
     {

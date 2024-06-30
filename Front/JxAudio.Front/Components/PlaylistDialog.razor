@@ -1,20 +1,30 @@
 ﻿@using System.Diagnostics.CodeAnalysis
 @using JxAudio.TransVo
 
-<div class="row g-3">
-    <div class="col-6">
-        <BootstrapInput @bind-Value="@Playlist.Name" ShowLabel="true" DisplayText="歌单名"></BootstrapInput>
+<ValidateForm Model="Playlist" OnValidSubmit="OnValidSubmit">
+    <div class="row g-3">
+        <div class="col-6">
+            <BootstrapInput @bind-Value="@Playlist.Name" ShowLabel="true" DisplayText="歌单名"></BootstrapInput>
+        </div>
+        <div class="col-6">
+            <Switch @bind-Value="@Playlist.IsPublic" ShowLabel="true" DisplayText="是否公开"></Switch>
+        </div>
+        <div class="col-12">
+            <Textarea rows="4" @bind-Value="@Playlist.Description" ShowLabel="true" DisplayText="歌单描述"></Textarea>
+        </div>
+        <div class="col-12">
+            <TrackTable Tracks="Playlist.Songs" ShowDefaultButton="false">
+                <TrackButton>
+                    <TableCellButton Icon="fas fa-minus" OnClick="() => Minus(context)"></TableCellButton>
+                </TrackButton>
+            </TrackTable>
+        </div>
     </div>
-    <div class="col-6">
-        <Switch @bind-Value="@Playlist.IsPublic" ShowLabel="true" DisplayText="是否公开"></Switch>
+    <div class="modal-footer">
+        <Button Icon="fa fa-save" Text="保存" ButtonType="ButtonType.Submit"></Button>
+        <DialogCloseButton></DialogCloseButton>
     </div>
-    <div class="col-12">
-        <Textarea rows="4" @bind-Value="@Playlist.Description" ShowLabel="true" DisplayText="歌单描述"></Textarea>
-    </div>
-    <div class="col-12">
-        <TrackTable Tracks="Playlist.Songs"></TrackTable>
-    </div>
-</div>
+</ValidateForm>
 
 @code {
     [NotNull]
@@ -25,6 +35,16 @@
     {
         base.OnInitialized();
         Playlist ??= new PlaylistVo();
+    }
+
+    private void Minus(TrackVo trackVo)
+    {
+        Playlist.Songs?.Remove(trackVo);
+    }
+
+    private Task OnValidSubmit(EditContext arg)
+    {
+        throw new NotImplementedException();
     }
 
 }

@@ -21,7 +21,6 @@ builder.Services.AddScoped(sp =>
 
 builder.Services.AddBootstrapBlazor(options =>
 {
-    options.IgnoreLocalizerMissing = true;
     options.DefaultCultureInfo = "zh-CN";
 });
 
