@@ -36,19 +36,18 @@ public sealed partial class MainLayout
         _avatar = User?.Avatar ?? "./images/logo.png";
     }
 
-    private static List<MenuItem> GetIconSideMenuItems()
+    private List<MenuItem> GetIconSideMenuItems()
     {
         var menus = new List<MenuItem>
         {
-            new() { Text = "专辑", Icon = "fa-solid fa-fw fa-flag", Url = "/Albums", Match = NavLinkMatch.All },
-            new() { Text = "歌手", Icon = "fa-solid fa-fw fa-check-square", Url = "/Artists" },
-            new() { Text = "歌曲", Icon = "fa-solid fa-fw fa-database", Url = "/Tracks" },
-            new() { Text = "我的收藏", Icon = "fa-solid fa-fw fa-table", Items = [
-                new MenuItem() {Text = "专辑", Icon = "fa-solid fa-fw fa-flag", Url = "/Star/Album"},
-                new MenuItem() {Text = "歌手", Icon = "fa-solid fa-fw fa-flag", Url = "/Star/Artist"},
-                new MenuItem() {Text = "歌曲", Icon = "fa-solid fa-fw fa-flag", Url = "/Star/Track"},
-            ]},
-            new() { Text = "花名册", Icon = "fa-solid fa-fw fa-users", Url = "/users" }
+            new() { Text = StringLocalizer["Album"], Icon = "fa-solid fa-fw fa-flag", Url = "/Albums", Match = NavLinkMatch.All },
+            new() { Text = StringLocalizer["Artist"], Icon = "fa-solid fa-fw fa-check-square", Url = "/Artists" },
+            new() { Text = StringLocalizer["Track"], Icon = "fa-solid fa-fw fa-database", Url = "/Tracks" },
+            new() { Text = StringLocalizer["Collection"], Icon = "fa-solid fa-fw fa-table", Items = [
+                new MenuItem() {Text = StringLocalizer["Album"], Icon = "fa-solid fa-fw fa-flag", Url = "/Star/Album"},
+                new MenuItem() {Text = StringLocalizer["Artist"], Icon = "fa-solid fa-fw fa-flag", Url = "/Star/Artist"},
+                new MenuItem() {Text = StringLocalizer["Track"], Icon = "fa-solid fa-fw fa-flag", Url = "/Star/Track"},
+            ]}
         };
 
         return menus;

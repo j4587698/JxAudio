@@ -1,12 +1,14 @@
 ﻿@using JxAudio.TransVo
+@using Microsoft.Extensions.Localization
 @inject DialogService DialogService
+@inject IStringLocalizer<PlayListControl> StringLocalizer
 
 <ListGroup TItem="TrackVo" Items="Tracks" 
            style="height: 20rem;min-width: 300px">
     <HeaderTemplate>
         <div class="list-group-header">
-            <div class="flex-fill">播放列表</div>
-            <Button Color="Color.Danger" Icon="fa fa-plus" Size="Size.ExtraSmall" OnClick="CreatePlaylist">生成歌单</Button>
+            <div class="flex-fill">@StringLocalizer["Playlist"]</div>
+            <Button Color="Color.Danger" Icon="fa fa-plus" Size="Size.ExtraSmall" OnClick="CreatePlaylist">@StringLocalizer["CreatePlaylist"]</Button>
         </div>
     </HeaderTemplate>
     <ItemTemplate>

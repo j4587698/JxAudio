@@ -39,4 +39,18 @@
     "JxAudio.Front.Pages.Artists": {
         "Title": "所有艺术家"
     },
+  "JxAudio.Front.Pages.Tracks": {
+    "Title": "所有歌曲"
+  },
+  "JxAudio.Front.Layout.MainLayout": {
+    "RePass": "修改密码",
+    "Album": "专辑",
+    "Artist": "艺术家",
+    "Track": "歌曲",
+    "Collection": "我的收藏"
+  },
+  "JxAudio.Front.Components.PlayListControl": {
+    "Playlist": "播放列表",
+    "CreatePlaylist": "创建歌单"
+  }
 }

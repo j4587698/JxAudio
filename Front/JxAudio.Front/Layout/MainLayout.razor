@@ -1,6 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @using JxAudio.Front.Components
+@using Microsoft.Extensions.Localization
 @inject HttpClient Http
+@inject IStringLocalizer<MainLayout> StringLocalizer
 
 <BootstrapBlazorRoot>
     <Layout ShowGotoTop="false" ShowCollapseBar="true" ShowFooter="true" SideWidth="0"
@@ -13,7 +15,7 @@
             </div>
             <Logout ImageUrl="@_avatar" DisplayName="@User?.UserName" UserName="@User?.UserName">
                 <LinkTemplate>
-                    <a href="#"><i class="fa-solid fa-suitcase"></i>修改密码</a>
+                    <a href="#"><i class="fa-solid fa-suitcase"></i>@StringLocalizer["RePass"]</a>
                     <LogoutLink/>
                 </LinkTemplate>
             </Logout>
