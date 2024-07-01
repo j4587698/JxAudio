@@ -1,15 +1,17 @@
 ﻿@page "/Album/{id:int?}"
 @using JxAudio.TransVo
+@using Microsoft.Extensions.Localization
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
+@inject IStringLocalizer<Album> StringLocalizer
 
-<PageTitle>专辑 @_album?.Title - JxAudio</PageTitle>
+<PageTitle>@StringLocalizer["Title"] @_album?.Title - JxAudio</PageTitle>
 
 <Card>
     <BodyTemplate>
         <div class="row">
             <div class="col-xs-5 col-md-3 col-sm-4 col-lg-2">
-                <img alt="cover" src="/api/Cover?coverId=@_album?.CoverId" class="w-100 h-100" />
+                <img alt="cover" src="/api/Cover?coverId=@_album?.CoverId" style="width: 100%;height: auto" />
             </div>
             <div class="col-md-9 col-xs-7 col-sm-8 col-lg-10">
                 <div class="row">

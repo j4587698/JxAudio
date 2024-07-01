@@ -3,11 +3,13 @@
 @using JxAudio.TransVo
 @using JxAudio.Front.Data
 @using JxAudio.Front.Filter
+@using Microsoft.Extensions.Localization
 
 @inject HttpClient Http
 @inject IDispatchService<AddTrackMessage> DispatchService
+@inject IStringLocalizer<Albums> StringLocalizer
 
-<PageTitle>所有专辑 - JxAudio</PageTitle>
+<PageTitle>@StringLocalizer["Title"] - JxAudio</PageTitle>
 
 <div style="height: calc(100vh - 5.1rem - 82px)">
     <FrontTable TItem="AlbumVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"

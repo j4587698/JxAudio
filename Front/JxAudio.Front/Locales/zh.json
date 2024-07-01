@@ -26,5 +26,17 @@
     "BitRate": "音频格式",
     "Size": "总大小",
     "Duration": "时长"
-  }
+  },
+  "JxAudio.Front.Pages.Albums": {
+    "Title": "所有专辑"
+  },
+  "JxAudio.Front.Pages.Album": {
+    "Title": "专辑"
+  },
+  "JxAudio.Front.Pages.Artist": {
+    "Title": "艺术家"
+  },
+    "JxAudio.Front.Pages.Artists": {
+        "Title": "所有艺术家"
+    },
 }
