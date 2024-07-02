@@ -1,4 +1,7 @@
 ﻿{
+  "System.ComponentModel.DataAnnotations.RequiredAttribute": {
+    "ErrorMessage": "{0} 是必填项。"
+  },
   "BootstrapBlazor.Components.StringFilter": {
     "Value1.PlaceHolder": "请输入"
   },
@@ -27,6 +30,15 @@
     "Size": "总大小",
     "Duration": "时长"
   },
+  "JxAudio.TransVo.PlaylistVo": {
+    "Name": "歌单名",
+    "Description": "描述",
+    "IsPublic": "是否公开",
+    "Count": "歌曲数量",
+    "TotalSize": "总大小",
+    "TotalTime": "总时长",
+    "Name.PlaceHolder": "请输入歌单名",
+  },
   "JxAudio.Front.Pages.Albums": {
     "Title": "所有专辑"
   },
@@ -42,12 +54,16 @@
   "JxAudio.Front.Pages.Tracks": {
     "Title": "所有歌曲"
   },
+  "JxAudio.Front.Pages.Playlists": {
+    "Title": "歌单"
+  },
   "JxAudio.Front.Layout.MainLayout": {
     "RePass": "修改密码",
     "Album": "专辑",
     "Artist": "艺术家",
     "Track": "歌曲",
-    "Collection": "我的收藏"
+    "Collection": "我的收藏",
+    "Playlist": "歌单"
   },
   "JxAudio.Front.Components.PlayListControl": {
     "Playlist": "播放列表",

@@ -1,0 +1,48 @@
+﻿@page "/Playlists"
+@using System.Net
+@using JxAudio.Front.Filter
+@using JxAudio.TransVo
+@using Microsoft.Extensions.Localization
+
+@inject IStringLocalizer<Playlists> StringLocalizer
+@inject HttpClient Http
+
+<PageTitle>@StringLocalizer["Title"] - JxAudio </PageTitle>
+
+<div style="height: calc(100vh - 5.1rem - 82px)">
+    <FrontTable TItem="PlaylistVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"
+                ShowExtendDeleteButton="false" ShowExtendEditButton="false" OnQueryAsync="OnQueryAsync">
+        <TableColumns>
+            <TableColumn @bind-Field="@context.Name"></TableColumn>
+            <TableColumn @bind-Field="@context.IsPublic"></TableColumn>
+            <TableColumn @bind-Field="@context.Count"></TableColumn>
+            <TableColumn @bind-Field="@context.TotalTime"></TableColumn>
+            <TableColumn @bind-Field="@context.TotalSize"></TableColumn>
+        </TableColumns>
+    </FrontTable>
+</div>
+
+@code {
+
+    private async Task<QueryData<PlaylistVo>> OnQueryAsync(QueryPageOptions queryPageOptions)
+    {
+        QueryOptionsVo queryOptionsVo = new QueryOptionsVo
+        {
+            SortName = queryPageOptions.SortName.ToFieldName(),
+            DynamicFilterInfo = queryPageOptions.ToDynamicFilter(),
+            SortOrder = (int)queryPageOptions.SortOrder,
+            IsPage = queryPageOptions.IsPage,
+            PageIndex = queryPageOptions.PageIndex,
+            PageItems = queryPageOptions.PageItems
+        };
+        var responseMessage = await Http.PostAsJsonAsync("/api/Playlist", queryOptionsVo);
+        var vo = await responseMessage.Content.ReadFromJsonAsync<QueryData<PlaylistVo>>();
+        if (vo == null)
+        {
+            return new QueryData<PlaylistVo>();
+        }
+
+        return vo;
+    }
+
+}

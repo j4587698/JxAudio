@@ -1,10 +1,13 @@
 ﻿using System.Security.Claims;
+using BootstrapBlazor.Components;
 using Jx.Toolbox.Extensions;
 using JxAudio.Core;
 using JxAudio.Core.Service;
 using JxAudio.TransVo;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using DynamicFilterInfo = FreeSql.Internal.Model.DynamicFilterInfo;
 using ResultVo = JxAudio.Web.Vo.ResultVo;
 
 namespace JxAudio.Web.Controllers.Api;
@@ -18,6 +21,22 @@ public class PlaylistController(PlaylistService playlistService): DynamicControl
         var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
         var playlists = await playlistService.GetPlaylistsAsync(Guid.Parse(id), HttpContext.RequestAborted);
         return ResultVo.Success(data: playlists);
+    }
+    
+    public async Task<object> Post([FromBody] QueryOptionsVo queryOptionsVo)
+    {
+        var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        var queryAsync = await playlistService.QueryData(queryOptionsVo.Adapt<QueryPageOptions>(),
+            queryOptionsVo.DynamicFilterInfo.Adapt<DynamicFilterInfo>(), Guid.Parse(id), false);
+        return ResultVo.Success(data: new QueryData<PlaylistVo>()
+        {
+            Items = queryAsync.Items?.Select(x => x.Adapt<PlaylistVo>()),
+            TotalCount = queryAsync.TotalCount,
+            IsAdvanceSearch = true,
+            IsFiltered = true,
+            IsSearch = true,
+            IsSorted = true
+        });
     }
     
     public async Task<object> CreatePlayList([FromBody]PlaylistVo? playlist)

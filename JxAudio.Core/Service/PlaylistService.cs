@@ -1,4 +1,6 @@
-﻿using FreeSql;
+﻿using BootstrapBlazor.Components;
+using FreeSql;
+using FreeSql.Internal.Model;
 using Jx.Toolbox.Extensions;
 using JxAudio.Core.Attributes;
 using JxAudio.Core.Entity;
@@ -16,6 +18,41 @@ public class PlaylistService
             y.DirectoryEntity!.IsAccessControlled == false ||
             y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId))
         && (x.UserId == userId || x.IsPublic));
+    }
+    
+    public async Task<QueryData<PlaylistEntity>> QueryData(QueryPageOptions options, DynamicFilterInfo dynamicFilterInfo,
+        Guid userId, bool starOnly)
+    {
+        var select = GetPlaylistBase(userId)
+            .IncludeMany(x => x.TrackEntities!.Select(y => new TrackEntity()
+                {
+                    Id = y.Id,
+                    Duration = y.Duration,
+                    Size = y.Size
+                }),
+                then => then.Where(y =>
+                    y.DirectoryEntity!.IsAccessControlled == false ||
+                    y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
+            .WhereDynamicFilter(dynamicFilterInfo)
+            .OrderByPropertyNameIf(options.SortOrder != SortOrder.Unset, options.SortName,
+                options.SortOrder == SortOrder.Asc)
+            .Count(out var count);
+        if (options.IsPage)
+        {
+            select.Page(options.PageIndex, options.PageItems);
+        }
+
+        var data = await select.ToListAsync();
+        
+        return new QueryData<PlaylistEntity>()
+        {
+            TotalCount = (int)count,
+            Items = data,
+            IsSorted = options.SortOrder != SortOrder.Unset,
+            IsFiltered = true,
+            IsAdvanceSearch = true,
+            IsSearch = true
+        };
     }
 
     public async Task<List<PlaylistEntity>> GetPlaylistsAsync(Guid apiUserId, CancellationToken cancellationToken)

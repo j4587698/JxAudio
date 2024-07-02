@@ -1,6 +1,8 @@
 ﻿@using System.Diagnostics.CodeAnalysis
 @using JxAudio.TransVo
 
+@inject HttpClient Http
+
 <ValidateForm Model="Playlist" OnValidSubmit="OnValidSubmit">
     <div class="row g-3">
         <div class="col-6">
@@ -42,9 +44,16 @@
         Playlist.Songs?.Remove(trackVo);
     }
 
-    private Task OnValidSubmit(EditContext arg)
+    private async Task OnValidSubmit(EditContext arg)
     {
-        throw new NotImplementedException();
+        if (Playlist.Id is null or 0)
+        {
+            await Http.PostAsJsonAsync($"api/Playlist/CreatePlayList", Playlist);
+        }
+        else
+        {
+            await Http.PostAsJsonAsync($"api/Playlist/UpdatePlayList", Playlist);
+        }
     }
 
 }
