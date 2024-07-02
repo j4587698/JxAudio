@@ -14,7 +14,7 @@
         <div class="col-12">
             <Textarea rows="4" @bind-Value="@Playlist.Description" ShowLabel="true" DisplayText="歌单描述"></Textarea>
         </div>
-        <div class="col-12">
+        <div class="col-12" style="max-height: 55vh">
             <TrackTable Tracks="Playlist.Songs" ShowDefaultButton="false">
                 <TrackButton>
                     <TableCellButton Icon="fas fa-minus" OnClick="() => Minus(context)"></TableCellButton>
@@ -23,8 +23,8 @@
         </div>
     </div>
     <div class="modal-footer">
-        <Button Icon="fa fa-save" Text="保存" ButtonType="ButtonType.Submit"></Button>
         <DialogCloseButton></DialogCloseButton>
+        <Button Icon="fa fa-save" Text="保存" ButtonType="ButtonType.Submit"></Button>
     </div>
 </ValidateForm>
 
@@ -32,6 +32,9 @@
     [NotNull]
     [Parameter]
     public PlaylistVo? Playlist { get; set; }
+    
+    [CascadingParameter]
+    private Func<Task>? OnCloseAsync { get; set; }
 
     protected override void OnInitialized()
     {
@@ -53,6 +56,11 @@
         else
         {
             await Http.PostAsJsonAsync($"api/Playlist/UpdatePlayList", Playlist);
+        }
+
+        if (OnCloseAsync != null)
+        {
+            await OnCloseAsync();
         }
     }
 
