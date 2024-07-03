@@ -11,9 +11,13 @@
 
 <div style="height: calc(100vh - 5.1rem - 82px)">
     <FrontTable TItem="PlaylistVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"
-                ShowExtendDeleteButton="false" ShowExtendEditButton="false" OnQueryAsync="OnQueryAsync">
+                ShowExtendDeleteButton="true" ShowExtendEditButton="false" OnQueryAsync="OnQueryAsync">
         <TableColumns>
-            <TableColumn @bind-Field="@context.Name"></TableColumn>
+            <TableColumn @bind-Field="@context.Name">
+                <Template Context="value">
+                    <LinkButton Text="@value.Value" Url=@($"/Playlist/{value.Row.Id}")></LinkButton>
+                </Template>
+            </TableColumn>
             <TableColumn @bind-Field="@context.IsPublic"></TableColumn>
             <TableColumn @bind-Field="@context.Count"></TableColumn>
             <TableColumn @bind-Field="@context.TotalTime"></TableColumn>

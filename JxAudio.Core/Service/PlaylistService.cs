@@ -14,10 +14,7 @@ public class PlaylistService
 {
     private ISelect<PlaylistEntity> GetPlaylistBase(Guid userId)
     {
-        return PlaylistEntity.Where(x => x.TrackEntities!.Any(y =>
-            y.DirectoryEntity!.IsAccessControlled == false ||
-            y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId))
-        && (x.UserId == userId || x.IsPublic));
+        return PlaylistEntity.Where(x => x.UserId == userId || x.IsPublic);
     }
     
     public async Task<QueryData<PlaylistEntity>> QueryData(QueryPageOptions options, DynamicFilterInfo dynamicFilterInfo,
