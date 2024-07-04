@@ -8,6 +8,9 @@
   "JxAudio.Front.Components.ArtistFilter": {
     "_value.PlaceHolder": "请输入"
   },
+  "JxAudio.Front.Components.TrackTable": {
+    "PlayAll": "播放全部"
+  },
   "JxAudio.TransVo.ArtistVo": {
     "Name": "歌手名",
     "Count": "歌曲数量",
@@ -55,6 +58,9 @@
     "Title": "所有歌曲"
   },
   "JxAudio.Front.Pages.Playlists": {
+    "Title": "歌单"
+  },
+  "JxAudio.Front.Pages.Playlist": {
     "Title": "歌单"
   },
   "JxAudio.Front.Layout.MainLayout": {

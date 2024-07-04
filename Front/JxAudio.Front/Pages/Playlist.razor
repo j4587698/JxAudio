@@ -1,0 +1,57 @@
+﻿@page "/Playlist/{id:int?}"
+@using JxAudio.TransVo
+@using Microsoft.Extensions.Localization
+
+@inject NavigationManager NavigationManager
+@inject HttpClient Http
+@inject IStringLocalizer<Playlist> StringLocalizer
+
+<PageTitle>@StringLocalizer["Title"] @_playlist?.Name - JxAudio</PageTitle>
+
+<Card>
+    <BodyTemplate>
+        <div class="row">
+            <div class="row">
+                <div class="col-12">
+                    <h1>@_playlist?.Name</h1>
+                </div>
+                <div class="col-12">
+                    @_playlist?.Description
+                </div>
+            </div>
+
+        </div>
+    </BodyTemplate>
+</Card>
+<br />
+<div class="g-3">
+    <TrackTable Tracks="_playlist?.Songs">
+        <ToolbarButtons>
+            <TableToolbarButton TItem="TrackVo" Text="添加歌曲" Icon="fa fa-plus"></TableToolbarButton>
+        </ToolbarButtons>
+    </TrackTable>
+</div>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private PlaylistVo? _playlist;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        if (Id == null)
+        {
+            NavigationManager.NavigateTo("/Playlists");
+            return;
+        }
+        
+        _playlist = await Http.GetFromJsonAsync<PlaylistVo>($"/api/Playlist/?id={Id}");
+        if (_playlist == null)
+        {
+            NavigationManager.NavigateTo("/Playlists");
+        }
+    }
+
+}

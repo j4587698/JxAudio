@@ -16,11 +16,11 @@ namespace JxAudio.Web.Controllers.Api;
 public class PlaylistController(PlaylistService playlistService): DynamicControllerBase
 {
 
-    public async Task<object> Get()
+    public async Task<object> Get(int id)
     {
-        var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
-        var playlists = await playlistService.GetPlaylistsAsync(Guid.Parse(id), HttpContext.RequestAborted);
-        return ResultVo.Success(data: playlists);
+        var userId = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        var playlist = await playlistService.GetPlaylistAsync(Guid.Parse(userId), id, HttpContext.RequestAborted);
+        return ResultVo.Success(data: playlist.Adapt<PlaylistVo>());
     }
     
     public async Task<object> Post([FromBody] QueryOptionsVo queryOptionsVo)
