@@ -13,14 +13,14 @@
     <ItemGroup>
       <PackageReference Include="Autofac" Version="8.0.0" />
       <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
-      <PackageReference Include="BootstrapBlazor" Version="8.6.5-beta02" />
+      <PackageReference Include="BootstrapBlazor" Version="8.7.2-beta02" />
       <PackageReference Include="BootstrapBlazor.FontAwesome" Version="8.0.4" />
       <PackageReference Include="FFMpegCore" Version="5.1.0" />
       <PackageReference Include="FreeSql.All" Version="3.2.820" />
       <PackageReference Include="FreeSql.Extensions.BaseEntity" Version="3.2.820" />
       <PackageReference Include="Hardware.Info" Version="100.1.0" />
       <PackageReference Include="Jx.Toolbox" Version="0.3.12" />
-      <PackageReference Include="Longbow.Tasks" Version="8.0.2" />
+      <PackageReference Include="Longbow.Tasks" Version="8.0.3" />
       <PackageReference Include="Mapster" Version="7.4.0" />
       <PackageReference Include="McMaster.NETCore.Plugins" Version="1.4.0" />
       <PackageReference Include="Mono.Cecil" Version="0.11.5" />

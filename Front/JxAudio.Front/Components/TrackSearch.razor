@@ -1,0 +1,21 @@
+﻿<div class="row g-3">
+    <div class="col-12">
+        <BootstrapInputGroup>
+            <BootstrapInput @bind-Value="SearchText"></BootstrapInput>
+            <Button Icon="fa fa-search" OnClick="Search"></Button>
+        </BootstrapInputGroup>
+    </div>
+    <div class="col-12">
+        
+    </div>
+</div>
+
+@code {
+    public string? SearchText { get; set; }
+
+    private void Search()
+    {
+        throw new NotImplementedException();
+    }
+
+}

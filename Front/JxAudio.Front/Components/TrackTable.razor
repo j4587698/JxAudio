@@ -2,11 +2,13 @@
 @using JxAudio.Front.Data
 @using JxAudio.TransVo
 @using Microsoft.Extensions.Localization
+
 @inject IDispatchService<AddTrackMessage> DispatchService
 @inject IStringLocalizer<TrackTable> StringLocalizer
 
-<Table TItem="TrackVo" Items="Tracks" IsBordered="true" IsStriped="true" ShowExtendButtons="true" 
-       ShowExtendEditButton="false" ShowExtendDeleteButton="false" ShowToolbar="true" ShowDefaultButtons="false">
+<Table TItem="TrackVo" Items="Tracks" IsBordered="true" IsStriped="true" ShowExtendButtons="true" IsMultipleSelect="true"
+       ShowExtendEditButton="false" ShowExtendDeleteButton="false" ShowToolbar="true" ShowDefaultButtons="false"
+       SelectedRows="_selectedRows" SelectedRowsChanged="SelectedChanged">
     <TableColumns>
         <TableColumn @bind-Field="@context.Title"></TableColumn>
         <TableColumn @bind-Field="@context.Artists">
@@ -60,59 +62,3 @@
         @ToolbarButtons
     </TableToolbarTemplate>
 </Table>
-
-@code {
-    [Parameter]
-    public List<TrackVo>? Tracks { get; set; }
-
-    [Parameter]
-    public RenderFragment<TrackVo>? TrackButton { get; set; }
-
-    [Parameter] public bool ShowDefaultButton { get; set; } = true;
-
-    [Parameter] public bool ShowDefaultToolbar { get; set; } = true;
-
-    [Parameter]
-    public RenderFragment? ToolbarButtons { get; set; }
-
-    private void Play(TrackVo trackVo)
-    {
-        DispatchService.Dispatch(new DispatchEntry<AddTrackMessage>()
-        {
-            Entry = new AddTrackMessage()
-            {
-                Tracks = [trackVo],
-                Type = "replace"
-            }
-        });
-    }
-
-    private void AddToList(TrackVo trackVo)
-    {
-        DispatchService.Dispatch(new DispatchEntry<AddTrackMessage>()
-        {
-            Entry = new AddTrackMessage()
-            {
-                Tracks = [trackVo],
-                Type = "add"
-            }
-        });
-    }
-
-    private Task PlayAll()
-    {
-        if (Tracks is { Count: > 0 })
-        {
-            DispatchService.Dispatch(new DispatchEntry<AddTrackMessage>()
-            {
-                Entry = new AddTrackMessage()
-                {
-                    Tracks = Tracks,
-                    Type = "replace"
-                }
-            });
-        }
-        return Task.CompletedTask;
-    }
-
-}

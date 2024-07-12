@@ -5,6 +5,7 @@
 @inject NavigationManager NavigationManager
 @inject HttpClient Http
 @inject IStringLocalizer<Playlist> StringLocalizer
+@inject DialogService DialogService
 
 <PageTitle>@StringLocalizer["Title"] @_playlist?.Name - JxAudio</PageTitle>
 
@@ -27,7 +28,7 @@
 <div class="g-3">
     <TrackTable Tracks="_playlist?.Songs">
         <ToolbarButtons>
-            <TableToolbarButton TItem="TrackVo" Text="添加歌曲" Icon="fa fa-plus"></TableToolbarButton>
+            <TableToolbarButton TItem="TrackVo" Text="添加歌曲" Icon="fa fa-plus" OnClick="AddTrack"></TableToolbarButton>
         </ToolbarButtons>
     </TrackTable>
 </div>
@@ -52,6 +53,14 @@
         {
             NavigationManager.NavigateTo("/Playlists");
         }
+    }
+
+    private void AddTrack()
+    {
+        DialogService.Show(new DialogOption()
+        {
+            BodyTemplate = BootstrapDynamicComponent.CreateComponent<TrackSearch>().Render()
+        });
     }
 
 }
