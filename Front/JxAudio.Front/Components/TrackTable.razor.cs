@@ -12,6 +12,8 @@ public partial class TrackTable
     [Parameter] public RenderFragment<TrackVo>? TrackButton { get; set; }
 
     [Parameter] public bool ShowDefaultButton { get; set; } = true;
+    [Parameter] public bool ShowDefaultToolbarButton { get; set; } = true;
+    
     [Parameter] public bool ShowDefaultToolbar { get; set; } = true;
 
     [Parameter] public RenderFragment? ToolbarButtons { get; set; }

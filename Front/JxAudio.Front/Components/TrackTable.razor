@@ -7,7 +7,7 @@
 @inject IStringLocalizer<TrackTable> StringLocalizer
 
 <Table TItem="TrackVo" Items="Tracks" IsBordered="true" IsStriped="true" ShowExtendButtons="true" IsMultipleSelect="true"
-       ShowExtendEditButton="false" ShowExtendDeleteButton="false" ShowToolbar="true" ShowDefaultButtons="false"
+       ShowExtendEditButton="false" ShowExtendDeleteButton="false" ShowToolbar="ShowDefaultToolbar" ShowDefaultButtons="false"
        SelectedRows="_selectedRows" SelectedRowsChanged="SelectedChanged">
     <TableColumns>
         <TableColumn @bind-Field="@context.Title"></TableColumn>
@@ -58,7 +58,7 @@
         @TrackButton?.Invoke(context)
     </RowButtonTemplate>
     <TableToolbarTemplate>
-        <TableToolbarButton Text="@StringLocalizer["PlayAll"]" Icon="fa fa-play" OnClickWithoutRender="PlayAll" IsShow="ShowDefaultToolbar"></TableToolbarButton>
+        <TableToolbarButton Text="@StringLocalizer["PlayAll"]" Icon="fa fa-play" OnClickWithoutRender="PlayAll" IsShow="ShowDefaultToolbarButton"></TableToolbarButton>
         @ToolbarButtons
     </TableToolbarTemplate>
 </Table>

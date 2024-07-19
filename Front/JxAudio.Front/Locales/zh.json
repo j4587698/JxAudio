@@ -61,7 +61,8 @@
     "Title": "歌单"
   },
   "JxAudio.Front.Pages.Playlist": {
-    "Title": "歌单"
+    "Title": "歌单",
+    "AddTrack": "添加歌曲"
   },
   "JxAudio.Front.Layout.MainLayout": {
     "RePass": "修改密码",
@@ -74,5 +75,8 @@
   "JxAudio.Front.Components.PlayListControl": {
     "Playlist": "播放列表",
     "CreatePlaylist": "创建歌单"
+  },
+  "JxAudio.Front.Components.TrackSearch": {
+    "SearchText": "搜索歌曲"
   }
 }

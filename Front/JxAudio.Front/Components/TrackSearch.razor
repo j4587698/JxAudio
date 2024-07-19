@@ -1,21 +1,37 @@
-﻿<div class="row g-3">
+﻿@using Jx.Toolbox.Extensions
+@using JxAudio.TransVo
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<TrackSearch> StringLocalizer
+@inject HttpClient Http
+
+<div class="row g-3">
     <div class="col-12">
         <BootstrapInputGroup>
-            <BootstrapInput @bind-Value="SearchText"></BootstrapInput>
+            <BootstrapInput @bind-Value="SearchText" PlaceHolder="@StringLocalizer["SearchText"]"></BootstrapInput>
             <Button Icon="fa fa-search" OnClick="Search"></Button>
         </BootstrapInputGroup>
     </div>
     <div class="col-12">
-        
+        <TrackTable Tracks="TrackVos" SelectedRows="SelectedTracks" ShowDefaultToolbar="false" ShowDefaultButton="false"></TrackTable>
     </div>
 </div>
 
 @code {
-    public string? SearchText { get; set; }
+    private string? SearchText { get; set; }
+    
+    public List<TrackVo>? TrackVos { get; set; }
 
-    private void Search()
+    [Parameter]
+    public List<TrackVo> SelectedTracks { get; set; } = new List<TrackVo>();
+
+    private async Task Search()
     {
-        throw new NotImplementedException();
+        if (SearchText.IsNullOrEmpty())
+        {
+            return;
+        }
+        var response = await Http.GetAsync("api/Track/Search?SearchText=" + SearchText);
+        TrackVos = await response.Content.ReadFromJsonAsync<List<TrackVo>>();
     }
 
 }

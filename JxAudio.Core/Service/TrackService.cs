@@ -208,7 +208,7 @@ public class TrackService
         Guid userId, bool starOnly)
     {
         var select = GetTrackBase(userId, null)
-            .WhereIf(starOnly, x => x.TrackStarEntities.Any(y => y.UserId == userId))
+            .WhereIf(starOnly, x => x.TrackStarEntities!.Any(y => y.UserId == userId))
             .WhereDynamicFilter(dynamicFilterInfo)
             .OrderByPropertyNameIf(options.SortOrder != SortOrder.Unset, options.SortName,
                 options.SortOrder == SortOrder.Asc)
@@ -230,4 +230,13 @@ public class TrackService
             IsSearch = options.Searches.Any() || options.CustomerSearches.Any()
         };
     }
+
+    public async Task<List<TrackEntity>> Search(string searchText, Guid userId, CancellationToken cancellationToken)
+    {
+        return await GetTrackBase(userId, null)
+            .Where(x => x.Name!.Contains(searchText) || x.AlbumEntity!.Title!.Contains(searchText) ||
+                        x.ArtistEntities!.Any(y => y.Name!.Contains(searchText)))
+            .ToListAsync(cancellationToken);
+    }
+    
 }

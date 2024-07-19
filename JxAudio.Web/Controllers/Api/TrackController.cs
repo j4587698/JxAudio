@@ -16,10 +16,10 @@ using DynamicFilterInfo = FreeSql.Internal.Model.DynamicFilterInfo;
 
 namespace JxAudio.Web.Controllers.Api;
 
+[Authorize]
 public class TrackController(TrackService trackService, UserService userService): DynamicControllerBase
 {
-
-    [Authorize]
+    
     public async Task<object> Post([FromBody] QueryOptionsVo queryOptionsVo)
     {
         var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
@@ -36,7 +36,6 @@ public class TrackController(TrackService trackService, UserService userService)
         });
     }
     
-    [Authorize]
     public async Task<object> PostStar([FromBody] QueryOptionsVo queryOptionsVo)
     {
         var id = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
@@ -52,24 +51,28 @@ public class TrackController(TrackService trackService, UserService userService)
             IsSorted = true
         });
     }
-
-    [Authorize]
+    
     public async Task<object> GetStar(int id)
     {
         var userId = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
         await trackService.StarTrackAsync(Guid.Parse(userId), [id], HttpContext.RequestAborted);
         return ResultVo.Success(data: "s");
     }
-
-    [Authorize]
+    
     public async Task<object> GetUnStar(int id)
     {
         var userId = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
         await trackService.UnStarTrackAsync(Guid.Parse(userId), [id], HttpContext.RequestAborted);
         return ResultVo.Success(data: "s");
     }
+
+    public async Task<object> GetSearch(string searchText)
+    {
+        var userId = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        var searchList = await trackService.Search(searchText, Guid.Parse(userId), HttpContext.RequestAborted);
+        return ResultVo.Success(data: searchList.Adapt<List<TrackVo>>());
+    }
     
-    [Authorize]
     public async Task<IActionResult> GetStream(int trackId, int? maxBitRate, string? format)
     {
         maxBitRate ??= 0;

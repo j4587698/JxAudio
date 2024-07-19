@@ -28,7 +28,7 @@
 <div class="g-3">
     <TrackTable Tracks="_playlist?.Songs">
         <ToolbarButtons>
-            <TableToolbarButton TItem="TrackVo" Text="添加歌曲" Icon="fa fa-plus" OnClick="AddTrack"></TableToolbarButton>
+            <TableToolbarButton TItem="TrackVo" Text="@StringLocalizer["AddTrack"]" Icon="fa fa-plus" OnClick="AddTrack"></TableToolbarButton>
         </ToolbarButtons>
     </TrackTable>
 </div>
@@ -59,6 +59,7 @@
     {
         DialogService.Show(new DialogOption()
         {
+            Title = StringLocalizer["AddTrack"],
             BodyTemplate = BootstrapDynamicComponent.CreateComponent<TrackSearch>().Render()
         });
     }
