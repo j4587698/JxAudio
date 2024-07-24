@@ -55,13 +55,21 @@
         }
     }
 
-    private void AddTrack()
+    private async Task AddTrack()
     {
-        DialogService.Show(new DialogOption()
+        var tracks = _playlist?.Songs ?? new List<TrackVo>();
+        var ret = await DialogService.ShowModal<TrackSearch>(new ResultDialogOption()
         {
             Title = StringLocalizer["AddTrack"],
-            BodyTemplate = BootstrapDynamicComponent.CreateComponent<TrackSearch>().Render()
+            ComponentParameters = new Dictionary<string, object>()
+            {
+                [nameof(TrackSearch.SelectedTracks)] = tracks
+            }
         });
+        if (ret == DialogResult.Yes)
+        {
+            _playlist!.Songs = tracks;
+        }
     }
 
 }

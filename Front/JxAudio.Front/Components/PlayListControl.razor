@@ -81,12 +81,13 @@
         
         var playlist = new PlaylistVo();
         playlist.Songs = Tracks;
-        await DialogService.Show(new DialogOption()
+        await DialogService.Show(new ResultDialogOption()
         {
-            BodyTemplate = BootstrapDynamicComponent.CreateComponent<PlaylistDialog>(new Dictionary<string, object?>()
+            Component = BootstrapDynamicComponent.CreateComponent<PlaylistDialog>(),
+            ComponentParameters = new Dictionary<string, object>()
             {
-                ["Playlist"] = playlist
-            }).Render(),
+              [nameof(PlaylistDialog.Playlist)]  = playlist
+            },
             Title = "创建新歌单",
             ShowFooter = false
         });

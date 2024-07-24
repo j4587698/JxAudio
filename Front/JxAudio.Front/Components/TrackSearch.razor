@@ -1,6 +1,7 @@
 ﻿@using Jx.Toolbox.Extensions
 @using JxAudio.TransVo
 @using Microsoft.Extensions.Localization
+@implements IResultDialog
 @inject IStringLocalizer<TrackSearch> StringLocalizer
 @inject HttpClient Http
 
@@ -12,7 +13,8 @@
         </BootstrapInputGroup>
     </div>
     <div class="col-12">
-        <TrackTable Tracks="TrackVos" SelectedRows="SelectedTracks" ShowDefaultToolbar="false" ShowDefaultButton="false"></TrackTable>
+        <TrackTable Tracks="TrackVos" SelectedRows="SelectedTracks" ShowDefaultToolbar="false" ShowDefaultButton="false"
+                    IsKeepSelectedRows="true"></TrackTable>
     </div>
 </div>
 
@@ -32,6 +34,11 @@
         }
         var response = await Http.GetAsync("api/Track/Search?SearchText=" + SearchText);
         TrackVos = await response.Content.ReadFromJsonAsync<List<TrackVo>>();
+    }
+
+    public Task OnClose(DialogResult result)
+    {
+        return Task.CompletedTask;
     }
 
 }

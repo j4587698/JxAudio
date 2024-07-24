@@ -24,6 +24,9 @@ public partial class TrackTable
     [Parameter]
     public EventCallback<List<TrackVo>> SelectedRowsChanged { get; set; }
 
+    [Parameter]
+    public bool IsKeepSelectedRows { get; set; }
+
     private List<TrackVo>? _selectedRows;
 
     protected override void OnInitialized()

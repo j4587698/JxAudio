@@ -8,7 +8,8 @@
 
 <Table TItem="TrackVo" Items="Tracks" IsBordered="true" IsStriped="true" ShowExtendButtons="true" IsMultipleSelect="true"
        ShowExtendEditButton="false" ShowExtendDeleteButton="false" ShowToolbar="ShowDefaultToolbar" ShowDefaultButtons="false"
-       SelectedRows="_selectedRows" SelectedRowsChanged="SelectedChanged">
+       SelectedRows="_selectedRows" SelectedRowsChanged="SelectedChanged" IsKeepSelectedRows="IsKeepSelectedRows"
+       ModelEqualityComparer="(vo, trackVo) => vo.Id == trackVo.Id">
     <TableColumns>
         <TableColumn @bind-Field="@context.Title"></TableColumn>
         <TableColumn @bind-Field="@context.Artists">
