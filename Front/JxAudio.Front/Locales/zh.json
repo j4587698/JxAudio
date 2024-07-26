@@ -9,7 +9,8 @@
     "_value.PlaceHolder": "请输入"
   },
   "JxAudio.Front.Components.TrackTable": {
-    "PlayAll": "播放全部"
+    "PlayAll": "播放全部",
+    "PlaySelect": "播放选中",
   },
   "JxAudio.TransVo.ArtistVo": {
     "Name": "歌手名",
@@ -62,7 +63,7 @@
   },
   "JxAudio.Front.Pages.Playlist": {
     "Title": "歌单",
-    "AddTrack": "添加歌曲"
+    "ModifyPlaylist": "修改歌单"
   },
   "JxAudio.Front.Layout.MainLayout": {
     "RePass": "修改密码",
@@ -78,5 +79,8 @@
   },
   "JxAudio.Front.Components.TrackSearch": {
     "SearchText": "搜索歌曲"
+  },
+  "JxAudio.Front.Components.PlaylistDialog": {
+    "AddTrack": "添加歌曲"
   }
 }

@@ -2,6 +2,7 @@
 using JxAudio.Front.Data;
 using JxAudio.TransVo;
 using Microsoft.AspNetCore.Components;
+using Console = System.Console;
 
 namespace JxAudio.Front.Components;
 
@@ -67,13 +68,32 @@ public partial class TrackTable
 
     private Task PlayAll()
     {
+        Console.WriteLine("brefore play all");
         if (Tracks is { Count: > 0 })
         {
+            Console.WriteLine("play all");
             DispatchService.Dispatch(new DispatchEntry<AddTrackMessage>()
             {
                 Entry = new AddTrackMessage()
                 {
                     Tracks = Tracks,
+                    Type = "replace"
+                }
+            });
+        }
+
+        return Task.CompletedTask;
+    }
+    
+    private Task PlaySelect()
+    {
+        if (_selectedRows is { Count: > 0 })
+        {
+            DispatchService.Dispatch(new DispatchEntry<AddTrackMessage>()
+            {
+                Entry = new AddTrackMessage()
+                {
+                    Tracks = _selectedRows,
                     Type = "replace"
                 }
             });

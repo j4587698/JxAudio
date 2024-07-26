@@ -28,7 +28,7 @@
 <div class="g-3">
     <TrackTable Tracks="_playlist?.Songs">
         <ToolbarButtons>
-            <TableToolbarButton TItem="TrackVo" Text="@StringLocalizer["AddTrack"]" Icon="fa fa-plus" OnClick="AddTrack"></TableToolbarButton>
+            <TableToolbarButton TItem="TrackVo" Text="@StringLocalizer["ModifyPlaylist"]" Icon="fa fa-edit" OnClick="ModifyPlaylist"></TableToolbarButton>
         </ToolbarButtons>
     </TrackTable>
 </div>
@@ -55,21 +55,18 @@
         }
     }
 
-    private async Task AddTrack()
+    private async Task ModifyPlaylist()
     {
-        var tracks = _playlist?.Songs ?? new List<TrackVo>();
-        var ret = await DialogService.ShowModal<TrackSearch>(new ResultDialogOption()
+        await DialogService.Show(new DialogOption()
         {
-            Title = StringLocalizer["AddTrack"],
-            ComponentParameters = new Dictionary<string, object>()
+            Title = StringLocalizer["ModifyPlaylist"],
+            Component = BootstrapDynamicComponent.CreateComponent<PlaylistDialog>(new Dictionary<string, object?>()
             {
-                [nameof(TrackSearch.SelectedTracks)] = tracks
-            }
+                [nameof(PlaylistDialog.Playlist)] = _playlist
+            }),
+            ShowFooter = false,
+            OnCloseAsync = async () => await InvokeAsync(StateHasChanged)
         });
-        if (ret == DialogResult.Yes)
-        {
-            _playlist!.Songs = tracks;
-        }
     }
 
 }

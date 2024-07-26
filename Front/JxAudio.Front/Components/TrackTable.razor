@@ -59,7 +59,8 @@
         @TrackButton?.Invoke(context)
     </RowButtonTemplate>
     <TableToolbarTemplate>
-        <TableToolbarButton Text="@StringLocalizer["PlayAll"]" Icon="fa fa-play" OnClickWithoutRender="PlayAll" IsShow="ShowDefaultToolbarButton"></TableToolbarButton>
+        <TableToolbarButton Text="@StringLocalizer["PlayAll"]" Icon="fa fa-play" OnClick="PlayAll" IsShow="ShowDefaultToolbarButton"></TableToolbarButton>
+        <TableToolbarButton Text="@StringLocalizer["PlaySelect"]" Icon="fa fa-play-circle" OnClick="PlaySelect" IsShow="ShowDefaultToolbarButton"></TableToolbarButton>
         @ToolbarButtons
     </TableToolbarTemplate>
 </Table>
