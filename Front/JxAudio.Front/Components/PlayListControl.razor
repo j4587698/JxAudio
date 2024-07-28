@@ -2,6 +2,7 @@
 @using Microsoft.Extensions.Localization
 @inject DialogService DialogService
 @inject IStringLocalizer<PlayListControl> StringLocalizer
+@inject IStringLocalizer<Program> CommonStringLocalizer
 
 <ListGroup TItem="TrackVo" Items="Tracks" 
            style="height: 20rem;min-width: 300px">
@@ -31,7 +32,7 @@
                 }
             </div>
             <div class="flex-fill" @onclick="() => SelectChanged(context)">
-                @($"{context.Title ?? "未知歌曲"} - {(context.Artists == null ? "未知歌手" : string.Join(',', context.Artists.Select(x => x.Name)))}")
+                @($"{context.Title ?? CommonStringLocalizer["Unkown"]} - {(context.Artists == null ? "未知歌手" : string.Join(',', context.Artists.Select(x => x.Name)))}")
             </div>
             <LinkButton Color="Color.None" Icon="far fa-trash-alt" OnClick="() => DeleteTrack(context)"></LinkButton>
         </div>
@@ -88,7 +89,7 @@
             {
               [nameof(PlaylistDialog.Playlist)]  = playlist
             },
-            Title = "创建新歌单",
+            Title = StringLocalizer["CreatePlaylist"],
             ShowFooter = false
         });
     }
