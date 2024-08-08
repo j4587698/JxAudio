@@ -9,13 +9,13 @@
 <ValidateForm Model="Playlist" OnValidSubmit="OnValidSubmit">
     <div class="row g-3">
         <div class="col-6">
-            <BootstrapInput @bind-Value="@Playlist.Name" ShowLabel="true" DisplayText="歌单名"></BootstrapInput>
+            <BootstrapInput @bind-Value="@Playlist.Name" ShowLabel="true"></BootstrapInput>
         </div>
         <div class="col-6">
-            <Switch @bind-Value="@Playlist.IsPublic" ShowLabel="true" DisplayText="是否公开"></Switch>
+            <Switch @bind-Value="@Playlist.IsPublic" ShowLabel="true"></Switch>
         </div>
         <div class="col-12">
-            <Textarea rows="1" @bind-Value="@Playlist.Description" ShowLabel="true" DisplayText="歌单描述"></Textarea>
+            <Textarea rows="1" @bind-Value="@Playlist.Description" ShowLabel="true"></Textarea>
         </div>
         <div class="col-12" style="height: 55vh">
             <TrackTable Tracks="Playlist.Songs" ShowDefaultButton="false">
@@ -30,7 +30,7 @@
     </div>
     <div class="modal-footer">
         <DialogCloseButton></DialogCloseButton>
-        <Button Icon="fa fa-save" Text="保存" ButtonType="ButtonType.Submit"></Button>
+        <Button Icon="fa fa-save" Text="@StringLocalizer["Save"]" ButtonType="ButtonType.Submit"></Button>
     </div>
 </ValidateForm>
 

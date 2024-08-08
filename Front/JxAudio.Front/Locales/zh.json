@@ -81,6 +81,11 @@
     "SearchText": "搜索歌曲"
   },
   "JxAudio.Front.Components.PlaylistDialog": {
-    "AddTrack": "添加歌曲"
+    "AddTrack": "添加歌曲",
+    "Save": "保存"
+  },
+  "Program": {
+    "UnknownTitle": "未知歌曲",
+    "UnknownArtist": "未知艺术家",
   }
 }

@@ -1,4 +1,5 @@
-﻿@using JxAudio.TransVo
+﻿@using Jx.Toolbox.Extensions
+@using JxAudio.TransVo
 @using Microsoft.Extensions.Localization
 @inject DialogService DialogService
 @inject IStringLocalizer<PlayListControl> StringLocalizer
@@ -32,7 +33,7 @@
                 }
             </div>
             <div class="flex-fill" @onclick="() => SelectChanged(context)">
-                @($"{context.Title ?? CommonStringLocalizer["Unkown"]} - {(context.Artists == null ? "未知歌手" : string.Join(',', context.Artists.Select(x => x.Name)))}")
+                @($"{(context.Title.IsNullOrEmpty() ? CommonStringLocalizer["UnknownTitle"] : context.Title)} - {(context.Artists is {Count:> 0} ? string.Join(',', context.Artists.Select(x => x.Name)) : CommonStringLocalizer["UnknownArtists"])}")
             </div>
             <LinkButton Color="Color.None" Icon="far fa-trash-alt" OnClick="() => DeleteTrack(context)"></LinkButton>
         </div>
