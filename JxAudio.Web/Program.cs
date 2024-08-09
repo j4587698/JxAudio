@@ -116,6 +116,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddCascadingAuthenticationState();
+
 var app = builder.Build().Use();
 app.UseSerilogRequestLogging();
 // 启用本地化

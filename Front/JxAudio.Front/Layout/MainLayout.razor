@@ -1,5 +1,4 @@
 ﻿@inherits LayoutComponentBase
-@using JxAudio.Front.Components
 @using Microsoft.Extensions.Localization
 @inject HttpClient Http
 @inject IStringLocalizer<MainLayout> StringLocalizer
@@ -16,7 +15,7 @@
             <Logout ImageUrl="@_avatar" DisplayName="@User?.UserName" UserName="@User?.UserName">
                 <LinkTemplate>
                     <a href="#"><i class="fa-solid fa-suitcase"></i>@StringLocalizer["RePass"]</a>
-                    <LogoutLink/>
+                    <LogoutLink Url="api/User/Logout"/>
                 </LinkTemplate>
             </Logout>
         </Header>

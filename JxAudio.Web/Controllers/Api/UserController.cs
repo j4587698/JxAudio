@@ -54,4 +54,12 @@ public class UserController(IStringLocalizer<UserController> userLocalizer, User
             user.MaxBitRate
         });
     }
+    
+    [Authorize]
+    [HttpGet("/api/User/Logout")]
+    public IActionResult Logout()
+    {
+        HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return Redirect("User/Login");
+    }
 }
