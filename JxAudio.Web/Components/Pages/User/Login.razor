@@ -1,10 +1,13 @@
 ﻿@page "/User/Login"
+@using Jx.Toolbox.Extensions
 @using JxAudio.Web.Components.Layout
 @using JxAudio.Web.Vo
+@using Microsoft.Extensions.Localization
 @layout EmptyLayout
 
 @inject AjaxService AjaxService
 @inject SwalService SwalService
+@inject IStringLocalizer<Login> Localizer
 
 <div class="container">
     <div class="row">
@@ -17,10 +20,10 @@
                             <h4 class="text-dark">JxAudio</h4>
                         </div>
                         <ValidateForm Model="@LoginVo" OnValidSubmit="DoLogin">
-                            <BootstrapInput TValue="string" @bind-Value="LoginVo.UserName" ShowLabel="false" PlaceHolder="请输入账号" />
-                            <BootstrapPassword ShowLabel="false" @bind-Value="LoginVo.Password" PlaceHolder="请输入密码" />
-                            <Checkbox ShowLabel="false" @bind-Value="LoginVo.IsKeep" ShowAfterLabel="true" DisplayText="记住登录状态" />
-                            <Button Text="登录" Color="Color.Primary" ButtonType="ButtonType.Submit"></Button>
+                            <BootstrapInput TValue="string" @bind-Value="LoginVo.UserName" ShowLabel="false"  />
+                            <BootstrapPassword ShowLabel="false" @bind-Value="LoginVo.Password" />
+                            <Checkbox ShowLabel="false" @bind-Value="LoginVo.IsKeep" ShowAfterLabel="true" />
+                            <Button Text="@Localizer["Login"]" Color="Color.Primary" ButtonType="ButtonType.Submit"></Button>
                         </ValidateForm>
                     </div>
                 </BodyTemplate>
@@ -33,6 +36,9 @@
 @code {
     private LoginVo LoginVo { get; set; } = new();
 
+    [SupplyParameterFromQuery]
+    public string? ReturnUrl { get; set; }
+
     private async Task DoLogin(EditContext arg)
     {
         var document = await AjaxService.InvokeAsync(new AjaxOption()
@@ -43,15 +49,22 @@
         
         if (document?.RootElement.GetProperty("code").GetInt32() == 200)
         {
-            await AjaxService.Goto("/");
+            if (ReturnUrl.IsNullOrEmpty())
+            {
+                await AjaxService.Goto("/");
+            }
+            else
+            {
+                await AjaxService.Goto(ReturnUrl!);
+            }
         }
         else
         {
             await SwalService.Show(new SwalOption()
             {
                 Category = SwalCategory.Error,
-                Content = document?.RootElement.GetProperty("message").GetString() ?? "系统异常",
-                Title = "登录失败"
+                Content = document?.RootElement.GetProperty("message").GetString() ?? Localizer["LoginFailContent"],
+                Title = @Localizer["LoginFail"]
             });
         }
     }

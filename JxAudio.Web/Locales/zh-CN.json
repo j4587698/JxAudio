@@ -142,11 +142,26 @@
     "CronExpress": "填写Cron表达式 (秒 分 时 日 月 周) 可从https://cron.qqe2.com/生成",
     "CronExpress.PlaceHolder": "请输入Cron表达式 (秒 分 时 日 月 周)"
   },
+  "JxAudio.Web.Vo.LoginVo": {
+    "UserName.PlaceHolder": "请输入用户名",
+    "Password.PlaceHolder": "请输入密码",
+    "IsKeep.PlaceHolder": "记住登录状态"
+  },
   "JxAudio.Web.Enums.TimeUnit": {
     "Second": "秒",
     "Minute": "分",
     "Hour": "小时",
     "Day": "天"
+  },
+  "JxAudio.Web.Components.Pages.User.Login": {
+    "Login": "登录",
+    "LoginFail": "登录失败",
+    "LoginFailContent": "系统异常"
+  },
+  "JxAudio.Web.Components.Pages.User.NotAuth": {
+    "NotAuth": "权限不足",
+    "ToHome": "返回首页",
+    "ToLogin": "返回登录页"
   },
   "JxAudio.Web.Components.Pages.Install.Install": {
     "Language": "语言选择",

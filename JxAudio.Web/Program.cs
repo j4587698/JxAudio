@@ -69,9 +69,9 @@ builder.Services.Configure<CookiePolicyOptions>(op =>
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
 {
-    options.LoginPath = "/login";
-    options.LogoutPath = "/logout";
-    options.AccessDeniedPath = "/denied";
+    options.LoginPath = "/User/Login";
+    options.LogoutPath = "/api/User/Logout";
+    options.AccessDeniedPath = "/User/NotAuth";
     options.Cookie.Name = "JxAudio";
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
@@ -80,12 +80,26 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
     options.Events.OnRedirectToLogin = context =>
     {
-        context.Response.StatusCode = 401;
+        if (context.Request.Path.StartsWithSegments("/Admin"))
+        {
+            context.Response.Redirect(context.RedirectUri);
+        }
+        else
+        {
+            context.Response.StatusCode = 401;
+        }
         return Task.CompletedTask;
     };
     options.Events.OnRedirectToAccessDenied = context =>
     {
-        context.Response.StatusCode = 403;
+        if (context.Request.Path.StartsWithSegments("/Admin"))
+        {
+            context.Response.Redirect(context.RedirectUri);
+        }
+        else
+        {
+            context.Response.StatusCode = 403;
+        }
         return Task.CompletedTask;
     };
 });

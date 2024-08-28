@@ -1,0 +1,26 @@
+﻿@page "/User/NotAuth"
+@using JxAudio.Web.Components.Layout
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<NotAuth> Localizer
+@inject NavigationManager NavigationManager
+@layout EmptyLayout
+
+<div class="container">
+    <div class="row g-3">
+        <div class="col-12">
+            <Card class="shadow-lg border-0 my-5">
+                <BodyTemplate>
+                    <div class="text-center">
+                        <h3>@Localizer["NotAuth"]</h3>
+                    </div>
+                    <div>
+                        <Button Text="@Localizer["ToHome"]" style="width: 100%" OnClick="@(() => NavigationManager.NavigateTo("/"))"></Button>
+                    </div>
+                    <br/>
+                    <Button Text="@Localizer["ToLogin"]" style="width: 100%" OnClick="@(() => NavigationManager.NavigateTo("/User/Login"))"></Button>
+                </BodyTemplate>
+                
+            </Card>
+        </div>
+    </div>
+</div>
