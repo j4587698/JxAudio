@@ -48,6 +48,8 @@ public class MediaRetrievalController(PictureService pictureService, TrackServic
             {
                 throw RestApiErrorException.GenericError("File not found");
             }
+            
+            await trackService.UpdatePlayCountAsync(trackId, HttpContext.RequestAborted);
 
             var now = DateTimeOffset.Now;
             HttpContext.Response.SetDate(now);

@@ -156,11 +156,11 @@ public class MediaAnnotationController(ArtistService artistService, AlbumService
     {
         Util.CheckRequiredParameters(nameof(id), id);
 
-        if (submission)
-        {
-            var trackId = id.ParseTrackId();
-            await trackService.UpdatePlayCountAsync(trackId, HttpContext.RequestAborted);
-        }
+        // if (submission)
+        // {
+        //     var trackId = id.ParseTrackId();
+        //     await trackService.UpdatePlayCountAsync(trackId, HttpContext.RequestAborted);
+        // }
         
         await HttpContext.WriteResponseAsync(0, null);
     }

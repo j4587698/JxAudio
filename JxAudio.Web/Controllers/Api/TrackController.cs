@@ -105,6 +105,8 @@ public class TrackController(TrackService trackService, UserService userService)
             Response.StatusCode = StatusCodes.Status404NotFound;
             return new NotFoundResult();
         }
+        
+        await trackService.UpdatePlayCountAsync(trackId, HttpContext.RequestAborted);
 
         var now = DateTimeOffset.Now;
         HttpContext.Response.SetDate(now);
