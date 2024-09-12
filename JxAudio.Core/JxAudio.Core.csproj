@@ -13,7 +13,7 @@
     <ItemGroup>
       <PackageReference Include="Autofac" Version="8.0.0" />
       <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
-      <PackageReference Include="BootstrapBlazor" Version="8.8.2" />
+      <PackageReference Include="BootstrapBlazor" Version="8.9.2-beta09" />
       <PackageReference Include="BootstrapBlazor.FontAwesome" Version="8.0.6" />
       <PackageReference Include="FFMpegCore" Version="5.1.0" />
       <PackageReference Include="FreeSql.All" Version="3.2.820" />
@@ -27,8 +27,8 @@
       <PackageReference Include="NSwag.AspNetCore" Version="14.0.7" />
       <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
       <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00972" />
-      <PackageReference Include="SixLabors.ImageSharp" Version="3.1.4" />
-      <PackageReference Include="z440.atl.core" Version="5.25.0" />
+      <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
+      <PackageReference Include="z440.atl.core" Version="6.4.0" />
     </ItemGroup>
 
     <ItemGroup>
