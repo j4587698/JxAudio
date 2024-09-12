@@ -239,4 +239,86 @@ public class TrackService
             .ToListAsync(cancellationToken);
     }
     
+    public async Task<QueryData<TrackEntity>> QueryNewestTrackAsync(Guid userId, int? musicFolderId, int offset, 
+        int count, CancellationToken cancellationToken)
+    {
+        var select = await GetTrackBase(userId, musicFolderId)
+            .OrderByDescending(x => x.CreateTime)
+            .Skip(offset)
+            .Take(count)
+            .Count(out var totalCount)
+            .ToListAsync(cancellationToken);
+
+        return new QueryData<TrackEntity>()
+        {
+            TotalCount = (int)totalCount,
+            Items = select,
+            IsSorted = true,
+            IsFiltered = false,
+            IsAdvanceSearch = false,
+            IsSearch = false
+        };
+    }
+    
+    public async Task<QueryData<TrackEntity>> QueryFrequentTrackAsync(Guid userId, int? musicFolderId, int offset, 
+        int count, CancellationToken cancellationToken)
+    {
+        var select = await GetTrackBase(userId, musicFolderId)
+            .OrderByDescending(x => x.PlayCount)
+            .Skip(offset)
+            .Take(count)
+            .Count(out var totalCount)
+            .ToListAsync(cancellationToken);
+
+        return new QueryData<TrackEntity>()
+        {
+            TotalCount = (int)totalCount,
+            Items = select,
+            IsSorted = true,
+            IsFiltered = false,
+            IsAdvanceSearch = false,
+            IsSearch = false
+        };
+    }
+    
+    public async Task<QueryData<TrackEntity>> QueryRecentTrackAsync(Guid userId, int? musicFolderId, int offset,
+        int count, CancellationToken cancellationToken)
+    {
+        var select = await GetTrackBase(userId, musicFolderId)
+            .OrderByDescending(x => x.UpdateTime)
+            .Skip(offset)
+            .Take(count)
+            .Count(out var totalCount)
+            .ToListAsync(cancellationToken);
+
+        return new QueryData<TrackEntity>()
+        {
+            TotalCount = (int)totalCount,
+            Items = select,
+            IsSorted = true,
+            IsFiltered = false,
+            IsAdvanceSearch = false,
+            IsSearch = false
+        };
+    }
+    
+    public async Task<QueryData<TrackEntity>> QueryRandomTrackAsync(Guid userId, int? musicFolderId, int count, 
+        CancellationToken cancellationToken)
+    {
+        var select = await GetTrackBase(userId, musicFolderId)
+            .OrderByRandom()
+            .Take(count)
+            .Count(out var totalCount)
+            .ToListAsync(cancellationToken);
+
+        return new QueryData<TrackEntity>()
+        {
+            TotalCount = (int)totalCount,
+            Items = select,
+            IsSorted = true,
+            IsFiltered = false,
+            IsAdvanceSearch = false,
+            IsSearch = false
+        };
+    }
 }
