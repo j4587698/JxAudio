@@ -10,6 +10,7 @@ namespace JxAudio.Web.Controllers.Api;
 
 [Authorize]
 public class RecommendController(
+    ArtistService artistService,
     AlbumService albumService,
     TrackService trackService
     ): DynamicControllerBase
@@ -76,5 +77,19 @@ public class RecommendController(
         var songs = await trackService.QueryRandomTrackAsync(Guid.Parse(userId), null, 
             count, HttpContext.RequestAborted);
         return ResultVo.Success(data: songs.Items?.Select(x => x.Adapt<TrackVo>()));
+    }
+
+    public async Task<object> GetSearch(string query, int? musicFolderId, int count = 10)
+    {
+        var userId = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        var artistsId3 = await artistService.GetSearch3ArtistId3(Guid.Parse(userId), musicFolderId, query!, count, 0, HttpContext.RequestAborted);
+        var albumsId3 = await albumService.GetSearch3AlbumId3(Guid.Parse(userId), musicFolderId, query!, count, 0, HttpContext.RequestAborted);
+        var tracks = await trackService.GetSearch3Songs(Guid.Parse(userId), musicFolderId, query!, count, 0, HttpContext.RequestAborted);
+        return ResultVo.Success(data: new SearchResultVo()
+        {
+            Artists = artistsId3.Select(x => x.Adapt<ArtistVo>()).ToList(),
+            Albums = albumsId3.Select(x => x.Adapt<AlbumVo>()).ToList(),
+            Tracks = tracks.Select(x => x.Adapt<TrackVo>()).ToList()
+        });
     }
 }

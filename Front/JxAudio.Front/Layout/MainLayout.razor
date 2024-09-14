@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+
+@using JxAudio.Front.Data
 @using Microsoft.Extensions.Localization
 @inject HttpClient Http
 @inject IStringLocalizer<MainLayout> StringLocalizer
@@ -10,7 +12,23 @@
             Menus="@Menus" class="@Theme">
         <Header>
             <span class="ms-3 flex-sm-fill d-none d-sm-block layout-title">JxAudio</span>
-            <div class="flex-fill d-sm-none">
+            <div class="flex-fill">
+                <AutoFill TValue="SearchList" Debounce="2000" OnCustomFilter="OnCustomFilter">
+                    <Template>
+                        <div class="d-flex">
+                            <div>
+                                <img style="width: 60px;height: 60px" src="@($"/api/Cover?coverId={context.Id}")" class="bb-avatar" />
+                            </div>
+                            <div class="ps-2">
+                                <div>@context.Name</div>
+                                <div><Tag>@context.SearchType</Tag><Tag>Open</Tag></div>
+                            </div>
+                            <div>
+                            play
+                            </div>
+                        </div>
+                    </Template>
+                </AutoFill>
             </div>
             <ThemeProvider></ThemeProvider>
             <Logout ImageUrl="@_avatar" DisplayName="@User?.UserName" UserName="@User?.UserName">

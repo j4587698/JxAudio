@@ -102,11 +102,11 @@ public class TrackService
         return tracks.Select(x => x.CreateTrackChild()).ToArray();
     }
 
-    public async Task<Child[]> GetSearch3Songs(Guid userId, int? musicFolderId, string query,int songCount, int songOffset, CancellationToken cancellationToken)
+    public async Task<List<TrackEntity>> GetSearch3Songs(Guid userId, int? musicFolderId, string query,int songCount, int songOffset, CancellationToken cancellationToken)
     {
         if (songCount == 0)
         {
-            return Array.Empty<Child>();
+            return [];
         }
 
         var tracks = await GetTrackBase(userId, musicFolderId)
@@ -115,7 +115,7 @@ public class TrackService
             .Take(songCount)
             .ToListAsync(cancellationToken);
 
-        return tracks.Select(x => x.CreateTrackChild()).ToArray();
+        return tracks;
     }
     
     public async Task StarTrackAsync(Guid? userId, List<int> trackIds, CancellationToken cancellationToken)

@@ -87,9 +87,9 @@ public class SearchingController: AudioController
         
             var searchResult2 = new SearchResult2()
             {
-                artist = artistsId3.Select(x => x.CreateArtist()).ToArray(),
-                album = albumsId3.Select(x => x.CreateDirectoryChild()).ToArray(),
-                song = tracks,
+                artist = artistsId3.Select(x => x.CreateArtistId3().CreateArtist()).ToArray(),
+                album = albumsId3.Select(x => x.CreateAlbumId3().CreateDirectoryChild()).ToArray(),
+                song = tracks.Select(x => x.CreateTrackChild()).ToArray(),
             };
 
             await HttpContext.WriteResponseAsync(ItemChoiceType.searchResult2, searchResult2);
@@ -152,9 +152,9 @@ public class SearchingController: AudioController
         
             var searchResult3 = new SearchResult3()
             {
-                artist = artistsId3,
-                album = albumsId3,
-                song = tracks,
+                artist = artistsId3.Select(x => x.CreateArtistId3()).ToArray(),
+                album = albumsId3.Select(x => x.CreateAlbumId3()).ToArray(),
+                song = tracks.Select(x => x.CreateTrackChild()).ToArray(),
             };
 
             await HttpContext.WriteResponseAsync(ItemChoiceType.searchResult3, searchResult3);
