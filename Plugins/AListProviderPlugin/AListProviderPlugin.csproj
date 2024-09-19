@@ -17,7 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AListSdkSharp" Version="1.1.3" />
+      <PackageReference Include="AListSdkSharp" Version="1.1.5" />
     </ItemGroup>
 
 </Project>
