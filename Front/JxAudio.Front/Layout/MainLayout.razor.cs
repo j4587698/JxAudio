@@ -19,6 +19,8 @@ public sealed partial class MainLayout
     
     private string _avatar = "./images/logo.png";
 
+    
+
     /// <summary>
     /// OnInitialized 方法
     /// </summary>
@@ -53,63 +55,5 @@ public sealed partial class MainLayout
         };
 
         return menus;
-    }
-    
-    private async Task<IEnumerable<SearchList>> OnCustomFilter(string searchText)
-    {
-        var list = await Http.GetFromJsonAsync<SearchResultVo>("/api/Recommend/Search?query=" + searchText);
-        if (list == null)
-        {
-            return [];
-        }
-        
-        var searchLists = new List<SearchList>();
-
-        if (list.Tracks != null)
-        {
-            foreach (var track in list.Tracks)
-            {
-                var searchList = new SearchList
-                {
-                    Id = track.Id,
-                    Name = track.Name,
-                    CoverId = track.CoverId,
-                    SearchType = SearchType.Track
-                };
-                searchLists.Add(searchList);
-            }
-        }
-        
-        if (list.Albums != null)
-        {
-            foreach (var album in list.Albums)
-            {
-                var searchList = new SearchList
-                {
-                    Id = album.Id,
-                    Name = album.Title,
-                    CoverId = album.CoverId,
-                    SearchType = SearchType.Album
-                };
-                searchLists.Add(searchList);
-            }
-        }
-        
-        if (list.Artists != null)
-        {
-            foreach (var artist in list.Artists)
-            {
-                var searchList = new SearchList
-                {
-                    Id = artist.Id,
-                    Name = artist.Name,
-                    CoverId = artist.CoverId,
-                    SearchType = SearchType.Artist
-                };
-                searchLists.Add(searchList);
-            }
-        }
-
-        return searchLists;
     }
 }

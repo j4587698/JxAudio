@@ -12,6 +12,12 @@
     "PlayAll": "播放全部",
     "PlaySelect": "播放选中",
   },
+  "JxAudio.Front.Data.SearchType": {
+    "Track": "歌曲",
+    "Artist": "艺术家",
+    "Album": "专辑",
+    "Playlist": "歌单"
+  },
   "JxAudio.TransVo.ArtistVo": {
     "Name": "歌手名",
     "Count": "歌曲数量",
