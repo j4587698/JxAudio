@@ -17,12 +17,12 @@
                     <div class="login-item login-item-avatar">
                         <div class="text-center">
                             <Avatar Url="./Images/logo.png" IsCircle="true" Size="Size.ExtraExtraLarge" />
-                            <h4 class="text-dark">JxAudio</h4>
+                            <h4>JxAudio</h4>
                         </div>
-                        <ValidateForm Model="@LoginVo" OnValidSubmit="DoLogin">
-                            <BootstrapInput TValue="string" @bind-Value="LoginVo.UserName" ShowLabel="false"  />
-                            <BootstrapPassword ShowLabel="false" @bind-Value="LoginVo.Password" />
-                            <Checkbox ShowLabel="false" @bind-Value="LoginVo.IsKeep" ShowAfterLabel="true" />
+                        <ValidateForm Model="@LoginVo" OnValidSubmit="DoLogin" ShowLabel="false">
+                            <BootstrapInput @bind-Value="LoginVo.UserName"  />
+                            <BootstrapPassword @bind-Value="LoginVo.Password" />
+                            <Checkbox @bind-Value="LoginVo.IsKeep" ShowAfterLabel="true" />
                             <Button Text="@Localizer["Login"]" Color="Color.Primary" ButtonType="ButtonType.Submit"></Button>
                         </ValidateForm>
                     </div>

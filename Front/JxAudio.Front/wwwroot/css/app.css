@@ -10,10 +10,6 @@
     --bb-layout-title-color: var(--bb-header-color);
 }
 
-.layout-header-bar {
-    color: var(--bb-layout-header-background);
-}
-
     .layout:not(.has-footer) {
         --bb-layout-footer-height: 0px;
     }

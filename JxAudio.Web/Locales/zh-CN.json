@@ -145,7 +145,7 @@
   "JxAudio.Web.Vo.LoginVo": {
     "UserName.PlaceHolder": "请输入用户名",
     "Password.PlaceHolder": "请输入密码",
-    "IsKeep.PlaceHolder": "记住登录状态"
+    "IsKeep": "记住登录状态"
   },
   "JxAudio.Web.Enums.TimeUnit": {
     "Second": "秒",
