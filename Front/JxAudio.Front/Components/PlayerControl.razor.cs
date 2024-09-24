@@ -228,7 +228,7 @@ public partial class PlayerControl
         if (entry.Entry != null)
         {
             var message = entry.Entry;
-            if (message is { Type: "add", Tracks: not null })
+            if (message is { Type: PlayType.Add, Tracks: not null })
             {
                 _tracks = _tracks.Union(message.Tracks).ToList();
                 if (_loopStatus == LoopStatus.ShuffleOne)
@@ -243,7 +243,7 @@ public partial class PlayerControl
                     await PlayNow();
                 }
             }
-            else if (message is { Type: "replace", Tracks: not null })
+            else if (message is { Type: PlayType.Replace, Tracks: not null })
             {
                 _tracks = message.Tracks;
                 if (_loopStatus == LoopStatus.ShuffleOne)
@@ -252,6 +252,23 @@ public partial class PlayerControl
                 }
 
                 _playIndex = 0;
+                await PlayNow();
+            }
+            else if (message is {Type: PlayType.AddAndPlay, Tracks: not null})
+            {
+                _tracks = _tracks.Union(message.Tracks).ToList();
+                if (_loopStatus == LoopStatus.ShuffleOne)
+                {
+                    _shuffleTrack = [.._tracks];
+                    Shuffle();
+                    ToShuffle();
+                    _playIndex = _shuffleTrack.IndexOf(message.Tracks[0]);
+                }
+                else
+                {
+                    _playIndex = _tracks.IndexOf(message.Tracks[0]);
+                }
+
                 await PlayNow();
             }
 

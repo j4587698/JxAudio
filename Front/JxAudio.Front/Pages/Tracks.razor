@@ -76,8 +76,8 @@
             </TableColumn>
         </TableColumns>
         <RowButtonTemplate>
-            <TableCellButton Icon="fa fa-play" OnClick="@(() => Play(context, "replace"))"></TableCellButton>
-            <TableCellButton Icon="fa fa-plus" OnClick="@(() => Play(context, "add"))"></TableCellButton>
+            <TableCellButton Icon="fa fa-play" OnClick="@(() => Play(context, PlayType.Replace))"></TableCellButton>
+            <TableCellButton Icon="fa fa-plus" OnClick="@(() => Play(context, PlayType.Add))"></TableCellButton>
             <TableCellButton Icon="@(context.Star? "fas fa-heart" : "far fa-heart")"
                              OnClick="() => Star(context)" style="color: red"></TableCellButton>
         </RowButtonTemplate>
@@ -86,7 +86,7 @@
 
 @code {
 
-    private void Play(TrackVo context, string type)
+    private void Play(TrackVo context, PlayType type)
     {
         DispatchService.Dispatch(new DispatchEntry<AddTrackMessage>()
         {

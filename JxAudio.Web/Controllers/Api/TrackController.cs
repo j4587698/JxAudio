@@ -19,6 +19,12 @@ namespace JxAudio.Web.Controllers.Api;
 [Authorize]
 public class TrackController(TrackService trackService, UserService userService): DynamicControllerBase
 {
+    public async Task<object> Get(int id)
+    {
+        var userId = HttpContext.User.FindFirst(ClaimTypes.Sid)!.Value;
+        var track = await trackService.GetSongEntityAsync(Guid.Parse(userId), id, HttpContext.RequestAborted);
+        return ResultVo.Success(data: track.Adapt<TrackVo>());
+    }
     
     public async Task<object> Post([FromBody] QueryOptionsVo queryOptionsVo)
     {

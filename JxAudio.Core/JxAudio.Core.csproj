@@ -13,7 +13,7 @@
     <ItemGroup>
       <PackageReference Include="Autofac" Version="8.1.0" />
       <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
-      <PackageReference Include="BootstrapBlazor" Version="8.9.2" />
+      <PackageReference Include="BootstrapBlazor" Version="8.9.3" />
       <PackageReference Include="BootstrapBlazor.FontAwesome" Version="8.0.6" />
       <PackageReference Include="FFMpegCore" Version="5.1.0" />
       <PackageReference Include="FreeSql.All" Version="3.2.833" />

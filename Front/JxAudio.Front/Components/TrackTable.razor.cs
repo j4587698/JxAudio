@@ -49,7 +49,7 @@ public partial class TrackTable
             Entry = new AddTrackMessage()
             {
                 Tracks = [trackVo],
-                Type = "replace"
+                Type = PlayType.Replace
             }
         });
     }
@@ -61,7 +61,7 @@ public partial class TrackTable
             Entry = new AddTrackMessage()
             {
                 Tracks = [trackVo],
-                Type = "add"
+                Type = PlayType.Add
             }
         });
     }
@@ -77,7 +77,7 @@ public partial class TrackTable
                 Entry = new AddTrackMessage()
                 {
                     Tracks = Tracks,
-                    Type = "replace"
+                    Type = PlayType.Replace
                 }
             });
         }
@@ -94,7 +94,7 @@ public partial class TrackTable
                 Entry = new AddTrackMessage()
                 {
                     Tracks = _selectedRows,
-                    Type = "replace"
+                    Type = PlayType.Replace
                 }
             });
         }

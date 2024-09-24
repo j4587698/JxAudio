@@ -33,8 +33,8 @@
             </TableColumn>
         </TableColumns>
         <RowButtonTemplate>
-            <TableCellButton Icon="fa fa-play" OnClick="@(() => PlayAll(context, "replace"))"></TableCellButton>
-            <TableCellButton Icon="fa fa-plus" OnClick="@(() => PlayAll(context, "add"))"></TableCellButton>
+            <TableCellButton Icon="fa fa-play" OnClick="@(() => PlayAll(context, PlayType.Replace))"></TableCellButton>
+            <TableCellButton Icon="fa fa-plus" OnClick="@(() => PlayAll(context, PlayType.Add))"></TableCellButton>
             <TableCellButton Icon="@(context.Star? "fas fa-heart" : "far fa-heart")"
                              OnClick="() => Star(context)" style="color: red"></TableCellButton>
         </RowButtonTemplate>
@@ -64,7 +64,7 @@
         return vo;
     }
     
-    private async Task PlayAll(ArtistVo artistVo, string type)
+    private async Task PlayAll(ArtistVo artistVo, PlayType type)
     {
         var responseMessage = await Http.GetAsync($"/api/Artist/AllTracks?id={artistVo.Id}");
         var tracks = await responseMessage.Content.ReadFromJsonAsync<List<TrackVo>>();

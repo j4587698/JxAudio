@@ -1,10 +1,12 @@
-﻿@using JxAudio.Front.Data
+﻿@using Jx.Toolbox.Extensions
+@using JxAudio.Front.Data
 @using JxAudio.TransVo
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@inject IDispatchService<AddTrackMessage> DispatchService
 
-<AutoFill @bind-Value="SearchList" Debounce="2000" OnCustomFilter="OnCustomFilter" 
-          OnGetDisplayText="@(list => list?.Name ?? "")">
+<AutoFill TValue="SearchList" Debounce="2000" OnCustomFilter="OnCustomFilter" OnSelectedItemChanged="OnSelectedItemChanged"
+          OnGetDisplayText="@(list => list?.Name ?? "")" IsSelectAllTextOnFocus="true">
     <Template>
         <div class="d-flex">
             <div>
@@ -19,24 +21,6 @@
 </AutoFill>
 
 @code {
-    private SearchList? SearchList
-    {
-        get => null;
-        set
-        {
-            switch (value?.SearchType)
-            {
-                case SearchType.Artist:
-                    NavigationManager.NavigateTo($"/artist/{value.Id}");
-                    break;
-                case SearchType.Album:
-                    NavigationManager.NavigateTo($"/album/{value.Id}");
-                    break;
-                case SearchType.Track:
-                    break;
-            }
-        }
-    }
     
     private async Task<IEnumerable<SearchList>> OnCustomFilter(string searchText)
     {
@@ -55,7 +39,7 @@
                 var searchList = new SearchList
                 {
                     Id = track.Id,
-                    Name = track.Name,
+                    Name = track.Title.IsNullOrEmpty() ? track.Name : track.Title,
                     CoverId = track.CoverId,
                     SearchType = SearchType.Track
                 };
@@ -95,4 +79,34 @@
 
         return searchLists;
     }
+
+    private async Task OnSelectedItemChanged(SearchList arg)
+    {
+        switch (arg.SearchType)
+        {
+            case SearchType.Artist:
+                NavigationManager.NavigateTo($"/artist/{arg.Id}");
+                break;
+            case SearchType.Album:
+                NavigationManager.NavigateTo($"/album/{arg.Id}");
+                break;
+            case SearchType.Track:
+                var track = await Http.GetFromJsonAsync<TrackVo>("/api/track/?id=" + arg.Id);
+                if (track == null)
+                {
+                    return;
+                }
+                DispatchService.Dispatch(new DispatchEntry<AddTrackMessage>()
+                {
+                    Entry = new AddTrackMessage()
+                    {
+                        Tracks = [track],
+                        Type = PlayType.Replace
+                    }
+                });
+                
+                break;
+        }
+    }
+
 }
