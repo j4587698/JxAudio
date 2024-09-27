@@ -68,7 +68,6 @@ public partial class TrackTable
 
     private Task PlayAll()
     {
-        Console.WriteLine("brefore play all");
         if (Tracks is { Count: > 0 })
         {
             Console.WriteLine("play all");

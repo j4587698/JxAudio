@@ -32,11 +32,11 @@
                 }
                 else
                 {
-                    @:未知专辑
+                    @StringLocalizer["UnknownAlbum"]
                 }
             </Template>
         </TableColumn>
-        <TableColumn @bind-Field="@context.Name" Text="音频格式">
+        <TableColumn @bind-Field="@context.Name" Text="@StringLocalizer["TrackType"]">
             <Template Context="value">
                 @Path.GetExtension(value.Value!)[1..].ToUpper()
             </Template>

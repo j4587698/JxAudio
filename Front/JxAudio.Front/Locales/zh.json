@@ -11,6 +11,8 @@
   "JxAudio.Front.Components.TrackTable": {
     "PlayAll": "播放全部",
     "PlaySelect": "播放选中",
+    "TrackType": "文件格式",
+    "UnknownAlbum": "未知专辑"
   },
   "JxAudio.Front.Data.SearchType": {
     "Track": "歌曲",
