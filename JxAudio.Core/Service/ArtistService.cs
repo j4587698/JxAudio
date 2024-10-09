@@ -186,7 +186,7 @@ public class ArtistService
         Guid userId, bool starOnly)
     {
         var select = GetArtistBase(userId, null)
-            .WhereIf(starOnly, x => x.ArtistStarEntities.Any(y => y.UserId == userId))
+            .WhereIf(starOnly, x => x.ArtistStarEntities!.Any(y => y.UserId == userId))
             .IncludeMany(x => x.TrackEntities!.Select(y => new TrackEntity()
                 {
                     Id = y.Id,
