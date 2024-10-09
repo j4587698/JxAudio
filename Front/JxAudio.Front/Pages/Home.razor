@@ -1,10 +1,119 @@
 ﻿@page "/"
+@using Jx.Toolbox.Extensions
+@using JxAudio.Front.Data
+@using JxAudio.TransVo
+@using Microsoft.Extensions.Localization
+@using Avatar = BootstrapBlazor.Components.Avatar
 
 @inject HttpClient Http
+@inject IStringLocalizer<Home> StringLocalizer
+@inject IDispatchService<AddTrackMessage> DispatchService
+@inject NavigationManager NavigationManager
 
-<PageTitle>Home</PageTitle>
+<PageTitle>@StringLocalizer["Title"] - JxAudio</PageTitle>
+<div>
+    <ListView TItem="TrackVo" Items="NewestTracks" OnListViewItemClick="AddTrack">
+        <HeaderTemplate>
+            <div>@StringLocalizer["NewestTracks"]</div>
+        </HeaderTemplate>
+        <BodyTemplate>
+            <Card>
+                <BodyTemplate>
+                    <Avatar Url="@($"/api/Cover?coverId={context.CoverId}")" Size="Size.ExtraExtraLarge"></Avatar><br />
+                    @{ var title = context.Title.IsNullOrEmpty() ? context.Name : context.Title; }
+                    <Tooltip Title="@title" style="width: 80px">
+                        <div class="text-center text-truncate">@title</div>
+                    </Tooltip>
+                </BodyTemplate>
+            </Card>
+        </BodyTemplate>
+    </ListView>
+    <br />
+    <ListView TItem="TrackVo" Items="FrequentTracks" OnListViewItemClick="AddTrack">
+        <HeaderTemplate>
+            <div>@StringLocalizer["FrequentTracks"]</div>
+        </HeaderTemplate>
+        <BodyTemplate>
+            <Card>
+                <BodyTemplate>
+                    <Avatar Url="@($"/api/Cover?coverId={context.CoverId}")" Size="Size.ExtraExtraLarge"></Avatar><br />
+                    @{ var title = context.Title.IsNullOrEmpty() ? context.Name : context.Title; }
+                    <Tooltip Title="@title" style="width: 80px">
+                        <div class="text-center text-truncate">@title</div>
+                    </Tooltip>
+                </BodyTemplate>
+            </Card>
+        </BodyTemplate>
+    </ListView>
+    <br />
+    <ListView TItem="AlbumVo" Items="NewestAlbums" OnListViewItemClick="ToAlbum">
+        <HeaderTemplate>
+            <div>@StringLocalizer["NewestAlbums"]</div>
+        </HeaderTemplate>
+        <BodyTemplate>
+            <Card>
+                <BodyTemplate>
+                    <Avatar Url="@($"/api/Cover?coverId={context.CoverId}")" Size="Size.ExtraExtraLarge"></Avatar><br />
+                    <Tooltip Title="@context.Title" style="width: 80px">
+                        <div class="text-center text-truncate">@context.Title</div>
+                    </Tooltip>
+                </BodyTemplate>
+            </Card>
+        </BodyTemplate>
+    </ListView>
+    <br />
+    <ListView TItem="AlbumVo" Items="FrequentAlbums" OnListViewItemClick="ToAlbum">
+        <HeaderTemplate>
+            <div>@StringLocalizer["FrequentAlbums"]</div>
+        </HeaderTemplate>
+        <BodyTemplate>
+            <Card>
+                <BodyTemplate>
+                    <Avatar Url="@($"/api/Cover?coverId={context.CoverId}")" Size="Size.ExtraExtraLarge"></Avatar><br />
+                    <Tooltip Title="@context.Title" style="width: 80px">
+                        <div class="text-center text-truncate">@context.Title</div>
+                    </Tooltip>
+                </BodyTemplate>
+            </Card>
+        </BodyTemplate>
+    </ListView>
+</div>
 
-<h1>Hello, world!</h1>
+@code
+{
+    private List<TrackVo>? NewestTracks { get; set; }
 
-Welcome to your new app.11
+    private List<TrackVo>? FrequentTracks { get; set; }
 
+    public List<AlbumVo>? NewestAlbums { get; set; }
+
+    public List<AlbumVo>? FrequentAlbums { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        NewestTracks = await Http.GetFromJsonAsync<List<TrackVo>>("/api/Recommend/NewestTrack");
+        FrequentTracks = await Http.GetFromJsonAsync<List<TrackVo>>("/api/Recommend/FrequentTrack");
+        NewestAlbums = await Http.GetFromJsonAsync<List<AlbumVo>>("/api/Recommend/NewestAlbum");
+        FrequentAlbums = await Http.GetFromJsonAsync<List<AlbumVo>>("/api/Recommend/FrequentAlbum");
+    }
+
+    private Task AddTrack(TrackVo track)
+    {
+        DispatchService.Dispatch(new DispatchEntry<AddTrackMessage>()
+        {
+            Entry = new AddTrackMessage()
+            {
+                Tracks = [track],
+                Type = PlayType.AddAndPlay
+            }
+        });
+        return Task.CompletedTask;
+    }
+
+    private Task ToAlbum(AlbumVo album)
+    {
+        NavigationManager.NavigateTo($"/Album/{album.Id}");
+        return Task.CompletedTask;
+    }
+}

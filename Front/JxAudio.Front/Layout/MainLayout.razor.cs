@@ -43,14 +43,15 @@ public sealed partial class MainLayout
     {
         var menus = new List<MenuItem>
         {
-            new() { Text = StringLocalizer["Album"], Icon = "fa-solid fa-fw fa-flag", Url = "/Albums", Match = NavLinkMatch.All },
-            new() { Text = StringLocalizer["Artist"], Icon = "fa-solid fa-fw fa-check-square", Url = "/Artists" },
-            new() { Text = StringLocalizer["Track"], Icon = "fa-solid fa-fw fa-database", Url = "/Tracks" },
-            new() { Text = StringLocalizer["Playlist"], Icon = "fa-solid fa-fw fa-database", Url = "/Playlists" },
+            new() { Text = StringLocalizer["Home"], Icon = "fa fa-fw fa-home", Url = "/", Match = NavLinkMatch.All },
+            new() { Text = StringLocalizer["Album"], Icon = "fas fa-fw fa-compact-disc", Url = "/Albums", Match = NavLinkMatch.All },
+            new() { Text = StringLocalizer["Artist"], Icon = "fas fa-fw fa-microphone", Url = "/Artists" },
+            new() { Text = StringLocalizer["Track"], Icon = "fas fa-fw fa-music", Url = "/Tracks" },
+            new() { Text = StringLocalizer["Playlist"], Icon = "fas fa-fw fa-clipboard-list", Url = "/Playlists" },
             new() { Text = StringLocalizer["Collection"], Icon = "fa-solid fa-fw fa-table", Items = [
-                new MenuItem() {Text = StringLocalizer["Album"], Icon = "fa-solid fa-fw fa-flag", Url = "/Star/Album"},
-                new MenuItem() {Text = StringLocalizer["Artist"], Icon = "fa-solid fa-fw fa-flag", Url = "/Star/Artist"},
-                new MenuItem() {Text = StringLocalizer["Track"], Icon = "fa-solid fa-fw fa-flag", Url = "/Star/Track"},
+                new MenuItem() {Text = StringLocalizer["Album"], Icon = "fas fa-fw fa-compact-disc", Url = "/Star/Album"},
+                new MenuItem() {Text = StringLocalizer["Artist"], Icon = "fas fa-fw fa-microphone", Url = "/Star/Artist"},
+                new MenuItem() {Text = StringLocalizer["Track"], Icon = "fas fa-fw fa-music", Url = "/Star/Track"},
             ]}
         };
 
