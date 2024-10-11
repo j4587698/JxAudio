@@ -1,3 +1,107 @@
 ﻿{
-
+  "System.ComponentModel.DataAnnotations.RequiredAttribute": {
+    "ErrorMessage": "{0} is required."
+  },
+  "BootstrapBlazor.Components.StringFilter": {
+    "Value1.PlaceHolder": "Please enter"
+  },
+  "JxAudio.Front.Components.ArtistFilter": {
+    "_value.PlaceHolder": "Please enter"
+  },
+  "JxAudio.Front.Components.TrackTable": {
+    "PlayAll": "Play All",
+    "PlaySelect": "Play Selected",
+    "TrackType": "File Format",
+    "UnknownAlbum": "Unknown Album"
+  },
+  "JxAudio.Front.Data.SearchType": {
+    "Track": "Track",
+    "Artist": "Artist",
+    "Album": "Album",
+    "Playlist": "Playlist"
+  },
+  "JxAudio.TransVo.ArtistVo": {
+    "Name": "Artist Name",
+    "Count": "Number of Songs",
+    "TotalSize": "Total Size",
+    "TotalTime": "Total Duration"
+  },
+  "JxAudio.TransVo.AlbumVo": {
+    "CoverId": "Cover",
+    "Title": "Title",
+    "Artist": "Artist",
+    "Count": "Number of Songs",
+    "TotalSize": "Total Size",
+    "TotalTime": "Total Duration"
+  },
+  "JxAudio.TransVo.TrackVo": {
+    "Title": "Title",
+    "Artists": "Artists",
+    "Album": "Album",
+    "BitRate": "Audio Format",
+    "Size": "Size",
+    "Duration": "Duration"
+  },
+  "JxAudio.TransVo.PlaylistVo": {
+    "Name": "Playlist Name",
+    "Description": "Description",
+    "IsPublic": "Public",
+    "Count": "Number of Songs",
+    "TotalSize": "Total Size",
+    "TotalTime": "Total Duration",
+    "Name.PlaceHolder": "Please enter playlist name",
+  },
+  "JxAudio.Front.Pages.Home": {
+    "NewestTracks": "Newest Tracks",
+    "NewestAlbums": "Newest Albums",
+    "FrequentTracks": "Most Played Tracks",
+    "FrequentAlbums": "Most Played Albums",
+    "Title": "Recommended"
+  },
+  "JxAudio.Front.Pages.Albums": {
+    "Title": "All Albums"
+  },
+  "JxAudio.Front.Pages.Album": {
+    "Title": "Album"
+  },
+  "JxAudio.Front.Pages.Artist": {
+    "Title": "Artist"
+  },
+  "JxAudio.Front.Pages.Artists": {
+    "Title": "All Artists"
+  },
+  "JxAudio.Front.Pages.Tracks": {
+    "Title": "All Tracks"
+  },
+  "JxAudio.Front.Pages.Playlists": {
+    "Title": "Playlists"
+  },
+  "JxAudio.Front.Pages.Playlist": {
+    "Title": "Playlist",
+    "ModifyPlaylist": "Edit Playlist"
+  },
+  "JxAudio.Front.Layout.MainLayout": {
+    "Home": "Recommended",
+    "RePass": "Change Password",
+    "Album": "Album",
+    "Artist": "Artist",
+    "Track": "Track",
+    "Collection": "My Collection",
+    "Playlist": "Playlist"
+  },
+  "JxAudio.Front.Components.PlayListControl": {
+    "Playlist": "Playlist",
+    "CreatePlaylist": "Create Playlist"
+  },
+  "JxAudio.Front.Components.TrackSearch": {
+    "SearchText": "Search Tracks"
+  },
+  "JxAudio.Front.Components.PlaylistDialog": {
+    "AddTrack": "Add Track",
+    "Save": "Save"
+  },
+  "Program": {
+    "UnknownTitle": "Unknown Track",
+    "UnknownArtist": "Unknown Artist",
+  }
 }

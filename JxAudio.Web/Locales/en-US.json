@@ -1,6 +1,265 @@
 ﻿{
+  "Longbow.Tasks.SchedulerStatus": {
+    "Running": "Running",
+    "Ready": "Ready",
+    "Disabled": "Stopped"
+  },
+  "Longbow.Tasks.TriggerResult": {
+    "Success": "Success",
+    "Cancelled": "Cancelled",
+    "Timeout": "Timeout",
+    "Error": "Error",
+    "Running": "Running"
+  },
+  "JxAudio.Core.Service.ArtistService": {
+    "NoArtistName": "[Unknown Artist]",
+    "NoAlbumName": "[Unknown Album]"
+  },
+  "JxAudio.Core.Setup": {
+    "InvalidDbType": "Invalid database type",
+    "InitDbFail": "Database initialization failed",
+    "ConnectDbFail": "Failed to connect to database"
+  },
+  "JxAudio.Core.Attributes.CronAttribute": {
+    "ErrorMessage": "Cron expression is incorrect"
+  },
+  "JxAudio.Core.Attributes.IntAttribute": {
+    "ErrorMessage": "{0} must be an integer"
+  },
+  "JxAudio.Core.Attributes.GuidRequiredAttribute": {
+    "ErrorMessage": "{0} cannot be empty"
+  },
+  "System.ComponentModel.DataAnnotations.RequiredAttribute": {
+    "ErrorMessage": "{0} cannot be empty"
+  },
+  "JxAudio.Web.Components.Components.CultureChooser": {
+    "Label": "Language"
+  },
   "JxAudio.Web.Components.Layout.MainLayout": {
     "Home": "Home",
-    "Music": "Music Manager"
+    "User": "User Management",
+    "Folder": "Folder Management",
+    "Album": "Album Management",
+    "Artist": "Artist Management",
+    "Genre": "Genre Management",
+    "Music": "Music Management",
+    "Playlist": "Playlist Management",
+    "Task": "Task Management",
+    "Plugin": "Plugin Management",
+    "Setting": "System Settings"
+  },
+  "JxAudio.Core.Enums.DbType": {
+    "Sqlite": "Sqlite",
+    "Mysql": "Mysql",
+    "SqlServer": "SQL Server",
+    "Oracle": "Oracle",
+    "Postgresql": "Postgresql"
+  },
+  "JxAudio.Core.Options.DbConfigOption": {
+    "DbType": "Database Type",
+    "DbUrl": "Database URL (Full path for Sqlite)",
+    "DbUrl.PlaceHolder": "Please enter database URL",
+    "DbPort": "Database Port",
+    "DbPort.PlaceHolder": "Please enter port number",
+    "DbName": "Database Name",
+    "DbName.PlaceHolder": "Please enter database name",
+    "Username": "Database Username",
+    "Username.PlaceHolder": "Please enter username",
+    "Password": "Database Password",
+    "Password.PlaceHolder": "Please enter password",
+    "Prefix": "Table Prefix",
+    "Prefix.PlaceHolder": "Please enter table prefix"
+  },
+  "JxAudio.Core.Entity.DirectoryEntity": {
+    "Provider": "Provider",
+    "Name": "Directory Alias",
+    "Path": "Full Path",
+    "Name.Required": "{0} cannot be empty",
+    "Path.Required": "{0} cannot be empty",
+    "IsAccessControlled": "Access Controlled",
+    "UserEntities": "Accessible Users",
+    "UserList": "User List"
+  },
+  "JxAudio.Core.Entity.TrackEntity": {
+    "Name": "File Name",
+    "PictureId": "Cover Image",
+    "ProviderId": "Provider",
+    "FullName": "File Path",
+    "Title": "Title",
+    "Size": "File Size",
+    "Duration": "Audio Duration"
+  },
+  "JxAudio.Core.Entity.AlbumEntity": {
+    "PictureId": "Cover Image",
+    "Title": "Album Title",
+    "Year": "Album Year",
+    "ArtistEntity": "Artist",
+    "Count": "Number of Songs"
+  },
+  "JxAudio.Core.Entity.ArtistEntity": {
+    "Name": "Artist Name",
+    "Count": "Number of Songs"
+  },
+  "JxAudio.Core.Entity.UserEntity": {
+    "UserName": "Username",
+    "Password": "Password",
+    "IsAdmin": "Administrator",
+    "IsGuest": "Guest",
+    "MaxBitRate": "Maximum Bitrate",
+    "CanJukebox": "Can Use Jukebox",
+    "MaxBitRate.PlaceHolder": "Allowed maximum bitrate"
+  },
+  "JxAudio.Core.Entity.GenreEntity": {
+    "Name": "Genre",
+    "Count": "Number of Songs"
+  },
+  "JxAudio.Core.Entity.PlaylistEntity": {
+    "Name": "Playlist Name",
+    "Description": "Playlist Description",
+    "IsPublic": "Public"
+  },
+  "JxAudio.Plugin.PluginConfig": {
+    "Id": "Plugin ID",
+    "Name": "Plugin Name",
+    "Author": "Plugin Author",
+    "Description": "Plugin Description",
+    "Version": "Plugin Version",
+    "IsEnable": "Enabled"
+  },
+  "JxAudio.Web.Enums.SearchType": {
+    "Interval": "Interval",
+    "Cron": "Cron Expression"
+  },
+  "JxAudio.Web.Validators.InstallValidator": {
+    "PasswordNotEqual": "The passwords entered do not match"
+  },
+  "JxAudio.Web.Vo.SettingsVo": {
+    "ScanInterval": "Scan Interval",
+    "SearchType": "Scan Time Setting Method",
+    "TimeUnit": "Time Unit",
+    "ScanInterval.PlaceHolder": "Please enter scan interval",
+    "ScanInterval.Required": "{0} cannot be empty",
+    "CronExpress": "Enter Cron expression (seconds minutes hours day month week) Can be generated from https://cron.qqe2.com/",
+    "CronExpress.PlaceHolder": "Please enter Cron expression (seconds minutes hours day month week)"
+  },
+  "JxAudio.Web.Vo.LoginVo": {
+    "UserName.PlaceHolder": "Please enter username",
+    "Password.PlaceHolder": "Please enter password",
+    "IsKeep": "Remember login status"
+  },
+  "JxAudio.Web.Enums.TimeUnit": {
+    "Second": "Second",
+    "Minute": "Minute",
+    "Hour": "Hour",
+    "Day": "Day"
+  },
+  "JxAudio.Web.Components.Pages.User.Login": {
+    "Login": "Login",
+    "LoginFail": "Login Failed",
+    "LoginFailContent": "System Error"
+  },
+  "JxAudio.Web.Components.Pages.User.NotAuth": {
+    "NotAuth": "Insufficient Permissions",
+    "ToHome": "Return to Home",
+    "ToLogin": "Return to Login Page"
+  },
+  "JxAudio.Web.Components.Pages.Install.Install": {
+    "Language": "Language Selection",
+    "LanguageDesc": "Select your language",
+    "Db": "Database Configuration",
+    "DbDesc": "Configure your database information",
+    "Settings": "Settings Configuration",
+    "SettingsDesc": "Initialize your settings",
+    "User": "Create User",
+    "UserDesc": "Create your first admin user"
+  },
+  "JxAudio.Web.Components.Pages.Admin.Home": {
+    "Dashboard": "Dashboard",
+    "MusicCount": "Music Count",
+    "AlbumCount": "Album Count",
+    "ArtistCount": "Artist Count",
+    "GenreCount": "Genre Count",
+    "UserCount": "User Count",
+    "PlaylistCount": "Playlist Count",
+    "TaskCount": "Task Count",
+    "PluginCount": "Plugin Count",
+    "FolderCount": "Folder Count"
+  },
+  "JxAudio.Web.Components.Pages.Admin.SettingsManager": {
+    "Title": "System Settings",
+    "Save": "Save",
+    "ToastTitle": "Save Settings",
+    "SuccessContent": "Settings have been saved successfully"
+  },
+  "JxAudio.Web.Components.Pages.Admin.MusicManager": {
+    "NoTitle": "[Unknown Title]",
+    "DeleteMusicText": "Deleting music will also delete the file and cannot be recovered, do you want to continue?"
+  },
+  "JxAudio.Web.Components.Pages.Admin.UserManager": {
+    "ChangePassword": "Change Password",
+    "Close": "Close",
+    "RePassword": "Passwords do not match",
+    "Success": "Successfully Changed"
+  },
+  "JxAudio.Web.Components.Pages.Admin.PluginManager": {
+    "Enable": "Enable Plugin",
+    "Disable": "Disable Plugin"
+  },
+  "JxAudio.Web.Components.Pages.Admin.TaskManager": {
+    "Run": "Trigger",
+    "Start": "Start",
+    "Stop": "Stop",
+    "Success": "Operation Successful",
+    "Fail": "Operation Failed",
+    "SuccessContent": "Task has been triggered, please wait...",
+    "FailContent": "Task failed to trigger"
+  },
+  "JxAudio.Web.Components.Pages.Admin.FolderSelect": {
+    "Delete": "Deleting the directory will also delete all song indexes under it, do you want to continue?",
+    "RunScanContent": "You have added a new folder, do you want to start scanning immediately?",
+    "RunClearContent": "You have deleted a folder, do you want to clear the index immediately?",
+    "Content": "Directory Selection"
+  },
+  "JxAudio.Web.Components.Components.Install": {
+    "Fail": "Failure",
+    "CreateTableFail": "Failed to create table"
+  },
+  "JxAudio.Web.Vo.ResetPasswordVo": {
+    "NewPassword": "New Password",
+    "NewPassword.PlaceHolder": "Please enter new password",
+    "RePassword": "Repeat New Password",
+    "RePassword.PlaceHolder": "Please repeat new password"
+  },
+  "JxAudio.Web.Vo.ScheduleVo": {
+    "Name": "Task Name",
+    "Status": "Task Status",
+    "NextRuntime": "Next Run Time",
+    "LastRuntime": "Last Run Time",
+    "LastRunResult": "Last Run Status",
+    "CreatedTime": "Creation Time"
+  },
+  "JxAudio.Web.Vo.UserInstallVo": {
+    "UserName.PlaceHolder": "Please enter username",
+    "UserName": "Username",
+    "Email.PlaceHolder": "Please enter Email address to get avatar",
+    "Email": "Email Address",
+    "Password.PlaceHolder": "Please enter password",
+    "Password": "User Password",
+    "RePassword.PlaceHolder": "Please re-enter password",
+    "RePassword": "Repeat Password",
+    "MaxBitRate.PlaceHolder": "Please enter the maximum bitrate limit",
+    "MaxBitRate": "Maximum Bitrate (0 for unlimited)"
+  },
+  "JxAudio.Web.Components.Components.Install.FinishStep": {
+    "SetupDb": "Creating tables, please wait...",
+    "SetupSettings": "Setting up base configurations, please wait...",
+    "SetupUser": "Creating admin user, please wait...",
+    "Finish": "Congratulations, all settings have been completed, redirecting in 3 seconds",
+    "Fail": "Failure",
+    "CreateTableFail": "Failed to create tables, please ensure the database has table creation permissions and rerun Install"
+  },
+  "JxAudio.Web.Controllers.Api.UserController": {
+    "NotEmpty": "Username and password cannot be empty",
+    "Invalid": "Invalid username or password"
   }
 }

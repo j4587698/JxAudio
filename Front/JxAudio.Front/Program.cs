@@ -2,6 +2,7 @@
 using JxAudio.Front.Handler;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.JSInterop;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -22,6 +23,10 @@ builder.Services.AddScoped(sp =>
 builder.Services.AddBootstrapBlazor(options =>
 {
     options.DefaultCultureInfo = "zh-CN";
+    options.SupportedCultures = ["zh-CN", "en-US"];
 });
 
-await builder.Build().RunAsync();
+var host = builder.Build();
+//var jsRuntime = host.Services.GetRequiredService<IJSRuntime>();
+
+await host.RunAsync();
