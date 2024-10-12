@@ -53,4 +53,7 @@ public partial class AdminTable<TItem> where TItem : class, new()
 
     [Parameter] public bool IsPagination { get; set; } = true;
 
+    [Parameter] public bool ShowSearch { get; set; } = true;
+    
+    [Parameter] public bool ShowAdvancedSearch { get; set; }
 }

@@ -123,10 +123,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll", builder =>
     {
         builder
-            .WithOrigins("https://localhost:7077") // 允许任何来源
+            .AllowAnyOrigin() // 允许任何来源
             .AllowAnyMethod() // 允许任何 HTTP 方法
-            .AllowAnyHeader() // 允许任何头
-            .AllowCredentials();
+            .AllowAnyHeader(); // 允许任何头
     });
 });
 

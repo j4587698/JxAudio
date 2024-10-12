@@ -29,7 +29,8 @@ public static class PluginUtil
         var dirs = Directory.GetDirectories(Constants.PluginPath);
         foreach (var dir in dirs)
         {
-            var dllPath = Path.Combine(dir, Path.GetFileName(dir) + ".dll");
+            var filename = Path.GetFileName(dir);
+            var dllPath = Path.Combine(dir, filename + ".dll");
             if (File.Exists(dllPath))
             {
                 try
@@ -41,7 +42,7 @@ public static class PluginUtil
                             var attr = type.CustomAttributes.FirstOrDefault(x => x.AttributeType.Name == nameof(PluginInfoAttribute));
                             if (attr != null)
                             {
-                                var configPlugin = ToPluginConfig(attr);
+                                var configPlugin = ToPluginConfig(attr, filename);
                                 if (configPlugin == null)
                                 {
                                     break;
@@ -72,7 +73,7 @@ public static class PluginUtil
         return pluginConfigs;
     }
 
-    public static PluginConfig? ToPluginConfig(CustomAttribute customAttribute)
+    public static PluginConfig? ToPluginConfig(CustomAttribute customAttribute, string id)
     {
         if (customAttribute.AttributeType.Name != nameof(PluginInfoAttribute))
         {
@@ -80,13 +81,11 @@ public static class PluginUtil
         }
         
         var pluginConfig = new PluginConfig();
+        pluginConfig.Id = id;
         foreach (var property in customAttribute.Properties)
         {
             switch (property.Name)
             {
-                case nameof(PluginInfoAttribute.Id):
-                    pluginConfig.Id = property.Argument.Value as string;
-                    break;
                 case nameof(PluginInfoAttribute.Name):
                     pluginConfig.Name = property.Argument.Value as string;
                     break;

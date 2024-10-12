@@ -1,13 +1,16 @@
 ﻿@page "/Admin/PluginManager"
 @using JxAudio.Plugin
 @using System.Diagnostics.CodeAnalysis
+@using System.IO.Compression
 @using Microsoft.Extensions.Localization
+@using Constants = JxAudio.Core.Constants
 
 @inject IStringLocalizer<PluginManager> PluginManagerLocalizer
 @inject IDispatchService<string> DispatchService
+@inject SwalService SwalService
 
 <AdminTable TItem="PluginConfig" Items="PluginConfigs" ShowToolbar="true" ShowDefaultButtons="false" 
-            ShowExtendButtons="true" ShowExtendEditButton="false" ShowExtendDeleteButton="false">
+            ShowExtendButtons="true" ShowExtendEditButton="false" ShowExtendDeleteButton="false" ShowSearch="false">
     <TableColumns>
         <TableColumn @bind-Field="@context.Id"></TableColumn>
         <TableColumn @bind-Field="@context.Name"></TableColumn>
@@ -20,6 +23,11 @@
         <TableCellButton Text="@(context.IsEnable ? PluginManagerLocalizer["Disable"] : PluginManagerLocalizer["Enable"])"
                          OnClick="() => ChangeStatus(context)"></TableCellButton>
     </RowButtonTemplate>
+    <TableToolbarTemplate>
+        <TableToolbarComponent>
+            <ButtonUpload TValue="string" BrowserButtonText="@PluginManagerLocalizer["Upload"]" OnChange="Upload"></ButtonUpload>
+        </TableToolbarComponent>
+    </TableToolbarTemplate>
 </AdminTable>
 
 @code {
@@ -42,6 +50,45 @@
                 Name = "menu",
                 Entry = "plugin"
             });
+        }
+    }
+
+    private async Task Upload(UploadFile uploadFile)
+    {
+        if (uploadFile.GetExtension() != ".zip" || uploadFile.File is null || uploadFile.OriginFileName is null)
+        {
+            await SwalService.Show(new SwalOption()
+            {
+                Title = PluginManagerLocalizer["Error"],
+                Content = PluginManagerLocalizer["OnlySupportJxAudioFile"],
+                Category = SwalCategory.Error
+            });
+            return;
+        }
+        var pluginPath = Path.Combine(AppContext.BaseDirectory, Constants.PluginPath);
+        if (Directory.Exists(Path.Combine(pluginPath, Path.GetFileNameWithoutExtension(uploadFile.OriginFileName))))
+        {
+            if (!await SwalService.ShowModal(new SwalOption()
+                {
+                    Title = PluginManagerLocalizer["Question"],
+                    Content = PluginManagerLocalizer["PluginAlreadyExists"],
+                    Category = SwalCategory.Question
+                }))
+            {
+                return;
+            }
+            
+        }
+
+        var stream = uploadFile.File.OpenReadStream();
+        
+        var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+        memoryStream.Seek(0, SeekOrigin.Begin);
+
+        using (var zip = new ZipArchive(stream, ZipArchiveMode.Read))
+        {
+            
         }
     }
 

@@ -203,7 +203,8 @@
   },
   "JxAudio.Web.Components.Pages.Admin.PluginManager": {
     "Enable": "启用插件",
-    "Disable": "禁用插件"
+    "Disable": "禁用插件",
+    "Upload": "上传插件",
   },
   "JxAudio.Web.Components.Pages.Admin.TaskManager": {
     "Run": "触发",
