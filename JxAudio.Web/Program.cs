@@ -11,6 +11,7 @@ using JxAudio.Web.Middlewares;
 using JxAudio.Web.Services;
 using JxAudio.Web.Utils;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using Serilog;
 using Console = System.Console;
@@ -58,6 +59,11 @@ builder.Services.AddRazorComponents()
 builder.Services.AddBootstrapBlazor(null, option =>
 {
     option.AdditionalJsonFiles = Directory.GetFiles("./Locales", "*.json", SearchOption.AllDirectories);
+});
+builder.Services.Configure<HubOptions>(option =>
+{
+    option.MaximumReceiveMessageSize = null;
+    option.DisableImplicitFromServicesParameters = true;
 });
 
 builder.Services.Configure<CookiePolicyOptions>(op =>
@@ -159,7 +165,6 @@ app.UseStaticFiles();
 
 app.UseMiddleware<InstallMiddleware>();
 
-app.UseRouting();
 app.UseAntiforgery();
 
 app.UseOpenApi();

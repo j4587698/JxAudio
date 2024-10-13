@@ -1,4 +1,5 @@
 ﻿@page "/Install"
+@using System.IO.Compression
 @using JxAudio.Web.Components.Layout
 @using JxAudio.Web.Components.Components.Install
 @using JxAudio.Web.Vo
@@ -33,6 +34,17 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        if (Directory.Exists("./plugins"))
+        {
+            foreach (var plugin in Directory.GetFiles("./plugins", "*.jxaudio"))
+            {
+                var pluginName = Path.GetFileNameWithoutExtension(plugin);
+                if (!Directory.Exists($"./config/plugins/{pluginName}"))
+                {
+                    ZipFile.ExtractToDirectory(plugin, "./config/plugins/");
+                }
+            }
+        }
         _stepItems.Add(new StepOption()
         {
             Template = BootstrapDynamicComponent.CreateComponent<CultureSelect>(new Dictionary<string, object?>()
