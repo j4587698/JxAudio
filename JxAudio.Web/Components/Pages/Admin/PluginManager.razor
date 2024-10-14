@@ -56,7 +56,7 @@
 
     private async Task Upload(UploadFile uploadFile)
     {
-        if (uploadFile.GetExtension() != ".zip" || uploadFile.File is null || uploadFile.OriginFileName is null)
+        if (uploadFile.GetExtension() != ".jxaudio" || uploadFile.File is null || uploadFile.OriginFileName is null)
         {
             await SwalService.Show(new SwalOption()
             {

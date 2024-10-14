@@ -205,6 +205,13 @@
     "Enable": "启用插件",
     "Disable": "禁用插件",
     "Upload": "上传插件",
+    "Error": "插件错误",
+    "OnlySupportJxAudioFile": "只支持上传.jxaudio文件",
+    "EnableCannotReplace": "不能替换当前已启用的插件",
+    "Question": "插件提示",
+    "PluginAlreadyExists": "插件已存在,是否覆盖？",
+    "Success": "操作成功",
+    "UploadSuccess": "插件上传成功",
   },
   "JxAudio.Web.Components.Pages.Admin.TaskManager": {
     "Run": "触发",
