@@ -33,5 +33,5 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: j45876898/JxAudio:latest,j45876898/JxAudio:${{ steps.get_version.outputs.version }}
+        tags: j45876898/jxaudio:latest,j45876898/jxaudio:${{ steps.get_version.outputs.version }}
         platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/386
