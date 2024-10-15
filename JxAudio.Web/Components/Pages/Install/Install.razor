@@ -45,17 +45,17 @@
                 }
             }
         }
-        _stepItems.Add(new StepOption()
-        {
-            Template = BootstrapDynamicComponent.CreateComponent<CultureSelect>(new Dictionary<string, object?>()
-            {
-                {nameof(StepBase.Next), () => { _step?.Next();StateHasChanged(); }},
-                {nameof(StepBase.Prev), () => { _step?.Prev();StateHasChanged(); }}
-            }).Render(),
-            Description = InstallLocalizer["LanguageDesc"],
-            Title = InstallLocalizer["Language"],
-            FinishedIcon = "fas fa-check"
-        });
+        // _stepItems.Add(new StepOption()
+        // {
+        //     Template = BootstrapDynamicComponent.CreateComponent<CultureSelect>(new Dictionary<string, object?>()
+        //     {
+        //         {nameof(StepBase.Next), () => { _step?.Next();StateHasChanged(); }},
+        //         {nameof(StepBase.Prev), () => { _step?.Prev();StateHasChanged(); }}
+        //     }).Render(),
+        //     Description = InstallLocalizer["LanguageDesc"],
+        //     Title = InstallLocalizer["Language"],
+        //     FinishedIcon = "fas fa-check"
+        // });
         _stepItems.Add(new StepOption()
         {
             Template = BootstrapDynamicComponent.CreateComponent<DbSetup>(new Dictionary<string, object?>()
