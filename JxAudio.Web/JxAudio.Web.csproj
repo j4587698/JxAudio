@@ -8,13 +8,6 @@
         <LangVersion>default</LangVersion>
         <Version>0.1</Version>
     </PropertyGroup>
-    <Target Name="Test" BeforeTargets="CoreCompile">
-        <Message Text="OS: $(OS)" Importance="high" />
-        <Message Text="Platform: $(Platform)" Importance="high" />
-        <!-- 其他自定义任务 -->
-    </Target>
-    
-    
     
     <ItemGroup>
       <Content Include="..\.dockerignore">

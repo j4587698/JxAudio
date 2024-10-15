@@ -136,6 +136,13 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddCascadingAuthenticationState();
+#if DEBUG
+#else
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+});
+#endif
 
 var app = builder.Build().Use();
 app.UseSerilogRequestLogging();
@@ -149,10 +156,14 @@ if (option != null)
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseWebAssemblyDebugging();
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    app.UseResponseCompression();
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     //app.UseHsts();
+}
+else
+{
+    app.UseWebAssemblyDebugging();
 }
 
 app.UseCors("AllowAll");

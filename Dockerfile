@@ -38,7 +38,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 RUN mkdir /app/config && mkdir /app/log && chown -R $APP_UID:$APP_UID /app/config /app/log
 USER $APP_UID
-ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 VOLUME /app/config
 VOLUME /app/log
