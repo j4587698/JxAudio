@@ -91,14 +91,15 @@ public class ScanJob : ITask
                             }
 
                             GenreEntity? genre = null;
-                            if (!track.Genre.IsNullOrEmpty())
+                            var trackGenre = track.Genre;
+                            if (!trackGenre.IsNullOrEmpty())
                             {
-                                genre = await GenreEntity.Where(x => x.Name == track.Genre).FirstAsync();
+                                genre = await GenreEntity.Where(x => x.Name == trackGenre).FirstAsync();
                                 if (genre == null)
                                 {
                                     genre = new GenreEntity()
                                     {
-                                        Name = track.Genre
+                                        Name = trackGenre
                                     };
                                     await genre.SaveAsync();
                                 }
