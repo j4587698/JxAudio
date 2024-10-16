@@ -81,7 +81,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.Cookie.Name = "JxAudio";
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.None;
-    options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.Path = "/";
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
     options.Events.OnRedirectToLogin = context =>
