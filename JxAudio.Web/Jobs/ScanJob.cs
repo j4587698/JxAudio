@@ -106,16 +106,17 @@ public class ScanJob : ITask
 
 
                             AlbumEntity? albumEntity = null;
-                            if (!track.Album.IsNullOrEmpty())
+                            var trackAlbum = track.Album;
+                            if (!trackAlbum.IsNullOrEmpty())
                             {
                                 albumEntity = await AlbumEntity
-                                    .Where(x => x.Title == track.Album && x.ArtistId == artistEntities[0].Id)
+                                    .Where(x => x.Title == trackAlbum && x.ArtistId == artistEntities[0].Id)
                                     .FirstAsync();
                                 if (albumEntity == null)
                                 {
                                     albumEntity = new AlbumEntity
                                     {
-                                        Title = track.Album,
+                                        Title = trackAlbum,
                                         ArtistId = artistEntities is { Count: > 0 } ? artistEntities[0].Id : 0,
                                         Year = track.Year,
                                         GenreId = genre?.Id,
