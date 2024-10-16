@@ -63,6 +63,7 @@ public class PartialHttpStream(Fs fs, InfoOut infoOut): Stream
             default:
                 throw new ArgumentOutOfRangeException(nameof(origin), "Invalid seek origin.");
         }
+        _stream?.Dispose();
         _stream = null;
         return _position;
     }
