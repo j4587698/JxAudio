@@ -80,7 +80,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.AccessDeniedPath = "/User/NotAuth";
     options.Cookie.Name = "JxAudio";
     options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.None;
     options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.Path = "/";
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
