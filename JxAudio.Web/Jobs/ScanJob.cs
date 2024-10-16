@@ -227,25 +227,28 @@ public class ScanJob : ITask
 
         if (picStream != null)
         {
-            var image = await Image.LoadAsync(picStream);
-            var extension = image.Metadata.DecodedImageFormat?.FileExtensions.FirstOrDefault() ?? "jpg";
-            var mimeType = image.Metadata.DecodedImageFormat?.DefaultMimeType ?? "image/jpeg";
-            var picName = Path.Combine($"{Guid.NewGuid()}.{extension}");
-            var fullPath = Path.Combine(AppContext.BaseDirectory, Constants.CoverCachePath);
-            if (!Directory.Exists(fullPath))
+            await using (picStream)
             {
-                Directory.CreateDirectory(fullPath);
+                var image = await Image.LoadAsync(picStream);
+                var extension = image.Metadata.DecodedImageFormat?.FileExtensions.FirstOrDefault() ?? "jpg";
+                var mimeType = image.Metadata.DecodedImageFormat?.DefaultMimeType ?? "image/jpeg";
+                var picName = Path.Combine($"{Guid.NewGuid()}.{extension}");
+                var fullPath = Path.Combine(AppContext.BaseDirectory, Constants.CoverCachePath);
+                if (!Directory.Exists(fullPath))
+                {
+                    Directory.CreateDirectory(fullPath);
+                }
+                await image.SaveAsync(Path.Combine(fullPath, picName));
+                var pictureEntity = new PictureEntity
+                {
+                    MimeType = mimeType,
+                    Path = picName,
+                    Height = image.Height,
+                    Width = image.Width
+                };
+                await pictureEntity.SaveAsync();
+                return pictureEntity;
             }
-            await image.SaveAsync(Path.Combine(fullPath, picName));
-            var pictureEntity = new PictureEntity
-            {
-                MimeType = mimeType,
-                Path = picName,
-                Height = image.Height,
-                Width = image.Width
-            };
-            await pictureEntity.SaveAsync();
-            return pictureEntity;
         }
 
         return null;
