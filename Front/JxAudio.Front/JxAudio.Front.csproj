@@ -35,9 +35,4 @@
       <ProjectReference Include="..\JxAudio.TransVo\JxAudio.TransVo.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Content Remove="wwwroot\images\logo.png" />
-      <None Include="wwwroot\images\logo.png" />
-    </ItemGroup>
-
 </Project>
