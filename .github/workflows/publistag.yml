@@ -1,0 +1,33 @@
+﻿name: publish tag
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read Field Value
+        id: read-field
+        run: |
+          VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+" JxAudio.Web/JxAudio.Web.csproj)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Get Latest Tag
+        id: get-latest-tag
+        run: |
+          LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+
+      - name: Compare and Create Tag
+        if: env.VERSION > env.LATEST_TAG
+        run: |
+          git config --local user.email "jx@jvxiang.com"
+          git config --local user.name "jx"
+          git tag $VERSION
+          git push origin $VERSION
