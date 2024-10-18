@@ -50,3 +50,7 @@ Docker部署
 ```shell
 docker run -d -p 4587:4587 -v /path/to/config:/app/config -v /path/to/log:/app/log --name jxaudio j4587698/jxaudio
 ```
+
+## 开源协议
+
+[![license](https://img.shields.io/github/license/j4587698/JxAudio)](https://github.com/j4587698/JxAudio/blob/master/LICENSE)
