@@ -21,13 +21,20 @@ jobs:
       - name: Get Latest Tag
         id: get-latest-tag
         run: |
-          LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+          LATEST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
+          LATEST_VERSION=$(echo "$LATEST_TAG" | sed 's/^v//')
+          echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
 
       - name: Compare and Create Tag
-        if: env.VERSION > env.LATEST_TAG
         run: |
-          git config --local user.email "jx@jvxiang.com"
-          git config --local user.name "jx"
-          git tag $VERSION
-          git push origin $VERSION
+          if [[ $(printf '%s\n' "$NEW_VERSION" "$LATEST_VERSION" | sort -V | head -n1) != "$NEW_VERSION" ]]; then
+            git config --local user.email "jx@jvxiang.com"
+            git config --local user.name "jx"
+            git tag $NEW_VERSION
+            git push origin $NEW_VERSION
+          else
+            echo "NEW_VERSION ($NEW_VERSION) is not greater than LATEST_VERSION ($LATEST_VERSION). No new tag created."
+          fi
+        env:
+          NEW_VERSION: ${{ env.VERSION }}
+          LATEST_VERSION: ${{ env.LATEST_VERSION }}
