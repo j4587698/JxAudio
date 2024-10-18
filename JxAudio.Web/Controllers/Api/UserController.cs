@@ -30,6 +30,7 @@ public class UserController(IStringLocalizer<UserController> userLocalizer, User
         var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
         identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName!));
         identity.AddClaim(new Claim(ClaimTypes.Sid, user.Id.ToString()));
+        identity.AddClaim(new Claim(ClaimTypes.Email, user.Email ?? ""));
         if (user.IsAdmin)
         {
             identity.AddClaim(new Claim(ClaimTypes.Role, "Admin"));

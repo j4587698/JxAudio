@@ -1,12 +1,15 @@
-﻿@using Microsoft.Extensions.Localization
-@using Console = System.Console
+﻿@using System.Security.Claims
+@using Microsoft.Extensions.Localization
 @using JxAudio.Plugin
+@using Microsoft.AspNetCore.Components.Authorization
+@using Avatar = Jx.Toolbox.Utils.Avatar
 @inherits LayoutComponentBase
 @implements IDisposable
 
 @inject IStringLocalizer<MainLayout> Localizer
 @inject NavigationManager NavigationManager
 @inject IDispatchService<string> DispatchService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>@PageTitle</PageTitle>
 <BootstrapBlazorRoot>
@@ -17,7 +20,7 @@
             <div class="flex-fill d-sm-none">
             </div>
             <ThemeProvider></ThemeProvider>
-            <Logout ImageUrl="/images/logo.png" UserName="Admin" DisplayName="Admin">
+            <Logout ImageUrl="@(Avatar.GetAvatarUrl(_email) ?? "/Images/logo.png")" UserName="@(_username ?? "JxAudio")" DisplayName="@(_username ?? "JxAudio")">
                 <LinkTemplate>
                     <LogoutLink Url="api/User/Logout"></LogoutLink>
                 </LinkTemplate>
@@ -50,6 +53,10 @@
     private string? PageTitle { get; set; }
     
     private List<MenuItem>? MenuItems { get; set; }
+    
+    private string? _username;
+
+    private string? _email;
 
     private Task OnCollapsed(bool collapsed)
     {
@@ -70,7 +77,15 @@
         }
         DispatchService.Subscribe(Notify);
     }
-    
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var user = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User;
+        _username = user.FindFirst(ClaimTypes.Name)?.Value;
+        _email = user.FindFirst(ClaimTypes.Email)?.Value;
+    }
+
     private Task Notify(DispatchEntry<string> payload)
     {
         if (payload.Name != "menu")

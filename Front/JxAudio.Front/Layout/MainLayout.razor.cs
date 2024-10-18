@@ -17,7 +17,7 @@ public sealed partial class MainLayout
     
     private User? User { get; set; }
     
-    private string _avatar = "./images/logo.png";
+    private string _avatar = "./Images/logo.png";
 
     
 
@@ -36,7 +36,7 @@ public sealed partial class MainLayout
         await base.OnInitializedAsync();
         var res = await Http.GetAsync("/api/User/UserInfo");
         User = await res.Content.ReadFromJsonAsync<User>();
-        _avatar = User?.Avatar ?? "./images/logo.png";
+        _avatar = User?.Avatar ?? "./Images/logo.png";
     }
 
     private List<MenuItem> GetIconSideMenuItems()
