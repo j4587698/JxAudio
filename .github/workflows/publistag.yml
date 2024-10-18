@@ -12,6 +12,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Fetch all tags
+        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
       - name: Read Field Value
         id: read-field
         run: |
