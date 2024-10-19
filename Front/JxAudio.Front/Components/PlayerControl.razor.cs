@@ -305,8 +305,11 @@ public partial class PlayerControl
                 break;
             case LoopStatus.LoopOnce:
                 _loopStatus = LoopStatus.ShuffleOne;
-                Shuffle();
-                ToShuffle();
+                if (_tracks.Count > 0)
+                {
+                    Shuffle();
+                    ToShuffle();
+                }
                 await MessageService.Show(new MessageOption()
                 {
                     Content = "随机播放"
@@ -314,7 +317,10 @@ public partial class PlayerControl
                 break;
             case LoopStatus.ShuffleOne:
                 _loopStatus = LoopStatus.PlayOnce;
-                ToBase();
+                if (_tracks.Count > 0)
+                {
+                    ToBase();
+                }
                 await MessageService.Show(new MessageOption()
                 {
                     Content = "单曲循环"
@@ -377,7 +383,7 @@ public partial class PlayerControl
 
     private void Shuffle()
     {
-        _shuffleTrack = new List<TrackVo>(_tracks);
+        _shuffleTrack = [.._tracks];
         _shuffleTrack.Shuffle();
     }
 
