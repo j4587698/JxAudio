@@ -216,6 +216,11 @@ public partial class PlayerControl
         {
             return;
         }
+
+        if (CurrentTrack.Lrc == null && CurrentTrack.LrcId != 0)
+        {
+            CurrentTrack.Lrc = await Http.GetFromJsonAsync<List<LrcVo>>("/api/Lrc?id=" + CurrentTrack.LrcId);
+        }
         
         _playStatus = PlayStatus.Loading;
         Duration = (int)CurrentTrack.Duration;
