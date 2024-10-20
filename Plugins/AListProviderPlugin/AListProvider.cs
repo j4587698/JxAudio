@@ -128,10 +128,12 @@ public class AListProvider: IProviderPlugin
     {
         try
         {
+            var parent = Path.GetDirectoryName(name) ?? "";
+            var filename = Path.GetFileNameWithoutExtension(name);
             Fs fs = new Fs(Constants.Account!.ServerUrl);
             var info = await fs.Info(Constants.Token, new ListIn()
             {
-                Path = Path.Combine($"{Path.GetFileNameWithoutExtension(name)}.jpg" )
+                Path = Path.Combine(parent, $"{filename}.jpg" )
             });
             if (info.Code != 200)
             {
@@ -232,10 +234,12 @@ public class AListProvider: IProviderPlugin
     {
         try
         {
+            var parent = Path.GetDirectoryName(name) ?? "";
+            var filename = Path.GetFileNameWithoutExtension(name);
             Fs fs = new Fs(Constants.Account!.ServerUrl);
             var info = await fs.Info(Constants.Token, new ListIn()
             {
-                Path = Path.Combine($"{Path.GetFileNameWithoutExtension(name)}.lrc" )
+                Path = Path.Combine(Path.Combine(parent, $"{filename}.lrc") )
             });
             if (info.Code != 200)
             {
