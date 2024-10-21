@@ -16,23 +16,37 @@ public class ScanJob : ITask
 
     private List<TrackEntity>? _trackEntities;
     
+    private static bool _isRunning;
+    
     public async Task Execute(IServiceProvider provider, CancellationToken cancellationToken)
     {
-        Log.Information("ScanJob is running.");
-        
-        _trackEntities = await TrackEntity.Select.ToListAsync(x => new TrackEntity()
-            { Id = x.Id, ProviderId = x.ProviderId, FullName = x.FullName }, cancellationToken);
-        var directoryEntities = await DirectoryEntity.Select.ToListAsync(cancellationToken);
-        foreach (var directoryEntity in directoryEntities)
+        if (_isRunning)
         {
-            var providerPlugin = Constant.GetProvider(directoryEntity.Provider);
-            if (providerPlugin == null)
+            Log.Warning("ScanJob is already running.");
+            return;
+        }
+        Log.Information("ScanJob is running.");
+        _isRunning = true;
+        try
+        {
+            _trackEntities = await TrackEntity.Select.ToListAsync(x => new TrackEntity()
+                { Id = x.Id, ProviderId = x.ProviderId, FullName = x.FullName }, cancellationToken);
+            var directoryEntities = await DirectoryEntity.Select.ToListAsync(cancellationToken);
+            foreach (var directoryEntity in directoryEntities)
             {
-                Log.Warning("提供器{pluginId}不存在，无法继续", directoryEntity.Provider);
-                continue;
-            }
+                var providerPlugin = Constant.GetProvider(directoryEntity.Provider);
+                if (providerPlugin == null)
+                {
+                    Log.Warning("提供器{pluginId}不存在，无法继续", directoryEntity.Provider);
+                    continue;
+                }
             
-            await ScanFiles(providerPlugin, directoryEntity.Path, directoryEntity);
+                await ScanFiles(providerPlugin, directoryEntity.Path, directoryEntity);
+            }
+        }
+        finally
+        {
+            _isRunning = false;
         }
     }
 
