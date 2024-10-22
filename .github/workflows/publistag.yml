@@ -33,8 +33,8 @@ jobs:
           if [[ $(printf '%s\n' "$NEW_VERSION" "$LATEST_VERSION" | sort -V | head -n1) != "$NEW_VERSION" ]]; then
             git config --local user.email "jx@jvxiang.com"
             git config --local user.name "jx"
-            git tag $NEW_VERSION
-            git push origin $NEW_VERSION
+            git tag "v$NEW_VERSION"
+            git push origin "v$NEW_VERSION"
           else
             echo "NEW_VERSION ($NEW_VERSION) is not greater than LATEST_VERSION ($LATEST_VERSION). No new tag created."
           fi
