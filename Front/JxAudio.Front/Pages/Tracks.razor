@@ -12,8 +12,15 @@
 <PageTitle>@StringLocalizer["Title"] - JxAudio</PageTitle>
 
 <div style="height: calc(100vh - 5.1rem - 82px)">
-    <FrontTable TItem="TrackVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true"
+    <FrontTable TItem="TrackVo" ShowToolbar="true" ShowDefaultButtons="false" ShowExtendButtons="true" 
+                IsMultipleSelect="true" SelectedRows="SelectedRows"
                 ShowExtendDeleteButton="false" ShowExtendEditButton="false" OnQueryAsync="OnQueryAsync">
+        <TableToolbarTemplate>
+            <TableToolbarButton TItem="TrackVo" Text="@StringLocalizer["PlaySelected"]" Icon="fa fa-play" 
+                                OnClick="() => PlayList(SelectedRows, PlayType.Replace)"></TableToolbarButton>
+            <TableToolbarButton TItem="TrackVo" Text="@StringLocalizer["AddSelected"]" Icon="fa fa-plus"
+                                OnClick="() => PlayList(SelectedRows, PlayType.AddAndPlay)"></TableToolbarButton>
+        </TableToolbarTemplate>
         <TableColumns>
             <TableColumn @bind-Field="@context.Title" Searchable="true" Filterable="true" Sortable="true">
                 <Template Context="value">
@@ -86,16 +93,27 @@
 
 @code {
 
-    private void Play(TrackVo context, PlayType type)
+    public List<TrackVo> SelectedRows { get; set; } = [];
+    
+    private void PlayList(List<TrackVo> trackVos, PlayType type)
     {
+        if (trackVos.Count == 0)
+        {
+            return;
+        }
         DispatchService.Dispatch(new DispatchEntry<AddTrackMessage>()
         {
             Entry = new AddTrackMessage()
             {
-                Tracks = [context],
+                Tracks = trackVos,
                 Type = type
             }
         });
+    }
+
+    private void Play(TrackVo track, PlayType type)
+    {
+        PlayList([track], type);
     }
 
     private async Task<QueryData<TrackVo>> OnQueryAsync(QueryPageOptions queryPageOptions)

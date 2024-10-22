@@ -71,7 +71,9 @@
         "Title": "所有艺术家"
     },
   "JxAudio.Front.Pages.Tracks": {
-    "Title": "所有歌曲"
+    "Title": "所有歌曲",
+    "PlaySelected": "播放选中",
+    "AddSelected": "添加选中",
   },
   "JxAudio.Front.Pages.Playlists": {
     "Title": "歌单"

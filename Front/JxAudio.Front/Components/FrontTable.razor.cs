@@ -36,6 +36,17 @@ public partial class FrontTable<TItem> where TItem: class, new()
     [Parameter] public IEnumerable<TItem>? Items { get; set; }
     [Parameter] public bool IsPagination { get; set; } = true;
 
+    [Parameter] public bool IsMultipleSelect { get; set; }
+    
+    [Parameter] [NotNull] public List<TItem>? SelectedRows { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        SelectedRows ??= new List<TItem>();
+    }
+
     public async Task QueryAsync()
     {
         await Table.QueryAsync();
