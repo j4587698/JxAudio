@@ -21,9 +21,7 @@ public class ArtistService
 
     private ISelect<ArtistEntity> GetArtistBase(Guid userId, int? musicFolderId)
     {
-        return ArtistEntity.Where(x => x.TrackEntities!.Any(y =>
-                y.DirectoryEntity!.IsAccessControlled == false ||
-                y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
+        return ArtistEntity
             .WhereIf(musicFolderId != null, x => x.TrackEntities!.Any(y => y.DirectoryId == musicFolderId))
             .IncludeMany(x => x.ArtistStarEntities, then => then.Where(y => y.UserId == userId))
             .IncludeMany(x => x.AlbumEntities!.Select(y => new AlbumEntity()
