@@ -20,9 +20,7 @@ public class AlbumService
 
     private ISelect<AlbumEntity> GetAlbumBase(Guid? userId, int? musicFolderId)
     {
-        return AlbumEntity.Where(x => x.TrackEntities!.Any(y =>
-                y.DirectoryEntity!.IsAccessControlled == false ||
-                y.DirectoryEntity.UserEntities!.Any(z => z.Id == userId)))
+        return AlbumEntity
             .WhereIf(musicFolderId != null, x => x.TrackEntities!.Any(y => y.DirectoryId == musicFolderId))
             .Include(x => x.ArtistEntity)
             .Include(x => x.GenreEntity)
