@@ -34,7 +34,9 @@ public class SettingsVo
             ScanInterval = settingsService.GetValue(Constant.ScanIntervalKey),
             CronExpress = settingsService.GetValue(Constant.CronExpressKey),
             TimeUnit = settingsService.GetValue(Constant.TimeUnitKey).ToEnum(TimeUnit.Second),
-            JobThread = int.Parse(settingsService.GetValue(Constant.JobThreadKey) ?? $"{Environment.ProcessorCount}")
+            JobThread = int.Parse(settingsService.GetValue(Constant.JobThreadKey) ?? 
+                                  $"{(Environment.ProcessorCount > 4 ? Environment.ProcessorCount / 2 : 
+                                      Environment.ProcessorCount)}")
         };
         return settingsVo;
     }
