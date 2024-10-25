@@ -1,4 +1,5 @@
-﻿using ATL;
+﻿using System.Threading.Tasks.Dataflow;
+using ATL;
 using FreeSql;
 using Jx.Toolbox.Extensions;
 using JxAudio.Core.Entity;
@@ -17,7 +18,163 @@ public class ScanJob : ITask
     private List<TrackEntity>? _trackEntities;
     
     private static bool _isRunning;
-    
+
+    private async Task AnalysisTrack(IProviderPlugin providerPlugin, FsInfo fsInfo, int directoryEntityId)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            try
+            {
+                var stream = await providerPlugin.GetFileAsync(fsInfo.FullName).ConfigureAwait(false);
+                if (stream == null)
+                {
+                    continue;
+                }
+
+                var track = new Track(stream);
+                var artists = track.Artist.Split([';', '&', '、', '|']).Select(x => x.Trim())
+                    .ToArray();
+                var artistEntities = new List<ArtistEntity>();
+                if (artists.Length > 0)
+                {
+                    foreach (var artist in artists)
+                    {
+                        var artistEntity = await ArtistEntity.Where(x => x.Name == artist).FirstAsync();
+                        if (artistEntity == null)
+                        {
+                            artistEntity = new ArtistEntity
+                            {
+                                Name = artist
+                            };
+                            await artistEntity.SaveAsync();
+                            Log.Information("查找到新歌手{artist}", artistEntity.Name);
+                        }
+
+                        artistEntities.Add(artistEntity);
+                    }
+                }
+
+                GenreEntity? genre = null;
+                var trackGenre = track.Genre;
+                if (!trackGenre.IsNullOrEmpty())
+                {
+                    genre = await GenreEntity.Where(x => x.Name == trackGenre).FirstAsync();
+                    if (genre == null)
+                    {
+                        genre = new GenreEntity()
+                        {
+                            Name = trackGenre
+                        };
+                        await genre.SaveAsync();
+                    }
+                }
+
+
+                AlbumEntity? albumEntity = null;
+                var trackAlbum = track.Album;
+                if (!trackAlbum.IsNullOrEmpty())
+                {
+                    albumEntity = await AlbumEntity
+                        .Where(x => x.Title == trackAlbum && x.ArtistId == artistEntities[0].Id)
+                        .FirstAsync();
+                    if (albumEntity == null)
+                    {
+                        albumEntity = new AlbumEntity
+                        {
+                            Title = trackAlbum,
+                            ArtistId = artistEntities is { Count: > 0 } ? artistEntities[0].Id : 0,
+                            Year = track.Year,
+                            GenreId = genre?.Id,
+                            PictureId = (await GetPicture(providerPlugin, fsInfo, track))?.Id
+                        };
+
+                        await albumEntity.SaveAsync();
+                        Log.Information("查找到新专辑{album}", albumEntity.Title);
+                    }
+                    else if (albumEntity.PictureId is null or 0)
+                    {
+                        var picture = await GetPicture(providerPlugin, fsInfo, track);
+                        if (picture != null)
+                        {
+                            albumEntity.PictureId = picture.Id;
+                            await albumEntity.SaveAsync();
+
+                            var tracks = await TrackEntity
+                                .Where(x => x.AlbumId == albumEntity.Id)
+                                .ToListAsync();
+                            foreach (var entity in tracks)
+                            {
+                                entity.PictureId = picture.Id;
+                            }
+
+                            BaseEntity.Orm.Update<TrackEntity>(tracks);
+                        }
+                    }
+                }
+
+                LrcEntity? lrcEntity = null;
+
+                var lrc = await providerPlugin.GetLrcAsync(fsInfo.FullName);
+
+                if (!lrc.IsNullOrEmpty())
+                {
+                    lrcEntity = new LrcEntity
+                    {
+                        Artist = artistEntities is { Count: > 0 }
+                            ? string.Join(",", artistEntities.Select(y => y.Name))
+                            : "",
+                        Title = track.Title,
+                        Lrc = lrc
+                    };
+                    await lrcEntity.SaveAsync();
+                }
+                else if (track.Lyrics != null && track.Lyrics.SynchronizedLyrics.Count > 0)
+                {
+                    lrcEntity = new LrcEntity
+                    {
+                        Artist = artistEntities is { Count: > 0 }
+                            ? string.Join(",", artistEntities.Select(y => y.Name))
+                            : "",
+                        Title = track.Title,
+                        Lrc = track.Lyrics.FormatSynchToLRC()
+                    };
+                    await lrcEntity.SaveAsync();
+                }
+
+                var trackEntity = new TrackEntity()
+                {
+                    Name = fsInfo.Name,
+                    FullName = fsInfo.FullName,
+                    Size = fsInfo.Size,
+                    ProviderId = providerPlugin.Id,
+                    TrackNumber = track.TrackNumber,
+                    DiscNumber = track.DiscNumber,
+                    Duration = track.DurationMs / 1000,
+                    BitRate = track.Bitrate,
+                    Title = track.Title,
+                    SortTitle = track.SortTitle,
+                    AlbumId = albumEntity?.Id,
+                    PictureId = albumEntity?.PictureId,
+                    CodecName = track.AudioFormat.ShortName,
+                    MimeType = track.AudioFormat.MimeList.FirstOrDefault(),
+                    ArtistEntities = artistEntities,
+                    DirectoryId = directoryEntityId,
+                    GenreId = genre?.Id,
+                    LrcId = lrcEntity?.Id ?? 0
+                };
+                await trackEntity.SaveAsync();
+                await trackEntity.SaveManyAsync(nameof(TrackEntity.ArtistEntities));
+                Log.Information("加入歌曲{track}", trackEntity.Title);
+                break;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, $"第{i + 1}/3次获取数据失败");
+            }
+
+        }
+    }
+
     public async Task Execute(IServiceProvider provider, CancellationToken cancellationToken)
     {
         if (_isRunning)
@@ -29,6 +186,15 @@ public class ScanJob : ITask
         _isRunning = true;
         try
         {
+            var actionBlock = new ActionBlock<(IProviderPlugin providerPlugin, FsInfo fsInfo,
+                int directoryEntityId)>(async (info) =>
+            {
+                await AnalysisTrack(info.providerPlugin, info.fsInfo, info.directoryEntityId);
+            }, new ExecutionDataflowBlockOptions()
+            {
+                MaxDegreeOfParallelism = Environment.ProcessorCount,
+                CancellationToken = cancellationToken
+            });
             _trackEntities = await TrackEntity.Select.ToListAsync(x => new TrackEntity()
                 { Id = x.Id, ProviderId = x.ProviderId, FullName = x.FullName }, cancellationToken);
             var directoryEntities = await DirectoryEntity.Select.ToListAsync(cancellationToken);
@@ -41,8 +207,11 @@ public class ScanJob : ITask
                     continue;
                 }
             
-                await ScanFiles(providerPlugin, directoryEntity.Path, directoryEntity);
+                await ScanFiles(providerPlugin, directoryEntity.Path, directoryEntity.Id, cancellationToken, actionBlock);
             }
+            
+            actionBlock.Complete();
+            await actionBlock.Completion.WaitAsync(cancellationToken);
         }
         finally
         {
@@ -50,14 +219,19 @@ public class ScanJob : ITask
         }
     }
 
-    private async Task ScanFiles(IProviderPlugin providerPlugin, string path, DirectoryEntity directoryEntity)
+    private async Task ScanFiles(IProviderPlugin providerPlugin, string path, int directoryEntityId, CancellationToken cancellationToken,
+        ActionBlock<(IProviderPlugin providerPlugin, FsInfo fsInfo, int directoryEntityId)> actionBlock)
     {
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return;
+        }
         var files = await providerPlugin.ListFilesAsync(path);
         foreach (var fsInfo in files)
         {
             if (fsInfo.IsDir)
             {
-                await ScanFiles(providerPlugin, fsInfo.FullName, directoryEntity);
+                await ScanFiles(providerPlugin, fsInfo.FullName, directoryEntityId, cancellationToken, actionBlock);
             }
             else
             {
@@ -71,158 +245,7 @@ public class ScanJob : ITask
 
                 if (Constants.AudioExtensions.Contains(Path.GetExtension(fsInfo.Name)))
                 {
-                    for (int i = 0; i < 3; i++)
-                    {
-                        try
-                        {
-                            var stream = await providerPlugin.GetFileAsync(fsInfo.FullName).ConfigureAwait(false);
-                            if (stream == null)
-                            {
-                                continue;
-                            }
-
-                            var track = new Track(stream);
-                            var artists = track.Artist.Split([';', '&', '、', '|']).Select(x => x.Trim())
-                                .ToArray();
-                            var artistEntities = new List<ArtistEntity>();
-                            if (artists.Length > 0)
-                            {
-                                foreach (var artist in artists)
-                                {
-                                    var artistEntity = await ArtistEntity.Where(x => x.Name == artist).FirstAsync();
-                                    if (artistEntity == null)
-                                    {
-                                        artistEntity = new ArtistEntity
-                                        {
-                                            Name = artist
-                                        };
-                                        await artistEntity.SaveAsync();
-                                        Log.Information("查找到新歌手{artist}", artistEntity.Name);
-                                    }
-
-                                    artistEntities.Add(artistEntity);
-                                }
-                            }
-
-                            GenreEntity? genre = null;
-                            var trackGenre = track.Genre;
-                            if (!trackGenre.IsNullOrEmpty())
-                            {
-                                genre = await GenreEntity.Where(x => x.Name == trackGenre).FirstAsync();
-                                if (genre == null)
-                                {
-                                    genre = new GenreEntity()
-                                    {
-                                        Name = trackGenre
-                                    };
-                                    await genre.SaveAsync();
-                                }
-                            }
-
-
-                            AlbumEntity? albumEntity = null;
-                            var trackAlbum = track.Album;
-                            if (!trackAlbum.IsNullOrEmpty())
-                            {
-                                albumEntity = await AlbumEntity
-                                    .Where(x => x.Title == trackAlbum && x.ArtistId == artistEntities[0].Id)
-                                    .FirstAsync();
-                                if (albumEntity == null)
-                                {
-                                    albumEntity = new AlbumEntity
-                                    {
-                                        Title = trackAlbum,
-                                        ArtistId = artistEntities is { Count: > 0 } ? artistEntities[0].Id : 0,
-                                        Year = track.Year,
-                                        GenreId = genre?.Id,
-                                        PictureId = (await GetPicture(providerPlugin, fsInfo, track))?.Id
-                                    };
-
-                                    await albumEntity.SaveAsync();
-                                    Log.Information("查找到新专辑{album}", albumEntity.Title);
-                                }
-                                else if (albumEntity.PictureId is null or 0)
-                                {
-                                    var picture = await GetPicture(providerPlugin, fsInfo, track);
-                                    if (picture != null)
-                                    {
-                                        albumEntity.PictureId = picture.Id;
-                                        await albumEntity.SaveAsync();
-
-                                        var tracks = await TrackEntity
-                                            .Where(x => x.AlbumId == albumEntity.Id)
-                                            .ToListAsync();
-                                        foreach (var entity in tracks)
-                                        {
-                                            entity.PictureId = picture.Id;
-                                        }
-
-                                        BaseEntity.Orm.Update<TrackEntity>(tracks);
-                                    }
-                                }
-                            }
-
-                            LrcEntity? lrcEntity = null;
-
-                            var lrc = await providerPlugin.GetLrcAsync(path);
-
-                            if (!lrc.IsNullOrEmpty())
-                            {
-                                lrcEntity = new LrcEntity
-                                {
-                                    Artist = artistEntities is { Count: > 0 }
-                                        ? string.Join(",", artistEntities.Select(y => y.Name))
-                                        : "",
-                                    Title = track.Title,
-                                    Lrc = lrc
-                                };
-                                await lrcEntity.SaveAsync();
-                            }
-                            else if (track.Lyrics != null && track.Lyrics.SynchronizedLyrics.Count > 0)
-                            {
-                                lrcEntity = new LrcEntity
-                                {
-                                    Artist = artistEntities is { Count: > 0 }
-                                        ? string.Join(",", artistEntities.Select(y => y.Name))
-                                        : "",
-                                    Title = track.Title,
-                                    Lrc = track.Lyrics.FormatSynchToLRC()
-                                };
-                                await lrcEntity.SaveAsync();
-                            }
-
-                            var trackEntity = new TrackEntity()
-                            {
-                                Name = fsInfo.Name,
-                                FullName = fsInfo.FullName,
-                                Size = fsInfo.Size,
-                                ProviderId = providerPlugin.Id,
-                                TrackNumber = track.TrackNumber,
-                                DiscNumber = track.DiscNumber,
-                                Duration = track.DurationMs / 1000,
-                                BitRate = track.Bitrate,
-                                Title = track.Title,
-                                SortTitle = track.SortTitle,
-                                AlbumId = albumEntity?.Id,
-                                PictureId = albumEntity?.PictureId,
-                                CodecName = track.AudioFormat.ShortName,
-                                MimeType = track.AudioFormat.MimeList.FirstOrDefault(),
-                                ArtistEntities = artistEntities,
-                                DirectoryId = directoryEntity.Id,
-                                GenreId = genre?.Id,
-                                LrcId = lrcEntity?.Id ?? 0
-                            };
-                            await trackEntity.SaveAsync();
-                            await trackEntity.SaveManyAsync(nameof(TrackEntity.ArtistEntities));
-                            Log.Information("加入歌曲{track}", trackEntity.Title);
-                            break;
-                        }
-                        catch (Exception e)
-                        {
-                            Log.Error(e, $"第{i + 1}/3次获取数据失败");
-                        }
-
-                    }
+                    actionBlock.Post((providerPlugin, fsInfo, directoryEntityId));
                 }
             }
         }
