@@ -6,7 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <LangVersion>default</LangVersion>
-        <Version>0.4.1</Version>
+        <Version>0.4.2</Version>
     </PropertyGroup>
     
     <ItemGroup>
@@ -19,6 +19,7 @@
       <PackageReference Include="JxAudio.Native" Version="6.1.0" />
       <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.0-rc.2.24474.3" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="System.Threading.Tasks.Dataflow" Version="9.0.0-rc.2.24473.5" />
     </ItemGroup>
 
     <ItemGroup>
