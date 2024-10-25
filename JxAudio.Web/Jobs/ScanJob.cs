@@ -186,13 +186,16 @@ public class ScanJob : ITask
         _isRunning = true;
         try
         {
+            var processCount = await SettingsEntity
+                .Where(x => x.SettingName == Constant.JobThreadKey)
+                .FirstAsync(x => x.SettingValue, cancellationToken) ?? Environment.ProcessorCount.ToString();
             var actionBlock = new ActionBlock<(IProviderPlugin providerPlugin, FsInfo fsInfo,
                 int directoryEntityId)>(async (info) =>
             {
                 await AnalysisTrack(info.providerPlugin, info.fsInfo, info.directoryEntityId);
             }, new ExecutionDataflowBlockOptions()
             {
-                MaxDegreeOfParallelism = Environment.ProcessorCount,
+                MaxDegreeOfParallelism = int.Parse(processCount),
                 CancellationToken = cancellationToken
             });
             _trackEntities = await TrackEntity.Select.ToListAsync(x => new TrackEntity()
