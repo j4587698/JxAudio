@@ -140,7 +140,9 @@
     "ScanInterval.PlaceHolder": "请输入扫描间隔",
     "ScanInterval.Required": "{0}不能为空",
     "CronExpress": "填写Cron表达式 (秒 分 时 日 月 周) 可从https://cron.qqe2.com/生成",
-    "CronExpress.PlaceHolder": "请输入Cron表达式 (秒 分 时 日 月 周)"
+    "CronExpress.PlaceHolder": "请输入Cron表达式 (秒 分 时 日 月 周)",
+    "JobThread": "任务线程数",
+    "JobThread.PlaceHolder": "请输入扫码任务最大线程数",
   },
   "JxAudio.Web.Vo.LoginVo": {
     "UserName.PlaceHolder": "请输入用户名",

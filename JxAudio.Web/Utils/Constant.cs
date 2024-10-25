@@ -22,6 +22,7 @@ public static class Constant
     
     public const string TimeUnitKey = "TimeUnit";
     
+    public const string JobThreadKey = "JobThread";
     
     
     public const string SuffixKey = "SuffixKey";

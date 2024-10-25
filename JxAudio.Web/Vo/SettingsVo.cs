@@ -24,6 +24,8 @@ public class SettingsVo
 
     public TimeUnit TimeUnit { get; set; }
 
+    public int JobThread { get; set; }
+
     public static SettingsVo GetSettings(SettingsService settingsService)
     {
         SettingsVo settingsVo = new()
@@ -31,7 +33,8 @@ public class SettingsVo
             SearchType = settingsService.GetValue(Constant.SearchTypeKey).ToEnum(SearchType.Interval),
             ScanInterval = settingsService.GetValue(Constant.ScanIntervalKey),
             CronExpress = settingsService.GetValue(Constant.CronExpressKey),
-            TimeUnit = settingsService.GetValue(Constant.TimeUnitKey).ToEnum(TimeUnit.Second)
+            TimeUnit = settingsService.GetValue(Constant.TimeUnitKey).ToEnum(TimeUnit.Second),
+            JobThread = int.Parse(settingsService.GetValue(Constant.JobThreadKey) ?? $"{Environment.ProcessorCount}")
         };
         return settingsVo;
     }
@@ -42,5 +45,6 @@ public class SettingsVo
         settingsService.SetValue(Constant.ScanIntervalKey, ScanInterval ?? "");
         settingsService.SetValue(Constant.TimeUnitKey, TimeUnit.ToString());
         settingsService.SetValue(Constant.CronExpressKey, CronExpress ?? "");
+        settingsService.SetValue(Constant.JobThreadKey, JobThread.ToString());
     }
 }
