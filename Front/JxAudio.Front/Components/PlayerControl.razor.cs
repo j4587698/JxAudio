@@ -300,7 +300,7 @@ public partial class PlayerControl
                 _loopStatus = LoopStatus.LoopOnce;
                 await MessageService.Show(new MessageOption()
                 {
-                    Content = "列表循环"
+                    Content = Localizer["Loop"]
                 });
                 break;
             case LoopStatus.LoopOnce:
@@ -312,7 +312,7 @@ public partial class PlayerControl
                 }
                 await MessageService.Show(new MessageOption()
                 {
-                    Content = "随机播放"
+                    Content = Localizer["Shuffle"]
                 });
                 break;
             case LoopStatus.ShuffleOne:
@@ -323,7 +323,7 @@ public partial class PlayerControl
                 }
                 await MessageService.Show(new MessageOption()
                 {
-                    Content = "单曲循环"
+                    Content = Localizer["PlayOnce"]
                 });
                 break;
             default:
@@ -396,7 +396,7 @@ public partial class PlayerControl
         }
         else
         {
-            _lrc = "暂无歌词";
+            _lrc = Localizer["NoneLrc"];
         }
     }
     

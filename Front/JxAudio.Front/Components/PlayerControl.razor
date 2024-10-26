@@ -2,9 +2,11 @@
 @using IconPark
 @using Jx.Toolbox.Extensions
 @using JxAudio.Front.Data
+@using Microsoft.Extensions.Localization
 @inherits BootstrapModuleComponentBase
 @implements IDisposable
 
+@inject IStringLocalizer<PlayerControl> Localizer
 @inject IDispatchService<AddTrackMessage> DispatchService
 @inject MessageService MessageService
 @inject HttpClient Http

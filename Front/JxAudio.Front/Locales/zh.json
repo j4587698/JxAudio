@@ -102,6 +102,12 @@
     "AddTrack": "添加歌曲",
     "Save": "保存"
   },
+  "JxAudio.Front.Components.PlayerControl": {
+    "Loop": "列表循环",
+    "Shuffle": "随机播放",
+    "PlayOnce": "单曲循环",
+    "NoneLrc": "暂无歌词"
+  },
   "Program": {
     "UnknownTitle": "未知歌曲",
     "UnknownArtist": "未知艺术家",
