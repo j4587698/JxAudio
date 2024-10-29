@@ -83,13 +83,12 @@
         
         var playlist = new PlaylistVo();
         playlist.Songs = Tracks;
-        await DialogService.Show(new ResultDialogOption()
+        await DialogService.Show(new DialogOption()
         {
-            Component = BootstrapDynamicComponent.CreateComponent<PlaylistDialog>(),
-            ComponentParameters = new Dictionary<string, object>()
+            BodyTemplate = BootstrapDynamicComponent.CreateComponent<PlaylistDialog>(new Dictionary<string, object?>()
             {
-              [nameof(PlaylistDialog.Playlist)]  = playlist
-            },
+                [nameof(PlaylistDialog.Playlist)]  = playlist
+            }).Render(),
             Title = StringLocalizer["CreatePlaylist"],
             ShowFooter = false
         });
