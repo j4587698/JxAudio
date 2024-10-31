@@ -1,5 +1,4 @@
-﻿using ATL;
-using JxAudio.Core.Attributes;
+﻿using JxAudio.Core.Attributes;
 using JxAudio.Core.Entity;
 
 namespace JxAudio.Core.Service;
@@ -14,9 +13,8 @@ public class LrcService
         {
             return "";
         }
-        var info = new LyricsInfo();
-        info.ParseLRC(lrc.Lrc);
-        var lrcText = string.Join("\n", info.SynchronizedLyrics.Select(x => x.Text));
+        var song = new LrcParser.Parser.Lrc.LrcParser().Decode(lrc.Lrc!);
+        var lrcText = string.Join("\n", song.Lyrics.Select(x => x.Text));
         return lrcText;
     }
 

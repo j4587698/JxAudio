@@ -1,13 +1,15 @@
 ﻿using System.Threading.Tasks.Dataflow;
-using ATL;
 using FreeSql;
 using Jx.Toolbox.Extensions;
+using Jx.Toolbox.Utils;
+using JxAudio.Core;
 using JxAudio.Core.Entity;
 using JxAudio.Plugin;
 using JxAudio.Web.Utils;
 using Longbow.Tasks;
 using Serilog;
 using SixLabors.ImageSharp;
+using TagLib;
 using Constants = JxAudio.Core.Constants;
 
 namespace JxAudio.Web.Jobs;
@@ -31,9 +33,8 @@ public class ScanJob : ITask
                     continue;
                 }
 
-                var track = new Track(stream);
-                var artists = track.Artist.Split([';', '&', '、', '|']).Select(x => x.Trim())
-                    .ToArray();
+                var track = TagLib.File.Create(new StreamFileAbstraction(fsInfo.Name, stream));
+                var artists = track.Tag.Performers;
                 var artistEntities = new List<ArtistEntity>();
                 if (artists.Length > 0)
                 {
@@ -55,7 +56,7 @@ public class ScanJob : ITask
                 }
 
                 GenreEntity? genre = null;
-                var trackGenre = track.Genre;
+                var trackGenre = track.Tag.Genres.FirstOrDefault();
                 if (!trackGenre.IsNullOrEmpty())
                 {
                     genre = await GenreEntity.Where(x => x.Name == trackGenre).FirstAsync();
@@ -71,7 +72,7 @@ public class ScanJob : ITask
 
 
                 AlbumEntity? albumEntity = null;
-                var trackAlbum = track.Album;
+                var trackAlbum = track.Tag.Album;
                 if (!trackAlbum.IsNullOrEmpty())
                 {
                     albumEntity = await AlbumEntity
@@ -83,7 +84,7 @@ public class ScanJob : ITask
                         {
                             Title = trackAlbum,
                             ArtistId = artistEntities is { Count: > 0 } ? artistEntities[0].Id : 0,
-                            Year = track.Year,
+                            Year = (int)track.Tag.Year,
                             GenreId = genre?.Id,
                             PictureId = (await GetPicture(providerPlugin, fsInfo, track))?.Id
                         };
@@ -123,20 +124,20 @@ public class ScanJob : ITask
                         Artist = artistEntities is { Count: > 0 }
                             ? string.Join(",", artistEntities.Select(y => y.Name))
                             : "",
-                        Title = track.Title,
+                        Title = track.Tag.Title,
                         Lrc = lrc
                     };
                     await lrcEntity.SaveAsync();
                 }
-                else if (track.Lyrics != null && track.Lyrics.SynchronizedLyrics.Count > 0)
+                else if (track.Tag.Lyrics != null)
                 {
                     lrcEntity = new LrcEntity
                     {
                         Artist = artistEntities is { Count: > 0 }
                             ? string.Join(",", artistEntities.Select(y => y.Name))
                             : "",
-                        Title = track.Title,
-                        Lrc = track.Lyrics.FormatSynchToLRC()
+                        Title = track.Tag.Title,
+                        Lrc = track.Tag.Lyrics
                     };
                     await lrcEntity.SaveAsync();
                 }
@@ -147,16 +148,16 @@ public class ScanJob : ITask
                     FullName = fsInfo.FullName,
                     Size = fsInfo.Size,
                     ProviderId = providerPlugin.Id,
-                    TrackNumber = track.TrackNumber,
-                    DiscNumber = track.DiscNumber,
-                    Duration = track.DurationMs / 1000,
-                    BitRate = track.Bitrate,
-                    Title = track.Title,
-                    SortTitle = track.SortTitle,
+                    TrackNumber = (int)track.Tag.Track,
+                    DiscNumber = (int)track.Tag.Disc,
+                    Duration = track.Properties.Duration.TotalSeconds,
+                    BitRate = track.Properties.AudioBitrate,
+                    Title = track.Tag.Title,
+                    SortTitle = track.Tag.Subtitle,
                     AlbumId = albumEntity?.Id,
                     PictureId = albumEntity?.PictureId,
-                    CodecName = track.AudioFormat.ShortName,
-                    MimeType = track.AudioFormat.MimeList.FirstOrDefault(),
+                    CodecName = track.Properties.Description,
+                    MimeType = Mime.GetMimeFromExtension(Path.GetExtension(fsInfo.Name)),
                     ArtistEntities = artistEntities,
                     DirectoryId = directoryEntityId,
                     GenreId = genre?.Id,
@@ -254,16 +255,16 @@ public class ScanJob : ITask
         }
     }
 
-    private async Task<PictureEntity?> GetPicture(IProviderPlugin providerPlugin, FsInfo fsInfo, Track track)
+    private async Task<PictureEntity?> GetPicture(IProviderPlugin providerPlugin, FsInfo fsInfo, TagLib.File track)
     {
         var picStream = await providerPlugin.GetThumbAsync(fsInfo.FullName);
-        if (picStream == null && track.EmbeddedPictures.Count > 0)
+        if (picStream == null && track.Tag.Pictures.Length> 0)
         {
             var picture =
-                track.EmbeddedPictures.FirstOrDefault(x => x.PicType == PictureInfo.PIC_TYPE.Front) ??
-                track.EmbeddedPictures[0];
+                track.Tag.Pictures.FirstOrDefault(x => x.Type == PictureType.FrontCover) ??
+                track.Tag.Pictures[0];
 
-            picStream = new MemoryStream(picture.PictureData);
+            picStream = new MemoryStream(picture.Data.Data);
         }
 
         if (picStream != null)
