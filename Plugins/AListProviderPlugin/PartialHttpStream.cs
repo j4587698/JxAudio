@@ -82,6 +82,10 @@ public class PartialHttpStream(Fs fs, InfoOut infoOut): Stream
 
     public override long Seek(long offset, SeekOrigin origin)
     {
+        if (offset == _position && origin == SeekOrigin.Begin)
+        {
+            return _position;
+        }
         switch (origin)
         {
             case SeekOrigin.Begin:
