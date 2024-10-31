@@ -1,7 +1,6 @@
-﻿using ATL;
-using Jx.Toolbox.Extensions;
-using JxAudio.Core.Entity;
+﻿using JxAudio.Core.Entity;
 using JxAudio.TransVo;
+using LrcParser.Model;
 using Mapster;
 
 namespace JxAudio.Web.Utils;
@@ -38,17 +37,21 @@ public static class MappingConfig
             .Map(dest => dest.TotalTime, src => src.TrackEntities != null ? src.TrackEntities.Sum(x => x.Duration) : 0)
             .Map(dest => dest.TotalSize, src => src.TrackEntities != null ? src.TrackEntities.Sum(x => x.Size) : 0)
             .Map(dest => dest.Songs, src => src.TrackEntities);
+
+        TypeAdapterConfig<Lyric, LrcVo>.NewConfig()
+            .Map(dest => dest.Text, src => src.Text)
+            .Map(dest => dest.TimestampMs, src => src.StartTime);
     }
 
-    private static List<LrcVo>? LrcEntityToLrcVo(LrcEntity? lrcEntity)
+    public static List<LrcVo>? LrcEntityToLrcVo(LrcEntity? lrcEntity)
     {
         if (lrcEntity == null)
         {
             return null;
         }
-        var info = new LyricsInfo();
-        info.ParseLRC(lrcEntity.Lrc);
-        return info.SynchronizedLyrics.Adapt<List<LrcVo>>();
+
+        var song = new LrcParser.Parser.Lrc.LrcParser().Decode(lrcEntity.Lrc!);
+        return song.Lyrics.Adapt<List<LrcVo>>();
     }
     
 }

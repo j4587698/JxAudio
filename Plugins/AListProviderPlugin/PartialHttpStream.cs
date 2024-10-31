@@ -1,5 +1,6 @@
 ﻿using AListSdkSharp.Api;
 using AListSdkSharp.Vo;
+using Serilog;
 
 namespace AListProviderPlugin;
 
@@ -18,14 +19,30 @@ public class PartialHttpStream(Fs fs, InfoOut infoOut): Stream
     {
         if (_position >= _responseLength)
             return 0; // End of stream
-        _stream ??= fs.RangeDownload(infoOut.Data.RawUrl, _position, _responseLength - _position).Result;
+        for (int i = 0; i < 3; i++)
+        {
+            try
+            {
+                _stream ??= fs.RangeDownload(infoOut.Data.RawUrl, _position, _responseLength - _position).Result;
+                break;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Failed to download file");
+            }
+        }
 
-        // var bytesRead = 0;
-        // while (bytesRead != count)
-        // {
-        var bytesRead = _stream.Read(buffer, offset, count);
-        //     bytesRead += read;
-        // }
+        if (_stream == null)
+        {
+            throw new Exception("Failed to get file stream");
+        }
+
+        var bytesRead = 0;
+        while (bytesRead != count)
+        {
+            var read = _stream.Read(buffer, offset, count);
+            bytesRead += read;
+        }
         _position += bytesRead;
         return bytesRead;
     }
@@ -35,7 +52,23 @@ public class PartialHttpStream(Fs fs, InfoOut infoOut): Stream
         if (_position >= _responseLength)
             return 0; // End of stream
 
-        _stream ??= await fs.RangeDownload(infoOut.Data.RawUrl, _position, _responseLength - _position, cancellationToken);
+        for (int i = 0; i < 3; i++)
+        {
+            try
+            {
+                _stream ??= await fs.RangeDownload(infoOut.Data.RawUrl, _position, _responseLength - _position, cancellationToken);
+                break;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Failed to download file");
+            }
+        }
+
+        if (_stream == null)
+        {
+            throw new Exception("Failed to get file stream");
+        }
         
         var bytesRead = 0;
         while (bytesRead != count)
