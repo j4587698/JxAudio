@@ -37,12 +37,12 @@ public class PartialHttpStream(Fs fs, InfoOut infoOut): Stream
             throw new Exception("Failed to get file stream");
         }
 
-        var bytesRead = 0;
-        while (bytesRead != count)
-        {
-            var read = _stream.Read(buffer, offset, count);
-            bytesRead += read;
-        }
+        // var bytesRead = 0;
+        // while (bytesRead != count)
+        // {
+            var bytesRead = _stream.Read(buffer, offset, count);
+        //     bytesRead += read;
+        // }
         _position += bytesRead;
         return bytesRead;
     }
@@ -70,12 +70,12 @@ public class PartialHttpStream(Fs fs, InfoOut infoOut): Stream
             throw new Exception("Failed to get file stream");
         }
         
-        var bytesRead = 0;
-        while (bytesRead != count)
-        {
-            var read = await _stream.ReadAsync(buffer, offset + bytesRead, count - bytesRead, cancellationToken);
-            bytesRead += read;
-        }
+        // var bytesRead = 0;
+        // while (bytesRead != count)
+        // {
+            var bytesRead = await _stream.ReadAsync(buffer, offset, count, cancellationToken);
+            // bytesRead += read;
+        // }
         _position += bytesRead;
         return bytesRead;
     }
