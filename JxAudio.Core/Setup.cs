@@ -100,7 +100,7 @@ public class Setup
                 e.ModifyResult.Name = dbConfig.Prefix + e.EntityType.Name.Replace("Entity", "").ToUnderLine();
             };
 
-            BaseEntity.Initialization(freeSql, null);
+            BaseEntity.Initialization(freeSql, () => Constants.AsyncUow.Value);
 
             return (true, "");
         }
