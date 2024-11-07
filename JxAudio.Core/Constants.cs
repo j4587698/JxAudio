@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using FreeSql;
 
 namespace JxAudio.Core;
 
@@ -36,6 +37,8 @@ public static class Constants
     public static readonly string PluginPath = Path.Combine(Directory.GetCurrentDirectory(), "config/plugins/");
 
     public static string? AesKey { get; set; }
+    
+    public static readonly AsyncLocal<IUnitOfWork> AsyncUow = new();
     
     public static Stream GetDefaultCover()
     {
