@@ -32,6 +32,9 @@ public class UserEntity : BaseEntity<UserEntity, Guid>
 
     public bool CanJukebox { get; set; }
 
+    [Description("用户语言")]
+    public string? Language { get; set; }
+
     [Navigate(ManyToMany = typeof(UserDirectoryEntity))]
     public ICollection<DirectoryEntity>? DirectoryEntities { get; set; }
 }
