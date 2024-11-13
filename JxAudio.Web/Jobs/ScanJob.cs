@@ -164,7 +164,8 @@ public class ScanJob : ITask
                     LrcId = lrcEntity?.Id ?? 0
                 };
                 await trackEntity.SaveAsync();
-                await trackEntity.SaveManyAsync(nameof(TrackEntity.ArtistEntities));
+                BaseEntity.Orm.GetRepository<TrackEntity>().SaveMany(trackEntity, nameof(TrackEntity.ArtistEntities));
+                //await trackEntity.SaveManyAsync(nameof(TrackEntity.ArtistEntities));
                 Log.Information("加入歌曲{track}", trackEntity.Title);
                 break;
             }

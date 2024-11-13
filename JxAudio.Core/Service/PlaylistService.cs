@@ -100,7 +100,8 @@ public class PlaylistService
             }).ToList()
         };
         await playlist.SaveAsync();
-        await playlist.SaveManyAsync(nameof(playlist.TrackEntities));
+        BaseEntity.Orm.GetRepository<PlaylistEntity>().SaveMany(playlist, nameof(playlist.TrackEntities));
+        //await playlist.SaveManyAsync(nameof(playlist.TrackEntities));
 
         return playlist.Id;
     }
@@ -136,7 +137,8 @@ public class PlaylistService
             Id = x
         }).ToList();
         await playlist.SaveAsync();
-        await playlist.SaveManyAsync(nameof(playlist.TrackEntities));
+        BaseEntity.Orm.GetRepository<PlaylistEntity>().SaveMany(playlist, nameof(playlist.TrackEntities));
+        //await playlist.SaveManyAsync(nameof(playlist.TrackEntities));
     }
 
     public async Task UpdatePlaylistAsync(Guid userId, int playlistId, string? name, string? comment, bool? @public, List<int>? songId, int[]? songIndexToRemove, CancellationToken cancellationToken)
@@ -213,7 +215,8 @@ public class PlaylistService
         }
         
         await playlist.SaveAsync();
-        await playlist.SaveManyAsync(nameof(playlist.TrackEntities));
+        BaseEntity.Orm.GetRepository<PlaylistEntity>().SaveMany(playlist, nameof(playlist.TrackEntities));
+        //await playlist.SaveManyAsync(nameof(playlist.TrackEntities));
     }
     
     public async Task DeletePlaylistAsync(Guid userId, int playlistId, CancellationToken cancellationToken)
