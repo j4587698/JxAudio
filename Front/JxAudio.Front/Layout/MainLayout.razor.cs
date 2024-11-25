@@ -1,6 +1,7 @@
 ﻿using BootstrapBlazor.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using System.Net.Http.Json;
+using JxAudio.Front.Components;
 using JxAudio.Front.Data;
 using JxAudio.TransVo;
 
@@ -56,5 +57,15 @@ public sealed partial class MainLayout
         };
 
         return menus;
+    }
+    
+    private void RePass()
+    {
+        DialogService.Show(new DialogOption()
+        {
+            Title = StringLocalizer["ChangePassword"],
+            BodyTemplate = BootstrapDynamicComponent.CreateComponent<RePassword>().Render(),
+            ShowFooter = false
+        });
     }
 }
