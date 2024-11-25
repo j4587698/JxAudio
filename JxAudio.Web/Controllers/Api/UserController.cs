@@ -3,12 +3,14 @@ using Jx.Toolbox.Extensions;
 using Jx.Toolbox.Utils;
 using JxAudio.Core;
 using JxAudio.Core.Service;
+using JxAudio.TransVo;
 using JxAudio.Web.Vo;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using ResultVo = JxAudio.Web.Vo.ResultVo;
 
 namespace JxAudio.Web.Controllers.Api;
 
@@ -62,5 +64,31 @@ public class UserController(IStringLocalizer<UserController> userLocalizer, User
     {
         HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return Redirect("User/Login");
+    }
+
+    [Authorize]
+    public async Task<object> PostResetPassword([FromBody]RePassVo rePassVo)
+    {
+        if (rePassVo.NewPassword.IsNullOrEmpty())
+        {
+            return ResultVo.Fail(500, userLocalizer["NotEmpty"]);
+        }
+
+        if (rePassVo.NewPassword != rePassVo.ReNewPassword)
+        {
+            return ResultVo.Fail(500, userLocalizer["RePassword"]);
+        }
+
+        var username = HttpContext.User.FindFirst(ClaimTypes.Name)!.Value;
+        var user = await userService.ValidatePasswordAsync(username, rePassVo.OldPassword!, HttpContext.RequestAborted);
+        if (user == null)
+        {
+            return ResultVo.Fail(500, userLocalizer["OldPasswordError"]);
+        }
+
+        user.Password = rePassVo.NewPassword;
+        userService.EncryptPassword(user);
+        await user.SaveAsync();
+        return ResultVo.Success(data: "success");
     }
 }

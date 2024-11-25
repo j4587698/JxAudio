@@ -89,7 +89,8 @@
     "Artist": "艺术家",
     "Track": "歌曲",
     "Collection": "我的收藏",
-    "Playlist": "歌单"
+    "Playlist": "歌单",
+    "ChangePassword": "修改密码"
   },
   "JxAudio.Front.Components.PlayListControl": {
     "Playlist": "播放列表",
@@ -111,5 +112,16 @@
   "Program": {
     "UnknownTitle": "未知歌曲",
     "UnknownArtist": "未知艺术家",
+  },
+  "JxAudio.TransVo.RePassVo": {
+    "OldPassword": "原密码",
+    "OldPassword.PlaceHolder": "请输入原密码",
+    "NewPassword": "新密码",
+    "NewPassword.PlaceHolder": "请输入新密码",
+    "ReNewPassword": "重复新密码",
+    "ReNewPassword.PlaceHolder": "请重复输入新密码"
+  },
+  "JxAudio.Front.Components.RePassword": {
+    "Ok": "确定",
   }
 }

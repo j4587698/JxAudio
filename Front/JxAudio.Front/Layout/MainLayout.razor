@@ -3,6 +3,7 @@
 @using Microsoft.Extensions.Localization
 @inject HttpClient Http
 @inject IStringLocalizer<MainLayout> StringLocalizer
+@inject DialogService DialogService
 
 <BootstrapBlazorRoot>
     <Layout ShowGotoTop="false" ShowCollapseBar="true" ShowFooter="true" SideWidth="0"
@@ -17,7 +18,7 @@
             <ThemeProvider></ThemeProvider>
             <Logout ImageUrl="@_avatar" DisplayName="@User?.UserName" UserName="@User?.UserName">
                 <LinkTemplate>
-                    <a href="#"><i class="fa-solid fa-suitcase"></i>@StringLocalizer["RePass"]</a>
+                    <a href="#" @onclick="RePass"><i class="fa-solid fa-suitcase"></i>@StringLocalizer["RePass"]</a>
                     <LogoutLink Url="api/User/Logout"/>
                 </LinkTemplate>
             </Logout>

@@ -67,7 +67,7 @@ public class UserService
         await userEntity.SaveAsync();
     }
 
-    public async Task<UserEntity> GetUserByUsernameAsync(string username)
+    public async Task<UserEntity?> GetUserByUsernameAsync(string username)
     {
         return await UserEntity.Where(x => x.UserName == username).FirstAsync();
     }
