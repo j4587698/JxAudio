@@ -45,10 +45,10 @@ JxAudio是一个基于.net core的音频管理系统，支持音乐的播放、�
 
 ## 截图
 
-![p1](../Asset/p1.png)
-![p2](../Asset/p2.png)
-![p3](../Asset/p3.png)
-![p4](../Asset/p4.png)
+![p1](/Asset/p1.png)
+![p2](/Asset/p2.png)
+![p3](/Asset/p3.png)
+![p4](/Asset/p4.png)
 
 ## 使用
 
