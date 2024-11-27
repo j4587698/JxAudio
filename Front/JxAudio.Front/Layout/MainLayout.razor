@@ -19,6 +19,10 @@
             <Logout ImageUrl="@_avatar" DisplayName="@User?.UserName" UserName="@User?.UserName">
                 <LinkTemplate>
                     <a href="#" @onclick="RePass"><i class="fa-solid fa-suitcase"></i>@StringLocalizer["RePass"]</a>
+                    @if(User?.IsAdmin == true)
+                    {
+                        <a href="/Admin"><i class="fa-solid fa-cog"></i>@StringLocalizer["ToAdmin"]</a>
+                    }
                     <LogoutLink Url="api/User/Logout"/>
                 </LinkTemplate>
             </Logout>
