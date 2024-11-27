@@ -90,7 +90,8 @@
     "Track": "歌曲",
     "Collection": "我的收藏",
     "Playlist": "歌单",
-    "ChangePassword": "修改密码"
+    "ChangePassword": "修改密码",
+    "ToAdmin": "进入后台",
   },
   "JxAudio.Front.Components.PlayListControl": {
     "Playlist": "播放列表",
