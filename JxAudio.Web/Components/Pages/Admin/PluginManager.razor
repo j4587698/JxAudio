@@ -99,7 +99,7 @@
         await stream.CopyToAsync(memoryStream);
         memoryStream.Seek(0, SeekOrigin.Begin);
 
-        ZipFile.ExtractToDirectory(memoryStream, Constants.PluginPath, true);
+        ZipFile.ExtractToDirectory(memoryStream, pluginPath, true);
         await ToastService.Show(new ToastOption()
         {
             Title = PluginManagerLocalizer["Success"],
