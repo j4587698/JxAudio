@@ -19,11 +19,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="BootstrapBlazor" Version="9.0.0" />
-        <PackageReference Include="BootstrapBlazor.FontAwesome" Version="9.0.0" />
+        <PackageReference Include="BootstrapBlazor" Version="9.5.3" />
+        <PackageReference Include="BootstrapBlazor.FontAwesome" Version="9.0.2" />
         <PackageReference Include="IconPark.Blazor" Version="1.3.0.3" />
-        <PackageReference Include="Jx.Toolbox" Version="0.3.12" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.0" />
+        <PackageReference Include="Jx.Toolbox" Version="0.3.13" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.3" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.0" PrivateAssets="all" />
     </ItemGroup>
 
