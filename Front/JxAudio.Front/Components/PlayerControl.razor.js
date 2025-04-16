@@ -1,7 +1,6 @@
 ﻿import Data from '../_content/BootstrapBlazor/modules/data.js'
 
 export function init(interop) {
-    console.log("init loader")
     const player = {}
     const audio = new Audio()
     player._audio = audio
@@ -11,7 +10,6 @@ export function init(interop) {
         player._interop.invokeMethodAsync("OnTimeUpdate", audio.currentTime)
     }
     audio.onended = function() {
-        console.log('播放已结束');
         player._interop.invokeMethodAsync("OnEnded")
     }
     audio.onerror = function() {
@@ -23,7 +21,6 @@ export function init(interop) {
     }
     
     audio.onplaying = function (){
-        console.log('开始播放')
         player._interop.invokeMethodAsync("OnPlaying")
     }
 }
@@ -84,6 +81,5 @@ export function getMuted() {
 
 export function setCurrentTime(time) {
     const player = Data.get("player")
-    console.log("setCurrentTime", time)
     player._audio.currentTime = time
 }
