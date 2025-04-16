@@ -18,7 +18,7 @@
             <ThemeProvider></ThemeProvider>
             <Logout ImageUrl="@_avatar" DisplayName="@User?.UserName" UserName="@User?.UserName">
                 <LinkTemplate>
-                    <a href="#" @onclick="RePass"><i class="fa-solid fa-suitcase"></i>@StringLocalizer["RePass"]</a>
+                    <a @onclick="@RePass"><i class="fa-solid fa-suitcase"></i>@StringLocalizer["RePass"]</a>
                     @if(User?.IsAdmin == true)
                     {
                         <a href="/Admin"><i class="fa-solid fa-cog"></i>@StringLocalizer["ToAdmin"]</a>
@@ -43,8 +43,5 @@
         <Footer>
             <PlayerControl></PlayerControl>
         </Footer>
-        <NotFound>
-            <p>Sorry, there's nothing at this address.</p>
-        </NotFound>
     </Layout>
 </BootstrapBlazorRoot>
