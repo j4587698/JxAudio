@@ -29,7 +29,7 @@
       <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
       <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
       <PackageReference Include="SixLabors.ImageSharp" Version="3.1.7" />
-      <PackageReference Include="TagLibSharp" Version="2.3.0" />
+      <PackageReference Include="z440.atl.core" Version="6.20.0" />
     </ItemGroup>
 
     <ItemGroup>
