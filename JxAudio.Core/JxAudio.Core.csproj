@@ -13,11 +13,11 @@
     <ItemGroup>
       <PackageReference Include="Autofac" Version="8.2.1" />
       <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
-      <PackageReference Include="BootstrapBlazor" Version="9.5.10" />
+      <PackageReference Include="BootstrapBlazor" Version="9.5.12" />
       <PackageReference Include="BootstrapBlazor.FontAwesome" Version="9.0.2" />
       <PackageReference Include="FFMpegCore" Version="5.2.0" />
-      <PackageReference Include="FreeSql.All" Version="3.5.202" />
-      <PackageReference Include="FreeSql.Extensions.BaseEntity" Version="3.5.202" />
+      <PackageReference Include="FreeSql.All" Version="3.5.203" />
+      <PackageReference Include="FreeSql.Extensions.BaseEntity" Version="3.5.203" />
       <PackageReference Include="Hardware.Info" Version="101.0.1" />
       <PackageReference Include="Jx.Toolbox" Version="0.4.0" />
       <PackageReference Include="Longbow.Tasks" Version="9.0.0" />
@@ -25,11 +25,11 @@
       <PackageReference Include="Mapster" Version="7.4.0" />
       <PackageReference Include="McMaster.NETCore.Plugins" Version="2.0.0" />
       <PackageReference Include="Mono.Cecil" Version="0.11.6" />
-      <PackageReference Include="NSwag.AspNetCore" Version="14.3.0" />
+      <PackageReference Include="NSwag.AspNetCore" Version="14.4.0" />
       <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
-      <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
-      <PackageReference Include="SixLabors.ImageSharp" Version="3.1.7" />
-      <PackageReference Include="z440.atl.core" Version="6.21.0" />
+      <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+      <PackageReference Include="SixLabors.ImageSharp" Version="3.1.8" />
+      <PackageReference Include="z440.atl.core" Version="6.22.0" />
     </ItemGroup>
 
     <ItemGroup>
