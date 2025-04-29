@@ -4,6 +4,7 @@
 @inject HttpClient Http
 @inject IStringLocalizer<MainLayout> StringLocalizer
 @inject DialogService DialogService
+@inject ToastService ToastService
 
 <BootstrapBlazorRoot>
     <Layout ShowGotoTop="false" ShowCollapseBar="true" ShowFooter="true" SideWidth="0"
@@ -44,4 +45,12 @@
             <PlayerControl></PlayerControl>
         </Footer>
     </Layout>
+    
+    <Modal @ref="_modal">
+        <ModalDialog Title="@(StringLocalizer["ChangePassword"])" ShowFooter="false">
+            <BodyTemplate>
+                <RePassword></RePassword>
+            </BodyTemplate>
+        </ModalDialog>
+    </Modal>
 </BootstrapBlazorRoot>

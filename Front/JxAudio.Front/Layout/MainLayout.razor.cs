@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using JxAudio.Front.Components;
 using JxAudio.Front.Data;
 using JxAudio.TransVo;
+using Console = System.Console;
 
 namespace JxAudio.Front.Layout;
 
@@ -20,7 +21,7 @@ public sealed partial class MainLayout
     
     private string _avatar = "./Images/logo.png";
 
-    
+    private Modal? _modal;
 
     /// <summary>
     /// OnInitialized 方法
@@ -59,13 +60,8 @@ public sealed partial class MainLayout
         return menus;
     }
     
-    private void RePass()
+    private async Task RePass()
     {
-        DialogService.Show(new DialogOption()
-        {
-            Title = StringLocalizer["ChangePassword"],
-            BodyTemplate = BootstrapDynamicComponent.CreateComponent<RePassword>().Render(),
-            ShowFooter = false
-        });
+        await _modal!.Toggle();
     }
 }
