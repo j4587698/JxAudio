@@ -1,6 +1,7 @@
 ﻿@using BootstrapBlazor.Components
 @typeparam TItem
 
+<div style="height: calc(100vh - var(--bb-layout-header-height) - 32px)">
 <Table TItem="TItem" IsBordered="true" IsStriped="true" TableColumns="TableColumns" ShowToolbar="@ShowToolbar" ShowSearch="true"
        ShowExtendButtons="@ShowExtendButtons" IsPagination="IsPagination" PageItemsSource="new[] { 10, 30, 50 }" Items="Items"
        TableToolbarTemplate="@TableToolbarTemplate" RowButtonTemplate="@RowButtonTemplate" TableExtensionToolbarTemplate="TableExtensionToolbarTemplate"
@@ -9,3 +10,4 @@
        ShowExtendEditButton="ShowExtendEditButton" ShowExtendDeleteButton="ShowExtendDeleteButton"
        ConfirmDeleteContentText="@ConfirmDeleteContentText" ShowSearchButton="@ShowSearch" ShowSearchText="@ShowSearch" ShowAdvancedSearch="@ShowAdvancedSearch" ShowResetButton="@ShowSearch">
 </Table>
+</div>
