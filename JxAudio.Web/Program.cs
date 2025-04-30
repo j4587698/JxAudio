@@ -6,11 +6,13 @@ using FreeSql;
 using JxAudio.Core;
 using JxAudio.Core.Extensions;
 using JxAudio.Core.Options;
+using JxAudio.Plugin;
 using JxAudio.Web.Components;
 using JxAudio.Web.Middlewares;
 using JxAudio.Web.Services;
 using JxAudio.Web.Utils;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using Serilog;
@@ -49,6 +51,8 @@ else if (Util.IsInstalled)
 
 Constants.AesKey = Application.GetValue("JxAudio:AesKey");
 
+builder.Services.AddSingleton<IActionDescriptorChangeProvider>(MyActionDescriptorChangeProvider.Instance);
+builder.Services.AddSingleton(MyActionDescriptorChangeProvider.Instance);
 builder.Services.AddTaskServices();
 builder.Services.AddHostedService<JobHostedService>();
 builder.Services.AddServiceController();

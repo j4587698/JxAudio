@@ -1,8 +1,11 @@
 ﻿using System.Reflection;
 using BootstrapBlazor.Components;
 using Jx.Toolbox.Extensions;
+using JxAudio.Core;
 using JxAudio.Core.Entity;
 using McMaster.NETCore.Plugins;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Mono.Cecil;
 using Serilog;
 using Constants = JxAudio.Core.Constants;
@@ -199,8 +202,10 @@ public static class PluginUtil
         var providerTypes =
             assembly.GetTypes().Where(x => typeof(IProviderPlugin).IsAssignableFrom(x) && !x.IsAbstract)
                 .Select(x => (IProviderPlugin)Activator.CreateInstance(x)!);
-        PluginLoaderInfo pluginLoaderInfo = new PluginLoaderInfo
+        AddToPartManager(plugin, assembly);
+        var pluginLoaderInfo = new PluginLoaderInfo
         {
+            Assembly = assembly,
             PluginLoader = plugin,
             SystemPlugins = systemTypes,
             ProviderPlugins = providerTypes
@@ -209,6 +214,34 @@ public static class PluginUtil
         return true;
     }
 
+    private static void AddToPartManager(PluginLoader pluginLoader, Assembly pluginAssembly)
+    {
+        var partManager = Application.GetSingletonInstanceIfAlreadyCreated<ApplicationPartManager>();
+        if (partManager == null)
+        {
+            return;
+        }
+        var partFactory = ApplicationPartFactory.GetApplicationPartFactory(pluginAssembly);
+        foreach (var applicationPart in partFactory.GetApplicationParts(pluginAssembly))
+        {
+            partManager.ApplicationParts.Add(applicationPart);
+        }
+        var relatedAssembliesAttrs = pluginAssembly.GetCustomAttributes<RelatedAssemblyAttribute>();
+        foreach (var attr in relatedAssembliesAttrs)
+        {
+            var assembly = pluginLoader.LoadAssembly(attr.AssemblyFileName);
+            partFactory = ApplicationPartFactory.GetApplicationPartFactory(assembly);
+            foreach (var part in partFactory.GetApplicationParts(assembly))
+            {
+                partManager.ApplicationParts.Add(part);
+            }
+        }
+        var controllerFeature = new ControllerFeature();
+        partManager.PopulateFeature(controllerFeature);
+        MyActionDescriptorChangeProvider.Instance.HasChanged = true;
+        MyActionDescriptorChangeProvider.Instance.TokenSource?.Cancel();
+    }
+    
     /// <summary>
     /// 卸载插件
     /// </summary>
@@ -221,10 +254,45 @@ public static class PluginUtil
         }
         if (Plugins.TryRemove(pluginConfig.Id, out var plugin))
         {
+            RemoveFromPartManager(plugin.PluginLoader!, plugin.Assembly!);
             plugin.Dispose();
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
+    }
+    
+    private static void RemoveFromPartManager(PluginLoader pluginLoader, Assembly pluginAssembly)
+    {
+        var partManager = Application.GetSingletonInstanceIfAlreadyCreated<ApplicationPartManager>();
+        if (partManager == null)
+        {
+            return;
+        }
+        var partFactory = ApplicationPartFactory.GetApplicationPartFactory(pluginAssembly);
+        foreach (var applicationPart in partFactory.GetApplicationParts(pluginAssembly))
+        {
+            var parts = partManager.ApplicationParts.Where(x => x.Name == applicationPart.Name).ToArray();
+            foreach (var part in parts)
+            {
+                partManager.ApplicationParts.Remove(part);
+            }
+        }
+        var relatedAssembliesAttrs = pluginAssembly.GetCustomAttributes<RelatedAssemblyAttribute>();
+        foreach (var attr in relatedAssembliesAttrs)
+        {
+            var assembly = pluginLoader.LoadAssembly(attr.AssemblyFileName);
+            partFactory = ApplicationPartFactory.GetApplicationPartFactory(assembly);
+            foreach (var applicationPart in partFactory.GetApplicationParts(assembly))
+            {
+                var parts = partManager.ApplicationParts.Where(x => x.Name == applicationPart.Name).ToArray();
+                foreach (var part in parts)
+                {
+                    partManager.ApplicationParts.Remove(part);
+                }
+            }
+        }
+        MyActionDescriptorChangeProvider.Instance.HasChanged = true;
+        MyActionDescriptorChangeProvider.Instance.TokenSource?.Cancel();
     }
     
     /// <summary>

@@ -11,12 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JxAudio.Web.Controllers.Rest;
 
-public class PlaylistsController: AudioController
+public class PlaylistsController(PlaylistService playlistService): AudioController
 {
-    [Inject]
-    [NotNull]
-    private PlaylistService? PlaylistService { get; set; }
-    
     [HttpGet("getPlaylists")]
     public async Task GetPlaylists(string? username)
     {
@@ -24,7 +20,7 @@ public class PlaylistsController: AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var playlists = await PlaylistService.GetPlaylistsAsync(apiUserId.Value, HttpContext.RequestAborted);
+            var playlists = await playlistService.GetPlaylistsAsync(apiUserId.Value, HttpContext.RequestAborted);
 
             await HttpContext.WriteResponseAsync(ItemChoiceType.playlists, new Playlists()
             {
@@ -43,7 +39,7 @@ public class PlaylistsController: AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var playlist = await PlaylistService.GetPlaylistAsync(apiUserId.Value, playlistId, HttpContext.RequestAborted);
+            var playlist = await playlistService.GetPlaylistAsync(apiUserId.Value, playlistId, HttpContext.RequestAborted);
             
             await HttpContext.WriteResponseAsync(ItemChoiceType.playlist, playlist.CreatePlaylistWithSongs());
         }
@@ -60,17 +56,17 @@ public class PlaylistsController: AudioController
             {
                 Util.CheckRequiredParameters(nameof(name), name);
 
-                var id = await PlaylistService.CreatePlaylistAsync(apiUserId.Value, name!, null, false,
+                var id = await playlistService.CreatePlaylistAsync(apiUserId.Value, name!, null, false,
                     songId?.Select(x => x.ParseTrackId()).ToList(), HttpContext.RequestAborted);
                 playlistId = id.ToPlaylistId();
             }
             else
             {
-                await PlaylistService.RecreatePlaylistAsync(apiUserId.Value, playlistId!.ParsePlaylistId(), name,
+                await playlistService.RecreatePlaylistAsync(apiUserId.Value, playlistId!.ParsePlaylistId(), name,
                     songId?.Select(x => x.ParseTrackId()).ToList(), HttpContext.RequestAborted);
             }
             
-            var playlist = await PlaylistService.GetPlaylistAsync(apiUserId.Value, playlistId!.ParsePlaylistId(), HttpContext.RequestAborted);
+            var playlist = await playlistService.GetPlaylistAsync(apiUserId.Value, playlistId!.ParsePlaylistId(), HttpContext.RequestAborted);
             
             await HttpContext.WriteResponseAsync(ItemChoiceType.playlist, playlist.CreatePlaylistWithSongs());
         }
@@ -85,10 +81,10 @@ public class PlaylistsController: AudioController
         {
             Util.CheckRequiredParameters(nameof(playlistId), playlistId);
 
-            await PlaylistService.UpdatePlaylistAsync(apiUserId.Value, playlistId!.ParsePlaylistId(), name, comment, @public,
+            await playlistService.UpdatePlaylistAsync(apiUserId.Value, playlistId!.ParsePlaylistId(), name, comment, @public,
                 songIdToAdd?.Select(x => x.ParseTrackId()).ToList(), songIndexToRemove, HttpContext.RequestAborted);
         
-            var playlist = await PlaylistService.GetPlaylistAsync(apiUserId.Value, playlistId!.ParsePlaylistId(), HttpContext.RequestAborted);
+            var playlist = await playlistService.GetPlaylistAsync(apiUserId.Value, playlistId!.ParsePlaylistId(), HttpContext.RequestAborted);
             
             await HttpContext.WriteResponseAsync(ItemChoiceType.playlist, playlist.CreatePlaylistWithSongs());
         }
@@ -103,7 +99,7 @@ public class PlaylistsController: AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            await PlaylistService.DeletePlaylistAsync(apiUserId.Value, playlistId, HttpContext.RequestAborted);
+            await playlistService.DeletePlaylistAsync(apiUserId.Value, playlistId, HttpContext.RequestAborted);
             
             await HttpContext.WriteResponseAsync(0, null);
         }

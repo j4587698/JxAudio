@@ -13,12 +13,8 @@ using Microsoft.Extensions.Localization;
 namespace JxAudio.Core.Service;
 
 [Transient]
-public class ArtistService
+public class ArtistService(IStringLocalizer<ArtistService> artistServiceLocalizer)
 {
-    [Inject]
-    [NotNull]
-    private IStringLocalizer<ArtistService>? ArtistServiceLocalizer { get; set; }
-
     private ISelect<ArtistEntity> GetArtistBase(Guid userId, int? musicFolderId)
     {
         return ArtistEntity
@@ -94,7 +90,7 @@ public class ArtistService
         {
             album = albumId3.ToArray(),
             id = id3.Id.ToArtistId(),
-            name = id3.Name ?? ArtistServiceLocalizer["NoArtistName"],
+            name = id3.Name ?? artistServiceLocalizer["NoArtistName"],
             starred = id3.ArtistStarEntities?.Count > 0 ? id3.ArtistStarEntities.First().CreateTime : default,
             starredSpecified = id3.ArtistStarEntities?.Count > 0,
             coverArt = null,

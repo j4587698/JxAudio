@@ -9,6 +9,8 @@ public static class Application
 {
     public static IServiceProvider? ServiceProvider { get; internal set; }
     
+    public static IServiceCollection? Services { get; internal set; }
+    
     [NotNull]
     public static IWebHostEnvironment? WebHostEnvironment { get; internal set; }
     
@@ -38,5 +40,21 @@ public static class Application
     public static T? GetValue<T>(string key) where T: class
     {
         return Configuration.GetSection(key).Get<T>();
+    }
+    
+    public static T? GetSingletonInstanceIfAlreadyCreated<T>()
+    {
+        // 逆序遍历，后注册的优先级高
+        var descriptor = Services?.LastOrDefault(d => 
+            d.ServiceType == typeof(T) && 
+            d.Lifetime == ServiceLifetime.Singleton);
+
+        // 只返回已存在的实例，不尝试创建新实例
+        if (descriptor?.ImplementationInstance is T existingInstance)
+        {
+            return existingInstance;
+        }
+
+        return default;
     }
 }

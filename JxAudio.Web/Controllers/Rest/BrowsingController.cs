@@ -14,27 +14,9 @@ using Index = JxAudio.Core.Subsonic.Index;
 
 namespace JxAudio.Web.Controllers.Rest;
 
-public class BrowsingController : AudioController
+public class BrowsingController(DirectoryService directoryService, ArtistService artistService,
+    GenreService genreService, AlbumService albumService, TrackService trackService) : AudioController
 {
-    [Inject]
-    [NotNull]
-    private DirectoryService? DirectoryService { get; set; }
-
-    [Inject]
-    [NotNull]
-    private ArtistService? ArtistService { get; set; }
-    
-    [Inject]
-    [NotNull]
-    private GenreService? GenreService { get; set; }
-    
-    [Inject]
-    [NotNull]
-    private AlbumService? AlbumService { get; set; }
-
-    [Inject]
-    [NotNull]
-    private TrackService? TrackService { get; set; }
     
     [HttpGet("getMusicFolders")]
     public async Task GetMusicFolders()
@@ -43,7 +25,7 @@ public class BrowsingController : AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var folders = await DirectoryService.GetMusicFoldersAsync(apiUserId.Value, HttpContext.RequestAborted);
+            var folders = await directoryService.GetMusicFoldersAsync(apiUserId.Value, HttpContext.RequestAborted);
             await HttpContext.WriteResponseAsync(ItemChoiceType.musicFolders, folders);
         }
     }
@@ -55,7 +37,7 @@ public class BrowsingController : AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var id3 = await ArtistService.GetArtistsAsync(apiUserId.Value, musicFolderId, ifModifiedSince, HttpContext.RequestAborted);
+            var id3 = await artistService.GetArtistsAsync(apiUserId.Value, musicFolderId, ifModifiedSince, HttpContext.RequestAborted);
             var index = new Indexes()
             {
                 ignoredArticles = id3.ignoredArticles,
@@ -81,7 +63,7 @@ public class BrowsingController : AudioController
             Directory? directory = null;
             if (id!.TryParseArtistId(out var artistId))
             {
-                var id3 = await ArtistService.GetArtistAsync(apiUserId.Value, artistId, HttpContext.RequestAborted);
+                var id3 = await artistService.GetArtistAsync(apiUserId.Value, artistId, HttpContext.RequestAborted);
                 directory = new Directory()
                 {
                     id = id3.id,
@@ -94,7 +76,7 @@ public class BrowsingController : AudioController
             }
             else if (id!.TryParseAlbumId(out var albumId))
             {
-                var album = await AlbumService.GetAlbumAsync(apiUserId.Value, albumId, HttpContext.RequestAborted);
+                var album = await albumService.GetAlbumAsync(apiUserId.Value, albumId, HttpContext.RequestAborted);
                 directory = new Directory()
                 {
                     id = album.id,
@@ -122,7 +104,7 @@ public class BrowsingController : AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var genres = await GenreService.GetGenresAsync(apiUserId.Value, HttpContext.RequestAborted);
+            var genres = await genreService.GetGenresAsync(apiUserId.Value, HttpContext.RequestAborted);
             await HttpContext.WriteResponseAsync(ItemChoiceType.genres, genres);
         }
     }
@@ -134,7 +116,7 @@ public class BrowsingController : AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var id3 = await ArtistService.GetArtistsAsync(apiUserId.Value, musicFolderId, null, HttpContext.RequestAborted);
+            var id3 = await artistService.GetArtistsAsync(apiUserId.Value, musicFolderId, null, HttpContext.RequestAborted);
             await HttpContext.WriteResponseAsync(ItemChoiceType.artists, id3);
         }
     }
@@ -149,7 +131,7 @@ public class BrowsingController : AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var id3 = await ArtistService.GetArtistAsync(apiUserId.Value, artistId, HttpContext.RequestAborted);
+            var id3 = await artistService.GetArtistAsync(apiUserId.Value, artistId, HttpContext.RequestAborted);
             await HttpContext.WriteResponseAsync(ItemChoiceType.artist, id3);
         }
     }
@@ -164,7 +146,7 @@ public class BrowsingController : AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var id3 = await AlbumService.GetAlbumAsync(apiUserId.Value, albumId, HttpContext.RequestAborted);
+            var id3 = await albumService.GetAlbumAsync(apiUserId.Value, albumId, HttpContext.RequestAborted);
             await HttpContext.WriteResponseAsync(ItemChoiceType.album, id3);
         }
     }
@@ -179,7 +161,7 @@ public class BrowsingController : AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var track = await TrackService.GetSongAsync(apiUserId.Value, trackId, HttpContext.RequestAborted);
+            var track = await trackService.GetSongAsync(apiUserId.Value, trackId, HttpContext.RequestAborted);
             await HttpContext.WriteResponseAsync(ItemChoiceType.song, track); 
         }
     }
@@ -317,7 +299,7 @@ public class BrowsingController : AudioController
         {
             var topSongs = new TopSongs
             {
-                song = await TrackService.GetTopSongsAsync(apiUserId.Value, artist!, count.Value, HttpContext.RequestAborted),
+                song = await trackService.GetTopSongsAsync(apiUserId.Value, artist!, count.Value, HttpContext.RequestAborted),
             };
 
             await HttpContext.WriteResponseAsync(ItemChoiceType.topSongs, topSongs);

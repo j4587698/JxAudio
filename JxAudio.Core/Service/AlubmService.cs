@@ -12,11 +12,8 @@ using Microsoft.Extensions.Localization;
 namespace JxAudio.Core.Service;
 
 [Transient]
-public class AlbumService
+public class AlbumService(IStringLocalizer<ArtistService> artistServiceLocalizer)
 {
-    [Inject]
-    [NotNull]
-    private IStringLocalizer<ArtistService>? ArtistServiceLocalizer { get; set; }
 
     private ISelect<AlbumEntity> GetAlbumBase(Guid? userId, int? musicFolderId)
     {
@@ -61,8 +58,8 @@ public class AlbumService
         var albumId3 = new AlbumWithSongsID3()
         {
             id = album.Id.ToAlbumId(),
-            name = album.Title ?? ArtistServiceLocalizer["NoAlbumName"],
-            artist = album.ArtistEntity?.Name ?? ArtistServiceLocalizer["NoArtistName"],
+            name = album.Title ?? artistServiceLocalizer["NoAlbumName"],
+            artist = album.ArtistEntity?.Name ?? artistServiceLocalizer["NoArtistName"],
             artistId = album.ArtistId.ToArtistId(),
             coverArt = album.PictureId.ToString(),
             songCount = album.TrackEntities?.Count ?? 0,
