@@ -13,20 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JxAudio.Web.Controllers.Rest;
 
-public class AlbumSongListController : AudioController
+public class AlbumSongListController(ArtistService artistService, AlbumService albumService, TrackService trackService) : AudioController
 {
-    [Inject]
-    [NotNull]
-    private ArtistService? ArtistService { get; set; }
-    
-    [Inject]
-    [NotNull]
-    private AlbumService? AlbumService { get; set; }
-    
-    [Inject]
-    [NotNull]
-    private TrackService? TrackService { get; set; }
-    
     [HttpGet("getAlbumList")]
     public async Task GetAlbumList(int? musicFolderId, string? type, int? size, int? offset, int? fromYear, int? toYear, string? genre)
     {
@@ -52,35 +40,35 @@ public class AlbumSongListController : AudioController
             switch (type)
             {
                 case "random":
-                    albumQuery = await AlbumService.QueryAlbumRandomAsync(apiUserId.Value, musicFolderId, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumRandomAsync(apiUserId.Value, musicFolderId, size.Value, HttpContext.RequestAborted);
                     break;
                 case "newest":
-                    albumQuery = await AlbumService.QueryAlbumNewestAsync(apiUserId.Value, musicFolderId,  offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumNewestAsync(apiUserId.Value, musicFolderId,  offset.Value, size.Value, HttpContext.RequestAborted);
                     break;
                 case "highest": // 与最高播放一致
                 case "frequent":
-                    albumQuery = await AlbumService.QueryAlbumFrequentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumFrequentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
                     break;
                 case "recent":
-                    albumQuery = await AlbumService.QueryAlbumRecentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumRecentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
                     break;
                 case "alphabeticalByName":
-                    albumQuery = await AlbumService.QueryAlbumOrderedByAlbumTitleAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumOrderedByAlbumTitleAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
                     break;
                 case "alphabeticalByArtist":
-                    albumQuery = await AlbumService.QueryAlbumOrderedByArtistNameAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumOrderedByArtistNameAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
                     break;
                 case "starred":
-                    albumQuery = await AlbumService.QueryAlbumStarredAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumStarredAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
                     break;
                 case "byYear":
                     Util.CheckRequiredParameters(nameof(fromYear), fromYear);
                     Util.CheckRequiredParameters(nameof(toYear), toYear);
-                    albumQuery = await AlbumService.QueryAlbumByYearAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value,fromYear!.Value, toYear!.Value, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumByYearAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value,fromYear!.Value, toYear!.Value, HttpContext.RequestAborted);
                     break;
                 case "byGenre":
                     Util.CheckRequiredParameters(nameof(genre), genre);
-                    albumQuery = await AlbumService.QueryAlbumByGenreAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, genre!, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumByGenreAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, genre!, HttpContext.RequestAborted);
                     break;
                 default:
                     throw RestApiErrorException.InvalidParameterError("type");
@@ -125,35 +113,35 @@ public class AlbumSongListController : AudioController
             switch (type)
             {
                 case "random":
-                    albumQuery = await AlbumService.QueryAlbumRandomAsync(apiUserId.Value, musicFolderId, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumRandomAsync(apiUserId.Value, musicFolderId, size.Value, HttpContext.RequestAborted);
                     break;
                 case "newest":
-                    albumQuery = await AlbumService.QueryAlbumNewestAsync(apiUserId.Value, musicFolderId,  offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumNewestAsync(apiUserId.Value, musicFolderId,  offset.Value, size.Value, HttpContext.RequestAborted);
                     break;
                 case "highest": // 与最高播放一致
                 case "frequent":
-                    albumQuery = await AlbumService.QueryAlbumFrequentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumFrequentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
                     break;
                 case "recent":
-                    albumQuery = await AlbumService.QueryAlbumRecentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumRecentAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
                     break;
                 case "alphabeticalByName":
-                    albumQuery = await AlbumService.QueryAlbumOrderedByAlbumTitleAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumOrderedByAlbumTitleAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
                     break;
                 case "alphabeticalByArtist":
-                    albumQuery = await AlbumService.QueryAlbumOrderedByArtistNameAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumOrderedByArtistNameAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
                     break;
                 case "starred":
-                    albumQuery = await AlbumService.QueryAlbumStarredAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumStarredAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, HttpContext.RequestAborted);
                     break;
                 case "byYear":
                     Util.CheckRequiredParameters(nameof(fromYear), fromYear);
                     Util.CheckRequiredParameters(nameof(toYear), toYear);
-                    albumQuery = await AlbumService.QueryAlbumByYearAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value,fromYear!.Value, toYear!.Value, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumByYearAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value,fromYear!.Value, toYear!.Value, HttpContext.RequestAborted);
                     break;
                 case "byGenre":
                     Util.CheckRequiredParameters(nameof(genre), genre);
-                    albumQuery = await AlbumService.QueryAlbumByGenreAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, genre!, HttpContext.RequestAborted);
+                    albumQuery = await albumService.QueryAlbumByGenreAsync(apiUserId.Value, musicFolderId, offset.Value, size.Value, genre!, HttpContext.RequestAborted);
                     break;
                 default:
                     throw RestApiErrorException.InvalidParameterError("type");
@@ -181,7 +169,7 @@ public class AlbumSongListController : AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var randomSongs = await TrackService.GetRandomSongsAsync(apiUserId.Value, musicFolderId, genre, fromYear, toYear,
+            var randomSongs = await trackService.GetRandomSongsAsync(apiUserId.Value, musicFolderId, genre, fromYear, toYear,
                 size.Value, HttpContext.RequestAborted);
 
             await HttpContext.WriteResponseAsync(ItemChoiceType.randomSongs, randomSongs);
@@ -199,7 +187,7 @@ public class AlbumSongListController : AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var songs = await TrackService.GetSongsByGenreAsync(apiUserId.Value, musicFolderId, genre!, offset.Value, count.Value, HttpContext.RequestAborted);
+            var songs = await trackService.GetSongsByGenreAsync(apiUserId.Value, musicFolderId, genre!, offset.Value, count.Value, HttpContext.RequestAborted);
 
             await HttpContext.WriteResponseAsync(ItemChoiceType.songsByGenre, songs);
         }
@@ -218,9 +206,9 @@ public class AlbumSongListController : AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var artistsId3 = await ArtistService.GetStar2ArtistsId3(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
-            var albumsId3 = await AlbumService.GetStar2AlbumsId3(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
-            var tracks = await TrackService.GeStar2Songs(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
+            var artistsId3 = await artistService.GetStar2ArtistsId3(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
+            var albumsId3 = await albumService.GetStar2AlbumsId3(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
+            var tracks = await trackService.GeStar2Songs(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
 
             var starred = new Starred()
             {
@@ -240,9 +228,9 @@ public class AlbumSongListController : AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var artistsId3 = await ArtistService.GetStar2ArtistsId3(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
-            var albumsId3 = await AlbumService.GetStar2AlbumsId3(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
-            var tracks = await TrackService.GeStar2Songs(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
+            var artistsId3 = await artistService.GetStar2ArtistsId3(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
+            var albumsId3 = await albumService.GetStar2AlbumsId3(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
+            var tracks = await trackService.GeStar2Songs(apiUserId.Value, musicFolderId, HttpContext.RequestAborted);
 
             var starred = new Starred2()
             {

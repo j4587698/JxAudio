@@ -1,7 +1,5 @@
 ﻿using System.Reflection;
 using System.Text.RegularExpressions;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using Jx.Toolbox.Extensions;
 using JxAudio.Core.Attributes;
 using JxAudio.Core.Options;
@@ -18,11 +16,11 @@ namespace JxAudio.Core.Extensions;
 public static class WebApplicationExtension
 {
     public static WebApplicationBuilder Inject(this WebApplicationBuilder webApplicationBuilder,
-        Action<AppConfigOption>? configOption = null,
-        Action<ContainerBuilder>? containerBuilder = null)
+        Action<AppConfigOption>? configOption = null)
     {
         Application.WebHostEnvironment = webApplicationBuilder.Environment;
         Application.Configuration = webApplicationBuilder.Configuration;
+        Application.Services = webApplicationBuilder.Services;
         
         var jsonPattern = @"^(?<name>[^.]+)(\.(?<env>[^.]+))?\.json$";
         var xmlPattern = @"^(?<name>[^.]+)(\.(?<env>[^.]+))?\.xml";
@@ -31,153 +29,93 @@ public static class WebApplicationExtension
         AppConfigOption option = new AppConfigOption();
         configOption?.Invoke(option);
         webApplicationBuilder.Services.Configure(configOption ?? (appConfigOption => { }) );
-        
-        webApplicationBuilder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory(containerBuilder));
-        webApplicationBuilder.Host.ConfigureContainer<ContainerBuilder>((context, builder) =>
+        webApplicationBuilder.Configuration.Sources.Clear();
+        LoadConfig(webApplicationBuilder.Configuration, AppContext.BaseDirectory, "*.json", jsonPattern, webApplicationBuilder.Environment);
+            
+        if (option.EnableXmlSearcher)
         {
-            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).ToList();
-            var scopedTypes = types.Where(x => x is { IsClass: true, IsAbstract: false } && x.GetCustomAttributes(typeof(ScopedAttribute), false).Length != 0);
-            foreach (var scopedType in scopedTypes)
-            {
-                Register(builder, scopedType, option, "scoped", webApplicationBuilder);
-            }
-            
-            var singletonTypes = types.Where(x => x is { IsClass: true, IsAbstract: false } && x.GetCustomAttributes(typeof(SingletonAttribute), false).Length != 0);
-            foreach (var singletonType in singletonTypes)
-            {
-                Register(builder, singletonType, option, "singleton", webApplicationBuilder);
-            }
-            
-            var transientTypes = types.Where(x => x is { IsClass: true, IsAbstract: false } && x.GetCustomAttributes(typeof(TransientAttribute), false).Length != 0);
-            foreach (var transientType in transientTypes)
-            {
-                Register(builder, transientType, option, "transient", webApplicationBuilder);
-            }
+            LoadConfig(webApplicationBuilder.Configuration, AppContext.BaseDirectory, "*.xml", xmlPattern, webApplicationBuilder.Environment);
+        }
 
-            var controllers = types.Where(x => x.IsSubclassOf(typeof(ControllerBase)));
-            builder.RegisterTypes(controllers.ToArray()).PropertiesAutowired((info, o) =>
-                Attribute.IsDefined(info, typeof(InjectAttribute)));
-        }).ConfigureAppConfiguration((context, builder) =>
+        if (option.ConfigSearchFolder is {Count: > 0})
         {
-            builder.Sources.Clear();
-            
-            LoadConfig(builder, AppContext.BaseDirectory, "*.json", jsonPattern, webApplicationBuilder.Environment);
-            
-            if (option.EnableXmlSearcher)
+            foreach (var folder in option.ConfigSearchFolder)
             {
-                LoadConfig(builder, AppContext.BaseDirectory, "*.xml", xmlPattern, webApplicationBuilder.Environment);
-            }
-
-            if (option.ConfigSearchFolder is {Count: > 0})
-            {
-                foreach (var folder in option.ConfigSearchFolder)
+                if (!folder.IsNullOrWhiteSpace())
                 {
-                    if (!folder.IsNullOrWhiteSpace())
+                    var path = Path.Combine(AppContext.BaseDirectory, folder);
+                    if (!Directory.Exists(path))
                     {
-                        var path = Path.Combine(AppContext.BaseDirectory, folder);
-                        if (!Directory.Exists(path))
-                        {
-                            Directory.CreateDirectory(path);
-                        }
-                        LoadConfig(builder,  path, "*.json", jsonPattern, webApplicationBuilder.Environment);
-                        if (option.EnableXmlSearcher)
-                        {
-                            LoadConfig(builder, path, "*.xml", xmlPattern, webApplicationBuilder.Environment);
-                        }
+                        Directory.CreateDirectory(path);
+                    }
+                    LoadConfig(webApplicationBuilder.Configuration,  path, "*.json", jsonPattern, webApplicationBuilder.Environment);
+                    if (option.EnableXmlSearcher)
+                    {
+                        LoadConfig(webApplicationBuilder.Configuration, path, "*.xml", xmlPattern, webApplicationBuilder.Environment);
                     }
                 }
             }
-        });
+        }
+        
+        var types = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(x => x.GetTypes())
+            .Where(x => x is { IsClass: true, IsAbstract: false })
+            .ToList();
 
+        foreach (var type in types)
+        {
+            if (type.GetCustomAttribute<ScopedAttribute>() != null)
+            {
+                var serviceTypes = GetServiceTypes(type, option);
+                foreach (var type1 in serviceTypes)
+                {
+                    webApplicationBuilder.Services.AddScoped(type1, type);
+                }
+            }
+            else if (type.GetCustomAttribute<SingletonAttribute>() != null)
+            {
+                var serviceTypes = GetServiceTypes(type, option);
+                foreach (var type1 in serviceTypes)
+                {
+                    webApplicationBuilder.Services.AddSingleton(type1, type);
+                }
+            }
+            else if (type.GetCustomAttribute<TransientAttribute>() != null)
+            {
+                var serviceTypes = GetServiceTypes(type, option);
+                foreach (var type1 in serviceTypes)
+                {
+                    webApplicationBuilder.Services.AddTransient(type1, type);
+                }
+            }
+        }
+        
         return webApplicationBuilder;
     }
-
-    private static void Register(ContainerBuilder builder, Type type, AppConfigOption option, string scope,  WebApplicationBuilder context)
+    
+    private static IEnumerable<Type> GetServiceTypes(Type implementationType, AppConfigOption option)
     {
-        if (type.IsGenericType)
+        if (implementationType.IsGenericTypeDefinition)
         {
-            var register = builder.RegisterGeneric(type);
-            var interfaces = type.GetInterfaces().Where(x => x.IsGenericType);
-            foreach (var @interface in interfaces)
+            // 开放泛型返回泛型类型定义
+            var interfaces = implementationType.GetInterfaces()
+                .Where(i => i is { IsGenericType: true, IsGenericTypeDefinition: true }).ToList();
+            if (option.RegisterSelfIfHasInterface || interfaces.Count == 0)
             {
-                register.As(@interface);
+                interfaces.Add(implementationType);
             }
 
-            if (option.RegisterSelfIfHasInterface || !interfaces.Any())
-            {
-                register.AsSelf();
-            }
-
-            register.PropertiesAutowired((info, o) =>
-                Attribute.IsDefined(info, typeof(InjectAttribute)));
-
-            var properties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                .Where(x => Attribute.IsDefined(x, typeof(ValueAttribute)));
-            foreach (var property in properties)
-            {
-                var valueAttribute = property.GetCustomAttribute<ValueAttribute>();
-                var value = context.Configuration[valueAttribute!.ConfigPath];
-                if (value != null)
-                {
-                    register.WithProperty(property.Name, value);
-                }
-            }
-
-            switch (scope)
-            {
-                case "singleton":
-                    register.SingleInstance();
-                    break;
-                case "transient":
-                    register.InstancePerDependency();
-                    break;
-                case "scoped":
-                    register.InstancePerLifetimeScope();
-                    break;
-            }
+            return interfaces;
         }
-        else
+    
+        // 非泛型或封闭泛型处理
+        var implementedInterfaces = implementationType.GetInterfaces()
+            .Where(i => !i.IsGenericType || !i.ContainsGenericParameters).ToList();
+        if (option.RegisterSelfIfHasInterface || implementedInterfaces.Count == 0)
         {
-            var register = builder.RegisterType(type);
-            var interfaces = type.GetInterfaces();
-            foreach (var @interface in interfaces)
-            {
-                register.As(@interface);
-            }
-
-            if (option.RegisterSelfIfHasInterface || !interfaces.Any())
-            {
-                register.AsSelf();
-            }
-            
-            register.PropertiesAutowired((info, o) =>
-                Attribute.IsDefined(info, typeof(InjectAttribute)));
-
-            var properties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                .Where(x => Attribute.IsDefined(x, typeof(ValueAttribute)));
-            foreach (var property in properties)
-            {
-                var valueAttribute = property.GetCustomAttribute<ValueAttribute>();
-                var value = context.Configuration[valueAttribute!.ConfigPath];
-                if (value != null)
-                {
-                    register.WithProperty(property.Name, value);
-                }
-            }
-
-            switch (scope)
-            {
-                case "singleton":
-                    register.SingleInstance();
-                    break;
-                case "transient":
-                    register.InstancePerDependency();
-                    break;
-                case "scoped":
-                    register.InstancePerLifetimeScope();
-                    break;
-            }
+            implementedInterfaces.Add(implementationType);
         }
+        return implementedInterfaces;
     }
 
     private static void LoadConfig(IConfigurationBuilder config, string path, string searchPattern, string pattern, IWebHostEnvironment environment)

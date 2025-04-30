@@ -11,19 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JxAudio.Web.Controllers.Rest;
 
-public class SearchingController: AudioController
+public class SearchingController(ArtistService artistService, AlbumService albumService, TrackService trackService): AudioController
 {
-    [Inject]
-    [NotNull]
-    private ArtistService? ArtistService { get; set; }
-    
-    [Inject]
-    [NotNull]
-    private AlbumService? AlbumService { get; set; }
-    
-    [Inject]
-    [NotNull]
-    private TrackService? TrackService { get; set; }
     
     [HttpGet("search")]
     public void Search()
@@ -81,9 +70,9 @@ public class SearchingController: AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var artistsId3 = await ArtistService.GetSearch3ArtistId3(apiUserId.Value, musicFolderId, query!, artistCount.Value, artistOffset.Value, HttpContext.RequestAborted);
-            var albumsId3 = await AlbumService.GetSearch3AlbumId3(apiUserId.Value, musicFolderId, query!, albumCount.Value, albumOffset.Value, HttpContext.RequestAborted);
-            var tracks = await TrackService.GetSearch3Songs(apiUserId.Value, musicFolderId, query!, songCount.Value, songOffset.Value, HttpContext.RequestAborted);
+            var artistsId3 = await artistService.GetSearch3ArtistId3(apiUserId.Value, musicFolderId, query!, artistCount.Value, artistOffset.Value, HttpContext.RequestAborted);
+            var albumsId3 = await albumService.GetSearch3AlbumId3(apiUserId.Value, musicFolderId, query!, albumCount.Value, albumOffset.Value, HttpContext.RequestAborted);
+            var tracks = await trackService.GetSearch3Songs(apiUserId.Value, musicFolderId, query!, songCount.Value, songOffset.Value, HttpContext.RequestAborted);
         
             var searchResult2 = new SearchResult2()
             {
@@ -146,9 +135,9 @@ public class SearchingController: AudioController
         var apiUserId = apiContext?.User?.Id;
         if (apiUserId != null)
         {
-            var artistsId3 = await ArtistService.GetSearch3ArtistId3(apiUserId.Value, musicFolderId, query!, artistCount.Value, artistOffset.Value, HttpContext.RequestAborted);
-            var albumsId3 = await AlbumService.GetSearch3AlbumId3(apiUserId.Value, musicFolderId, query!, albumCount.Value, albumOffset.Value, HttpContext.RequestAborted);
-            var tracks = await TrackService.GetSearch3Songs(apiUserId.Value, musicFolderId, query!, songCount.Value, songOffset.Value, HttpContext.RequestAborted);
+            var artistsId3 = await artistService.GetSearch3ArtistId3(apiUserId.Value, musicFolderId, query!, artistCount.Value, artistOffset.Value, HttpContext.RequestAborted);
+            var albumsId3 = await albumService.GetSearch3AlbumId3(apiUserId.Value, musicFolderId, query!, albumCount.Value, albumOffset.Value, HttpContext.RequestAborted);
+            var tracks = await trackService.GetSearch3Songs(apiUserId.Value, musicFolderId, query!, songCount.Value, songOffset.Value, HttpContext.RequestAborted);
         
             var searchResult3 = new SearchResult3()
             {

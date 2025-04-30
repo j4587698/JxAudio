@@ -24,7 +24,7 @@ public static class MvcExtension
             {
                 options.Conventions.Add(new DynamicControllerFeatureProvider(option));
             }
-        }).AddControllersAsServices();
+        });
 
         return builder;
     }
