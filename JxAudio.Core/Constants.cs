@@ -18,7 +18,7 @@ public static class Constants
         ".flv",
         ".mkv", ".mka", ".mk3d", ".mks",
         ".mov", ".qt",
-        ".m4v",
+        ".m4v", ".m4a",
         ".mp3",
         ".mpc",
         ".ogg", ".ogv", ".oga", ".ogx", ".spx", ".opus",

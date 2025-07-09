@@ -69,7 +69,7 @@ public class ScanJob : ITask
                 }
 
 
-                if (Constants.AudioExtensions.Contains(Path.GetExtension(fsInfo.Name)))
+                if (Constants.AudioExtensions.Contains(Path.GetExtension(fsInfo.Name).ToLower()))
                 {
                     for (int i = 0; i < 3; i++)
                     {
@@ -178,7 +178,7 @@ public class ScanJob : ITask
                                 };
                                 await lrcEntity.SaveAsync();
                             }
-                            else if (track.Lyrics != null && track.Lyrics.SynchronizedLyrics.Count > 0)
+                            else if (track.Lyrics is { SynchronizedLyrics.Count: > 0 })
                             {
                                 lrcEntity = new LrcEntity
                                 {
@@ -188,6 +188,7 @@ public class ScanJob : ITask
                                     Title = track.Title,
                                     Lrc = track.Lyrics.FormatSynchToLRC()
                                 };
+                                
                                 await lrcEntity.SaveAsync();
                             }
 
