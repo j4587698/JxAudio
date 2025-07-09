@@ -1,5 +1,6 @@
 ﻿using ATL;
 using ATL.Playlist;
+using BootstrapBlazor.Components;
 using FreeSql;
 using Jx.Toolbox.Extensions;
 using JxAudio.Core.Entity;
@@ -29,6 +30,11 @@ public class ScanJob : ITask
         }
         Log.Information("ScanJob is running.");
         _isRunning = true;
+        var dispatchService = provider.GetRequiredService<IDispatchService<string>>();
+        dispatchService.Dispatch(new DispatchEntry<string>()
+        {
+            Name = "task"
+        });
         try
         {
             _trackEntities = await TrackEntity.Select.ToListAsync(x => new TrackEntity()

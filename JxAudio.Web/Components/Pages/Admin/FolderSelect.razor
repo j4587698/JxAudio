@@ -88,7 +88,7 @@
             });
             if (ret)
             {
-                TaskServicesManager.GetOrAdd<ClearJob>(TriggerBuilder.Default.Build());
+                TaskServicesManager.GetOrAdd<ClearJob>("文件夹清理任务", TriggerBuilder.Default.Build());
             }
             return true;
         }

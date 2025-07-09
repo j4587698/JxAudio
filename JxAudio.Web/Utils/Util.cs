@@ -155,12 +155,12 @@ public static class Util
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            TaskServicesManager.GetOrAdd<ScanJob>(TriggerBuilder.Default.WithInterval(scanInterval * 1000).Build());
+            TaskServicesManager.GetOrAdd<ScanJob>("歌曲扫描任务", TriggerBuilder.Default.WithInterval(scanInterval * 1000).Build());
             return;
         }
         if (settingsVo.SearchType == SearchType.Cron)
         {
-            TaskServicesManager.GetOrAdd<ScanJob>(TriggerBuilder.Build(settingsVo.CronExpress!));
+            TaskServicesManager.GetOrAdd<ScanJob>("歌曲扫描任务", TriggerBuilder.Build(settingsVo.CronExpress!));
             return;
         }
 

@@ -1,6 +1,8 @@
 ﻿@using System.Security.Claims
 @using Microsoft.Extensions.Localization
 @using JxAudio.Plugin
+@using JxAudio.Web.Vo
+@using Longbow.Tasks
 @using Microsoft.AspNetCore.Components.Authorization
 @using Avatar = Jx.Toolbox.Utils.Avatar
 @inherits LayoutComponentBase
@@ -19,6 +21,27 @@
             <span class="ms-3 flex-sm-fill d-none d-sm-block">JxAudio</span>
             <div class="flex-fill d-sm-none">
             </div>
+            @if (_scheduleVos.Count > 0)
+            {
+                <PopConfirmButton Icon="fas fa-spinner fa-pulse" ShowConfirmButton="false" ShowCloseButton="false">
+                    <BodyTemplate>
+                        <div class="d-flex align-items-center">
+                        <table class="table table-striped table-hover">
+                        @foreach(var scheduler in _scheduleVos)
+                        {
+                            <tr>
+                                <td><span class="me-2">@scheduler.Name</span></td>
+                                <td><span class="badge bg-secondary">正在运行</span></td>
+                            </tr>
+                        }
+                        
+                        </table>
+                            
+                        </div>
+                    </BodyTemplate>
+                </PopConfirmButton>
+            }
+            
             <ThemeProvider></ThemeProvider>
             <Logout ImageUrl="@(Avatar.GetAvatarUrl(_email) ?? "/Images/logo.png")" UserName="@(_username ?? "JxAudio")" DisplayName="@(_username ?? "JxAudio")">
                 <LinkTemplate>
@@ -57,6 +80,8 @@
     private string? _username;
 
     private string? _email;
+    
+    private List<IScheduler> _scheduleVos = new();
 
     private Task OnCollapsed(bool collapsed)
     {
@@ -76,6 +101,7 @@
             PageTitle = menu.Text + "- JXAudio";
         }
         DispatchService.Subscribe(Notify);
+        _scheduleVos = TaskServicesManager.ToList().Where(x => x.LastRunResult == TriggerResult.Running).ToList();
     }
 
     protected override async Task OnInitializedAsync()
@@ -88,12 +114,16 @@
 
     private Task Notify(DispatchEntry<string> payload)
     {
-        if (payload.Name != "menu")
+        if (payload.Name == "menu")
         {
-            return Task.CompletedTask;
+            GetIconSideMenuItems();
+            StateHasChanged();
         }
-        GetIconSideMenuItems();
-        StateHasChanged();
+        else if (payload.Name == "task")
+        {
+            _scheduleVos = TaskServicesManager.ToList().Where(x => x.LastRunResult == TriggerResult.Running).ToList();
+            StateHasChanged();
+        }
         return Task.CompletedTask;
     }
     
