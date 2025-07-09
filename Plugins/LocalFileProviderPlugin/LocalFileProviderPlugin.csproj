@@ -7,6 +7,7 @@
         <AssemblyName>LocalFileProviderPlugin</AssemblyName>
         <RootNamespace>LocalFileProviderPlugin</RootNamespace>
         <LangVersion>default</LangVersion>
+        <Version>0.8.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
