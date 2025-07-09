@@ -95,11 +95,20 @@ public static class WebApplicationExtension
     
     private static IEnumerable<Type> GetServiceTypes(Type implementationType, AppConfigOption option)
     {
-        if (implementationType.IsGenericTypeDefinition)
+        if (implementationType.IsGenericType)
         {
             // 开放泛型返回泛型类型定义
             var interfaces = implementationType.GetInterfaces()
-                .Where(i => i is { IsGenericType: true, IsGenericTypeDefinition: true }).ToList();
+                .Where(i => i is { IsGenericType: true }).Select(x =>
+                {
+                    if (x.IsTypeDefinition)
+                    {
+                        return x;
+                    }
+
+                    return x.GetGenericTypeDefinition();
+                }).ToList();
+            
             if (option.RegisterSelfIfHasInterface || interfaces.Count == 0)
             {
                 interfaces.Add(implementationType);
@@ -109,8 +118,8 @@ public static class WebApplicationExtension
         }
     
         // 非泛型或封闭泛型处理
-        var implementedInterfaces = implementationType.GetInterfaces()
-            .Where(i => !i.IsGenericType || !i.ContainsGenericParameters).ToList();
+        var implementedInterfaces = implementationType.GetInterfaces().ToList();
+        
         if (option.RegisterSelfIfHasInterface || implementedInterfaces.Count == 0)
         {
             implementedInterfaces.Add(implementationType);

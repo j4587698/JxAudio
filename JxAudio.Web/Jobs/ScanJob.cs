@@ -1,4 +1,6 @@
 ﻿using ATL;
+using ATL.Playlist;
+using BootstrapBlazor.Components;
 using FreeSql;
 using Jx.Toolbox.Extensions;
 using JxAudio.Core.Entity;
@@ -20,6 +22,7 @@ public class ScanJob : ITask
     
     public async Task Execute(IServiceProvider provider, CancellationToken cancellationToken)
     {
+        
         if (_isRunning)
         {
             Log.Warning("ScanJob is already running.");
@@ -27,6 +30,11 @@ public class ScanJob : ITask
         }
         Log.Information("ScanJob is running.");
         _isRunning = true;
+        var dispatchService = provider.GetRequiredService<IDispatchService<string>>();
+        dispatchService.Dispatch(new DispatchEntry<string>()
+        {
+            Name = "task"
+        });
         try
         {
             _trackEntities = await TrackEntity.Select.ToListAsync(x => new TrackEntity()
@@ -69,7 +77,7 @@ public class ScanJob : ITask
                 }
 
 
-                if (Constants.AudioExtensions.Contains(Path.GetExtension(fsInfo.Name)))
+                if (Constants.AudioExtensions.Contains(Path.GetExtension(fsInfo.Name).ToLower()))
                 {
                     for (int i = 0; i < 3; i++)
                     {
@@ -178,16 +186,18 @@ public class ScanJob : ITask
                                 };
                                 await lrcEntity.SaveAsync();
                             }
-                            else if (track.Lyrics != null && track.Lyrics.SynchronizedLyrics.Count > 0)
+                            else if (track.Lyrics is { Count: > 0 })
                             {
+                                track.Lyrics[0].Format = LyricsInfo.LyricsFormat.LRC;
                                 lrcEntity = new LrcEntity
                                 {
                                     Artist = artistEntities is { Count: > 0 }
                                         ? string.Join(",", artistEntities.Select(y => y.Name))
                                         : "",
                                     Title = track.Title,
-                                    Lrc = track.Lyrics.FormatSynchToLRC()
+                                    Lrc = track.Lyrics[0].FormatSynch()
                                 };
+                                
                                 await lrcEntity.SaveAsync();
                             }
 
