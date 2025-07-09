@@ -27,7 +27,7 @@
       <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
       <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
       <PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
-      <PackageReference Include="z440.atl.core" Version="6.26.0" />
+      <PackageReference Include="z440.atl.core" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>
