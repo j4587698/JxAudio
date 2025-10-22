@@ -45,6 +45,14 @@ public class PictureService
         {
             return Constants.GetDefaultAvatar();
         }
+        else if (int.TryParse(id, out var result))
+        {
+            pictureEntity = await PictureEntity.FindAsync(result);
+            if (pictureEntity == null)
+            {
+                return Constants.GetDefaultCover();
+            }
+        }
         else
         {
             throw RestApiErrorException.DataNotFoundError();
