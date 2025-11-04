@@ -36,7 +36,7 @@ public class AlbumService(IStringLocalizer<ArtistService> artistServiceLocalizer
     
     public async Task<AlbumWithSongsID3> GetAlbumAsync(Guid userId, int albumId, CancellationToken cancellationToken)
     {
-        var album = await GetAlbumBase(userId, null).FirstAsync(cancellationToken);
+        var album = await GetAlbumBase(userId, null).Where(x => x.Id == albumId).FirstAsync(cancellationToken);
 
         if (album == null)
         {
